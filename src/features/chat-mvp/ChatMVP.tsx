@@ -110,6 +110,8 @@ export function ChatMVP({
   const [mode, setMode] = useState<'drafting' | 'refining' | 'validating'>('drafting');
   const [focus, setFocus] = useState<'ideation' | 'journey' | 'deliverables' | 'overview'>('ideation');
   const [showKickoffPanel, setShowKickoffPanel] = useState(false); // Show kickoff only on stage transitions
+  // Tracks if kickoff panel was auto-opened (so we can auto-close it after a short delay)
+  const kickoffAutoOpenRef = useRef(false);
   const [showBrief, setShowBrief] = useState(true);
   const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
@@ -170,6 +172,7 @@ export function ChatMVP({
 
   useEffect(() => {
     if (showIntro) {
+      kickoffAutoOpenRef.current = true;
       setShowKickoffPanel(!isMobile);
     }
   }, [showIntro, isMobile]);
@@ -294,6 +297,7 @@ export function ChatMVP({
       setStageTurns(0);
       setInitialized(true);
       setAutosaveEnabled(Object.keys(serializeCaptured(hydrated)).length > 0);
+      kickoffAutoOpenRef.current = true;
       setShowKickoffPanel(!isMobile); // Show kickoff on initial load (mobile collapses)
     }
 
@@ -306,8 +310,20 @@ export function ChatMVP({
 
   // Surface kickoff guidance on every stage transition until the teacher dismisses it
   useEffect(() => {
+    kickoffAutoOpenRef.current = true;
     setShowKickoffPanel(!isMobile);
   }, [stage, isMobile]);
+
+  // Auto-dismiss the kickoff panel shortly after it opens automatically
+  useEffect(() => {
+    if (!showKickoffPanel) {return;}
+    if (!kickoffAutoOpenRef.current) {return;}
+    kickoffAutoOpenRef.current = false; // Consume the flag
+    const t = window.setTimeout(() => {
+      setShowKickoffPanel(false);
+    }, 1800); // 1.8s feels responsive without being abrupt
+    return () => window.clearTimeout(t);
+  }, [showKickoffPanel]);
 
   const persist = useCallback(async () => {
     try {
@@ -1475,7 +1491,7 @@ Your project structure is ready!`,
             />
           </div>
           <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-2`}>
-            <StageKickoffPanel
+          <StageKickoffPanel
               stage={stage}
               stageIndex={stageIndex}
               stageCount={stageOrder.length}
@@ -1488,6 +1504,7 @@ Your project structure is ready!`,
               gradeBand={gradeBandKey}
               gradeSections={gradeBandSections}
               onToggle={() => {
+                kickoffAutoOpenRef.current = false; // user action should not auto-close
                 setShowKickoffPanel(prev => {
                   const next = !prev;
                   trackEvent('kickoff_toggle', { stage, expanded: next, gradeBand: gradeBandLabel });
@@ -1847,6 +1864,37 @@ function StageKickoffPanel({
   const gradeLabel = gradeBand ?? '';
   const effectiveGradeSections = gradeSections ?? [];
 
+  const exampleHints: Record<Stage, { label: string; items?: string[]; tip?: string }> = {
+    BIG_IDEA: {
+      label: 'Examples',
+      items: ['Systems thinking', 'Sustainable design', 'Data ethics']
+    },
+    ESSENTIAL_QUESTION: {
+      label: 'Examples',
+      items: [
+        'How might we reduce waste in our cafeteria?',
+        'What makes a fair algorithm?',
+        'How does energy move through a system?'
+      ]
+    },
+    CHALLENGE: {
+      label: 'Examples',
+      items: [
+        'Design a low‑waste lunch system for our school',
+        'Advise the city on safer crosswalks near campus',
+        'Prototype a tool to visualize local air quality'
+      ]
+    },
+    JOURNEY: {
+      label: 'Tip',
+      tip: 'Click the lightbulb for sample phases and resources.'
+    },
+    DELIVERABLES: {
+      label: 'Tip',
+      tip: 'Click the lightbulb for milestones, artifacts, and rubric ideas.'
+    }
+  };
+
   const renderSummary = () => {
     if (!summary || summary.length === 0) {
       return null;
@@ -1946,23 +1994,22 @@ function StageKickoffPanel({
                 <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
                 <p className="leading-snug text-[12px]">{guide.tip}</p>
               </div>
-              {effectiveGradeSections.length > 0 && (
-                <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/70 px-3 py-2 text-[11px] text-emerald-900 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-200">
-                  <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Grade guardrails{gradeLabel ? ` (${gradeLabel})` : ''}</p>
-                  <div className="space-y-1.5">
-                    {effectiveGradeSections.map((section) => (
-                      <div key={section.title}>
-                        <p className="text-[11px] font-semibold text-emerald-900 dark:text-emerald-200">{section.title}</p>
-                        <ul className="list-disc pl-4 space-y-1 text-[12px] text-emerald-900/90 dark:text-emerald-100/90">
-                          {section.items.map((item, idx) => (
-                            <li key={`${section.title}-${idx}`}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
+              {/* Quick examples/tips and no public guardrails */}
+              <div className="rounded-xl border border-white/60 bg-white/60 backdrop-blur-sm px-3 py-2 shadow-sm dark:border-white/10 dark:bg-gray-900/40 text-[11px] text-gray-700 dark:text-gray-300">
+                <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">{exampleHints[stage].label}</p>
+                {exampleHints[stage].items ? (
+                  <ul className="list-disc pl-4 space-y-1 text-[12px]">
+                    {exampleHints[stage].items!.map((ex, i) => (
+                      <li key={i}>{ex}</li>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </ul>
+                ) : (
+                  <p className="leading-snug text-[12px]">{exampleHints[stage].tip}</p>
+                )}
+                {!exampleHints[stage].items && (
+                  <p className="mt-1 text-[11px] text-gray-600 dark:text-gray-400">Need ideas fast? Tap the lightbulb.</p>
+                )}
+              </div>
               {experience === 'new' && (
                 <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 shadow-sm dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
                   <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>

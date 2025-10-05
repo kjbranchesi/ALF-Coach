@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Users, Clock, BookOpen, Target } from 'lucide-react';
+import { Sparkles, Users, Clock, BookOpen, Presentation } from 'lucide-react';
 import { listProjectsV2 } from '../utils/showcaseV2-registry';
 import './SamplesGallery.css';
 
@@ -154,10 +154,10 @@ export default function SamplesGallery() {
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
 
-                // New info to reveal on hover (not visible by default)
-                const lessonsTotal = project.totalWeeks * project.lessonsPerWeek;
-                const keyOutcome = project.coreOutcomes[0] || '';
-                const microSummary = project.microOverview[0] || project.tagline;
+                // NEW info revealed on hover - NOT visible by default!
+                const whatStudentsCreate = project.coreOutcomes[0] || '';
+                const whoTheyPresentTo = project.primaryAudience;
+                const projectContext = project.microOverview[0] || project.tagline;
 
                 return (
                 <article
@@ -175,15 +175,15 @@ export default function SamplesGallery() {
                       />
                     )}
 
-                    {/* Overlay with NEW project summary (not tagline) */}
+                    {/* Overlay - what students actually DO (hidden by default) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/96 via-slate-900/92 to-slate-900/70 backdrop-blur-md flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-[450ms]">
                       <p className="text-[13px] text-white/95 leading-relaxed font-medium tracking-tight">
-                        {microSummary}
+                        {projectContext}
                       </p>
                     </div>
                   </div>
 
-                  <div className="magnetic-content flex flex-col gap-4 p-6 sm:p-7">
+                  <div className="magnetic-content flex flex-col gap-3 p-6 sm:p-7">
                     {/* Title and existing badges */}
                     <div className="space-y-2">
                       <h3 className="magnetic-title text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
@@ -209,23 +209,35 @@ export default function SamplesGallery() {
                       </div>
                     </div>
 
-                    {/* NEW: Revealed info on hover - total lessons & key outcome */}
+                    {/* NEW: What students create & who they present to (HIDDEN by default) */}
                     <div className="magnetic-reveal overflow-hidden">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-[13px] text-slate-600 dark:text-slate-400">
-                          <Target className="w-4 h-4 text-primary-500 dark:text-primary-400 flex-shrink-0" />
-                          <span className="font-medium tracking-tight line-clamp-2">{keyOutcome}</span>
+                      <div className="space-y-2.5">
+                        {/* Authentic audience - NOT on card front */}
+                        <div className="flex items-start gap-2 text-[13px] text-slate-700 dark:text-slate-300">
+                          <Presentation className="w-4 h-4 text-primary-500 dark:text-primary-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <div className="font-semibold text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-0.5">
+                              Students present to
+                            </div>
+                            <div className="font-medium leading-tight">
+                              {whoTheyPresentTo}
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-500 font-medium">
-                          {lessonsTotal} lessons · {project.totalWeeks} weeks
-                        </div>
+
+                        {/* Key outcome/deliverable - NOT on card front */}
+                        {whatStudentsCreate && (
+                          <div className="text-[12px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
+                            {whatStudentsCreate}
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     <div className="pt-2 mt-auto">
                       <button
                         type="button"
-                        className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0a0a0a] dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(255,255,255,0.1)] focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
                         <span>View project</span>

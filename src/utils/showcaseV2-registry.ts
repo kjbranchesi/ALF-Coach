@@ -76,8 +76,7 @@ export function listProjectsV2(): Array<{
   image?: string;
   tagline: string;
   microOverview: string[];
-  totalWeeks: number;
-  lessonsPerWeek: number;
+  primaryAudience: string;
   coreOutcomes: string[];
 }> {
   return Object.entries(REGISTRY).map(([id, p]) => ({
@@ -89,8 +88,7 @@ export function listProjectsV2(): Array<{
     image: p.hero.image,
     tagline: p.hero.tagline,
     microOverview: p.microOverview,
-    totalWeeks: p.schedule.totalWeeks,
-    lessonsPerWeek: p.schedule.lessonsPerWeek,
+    primaryAudience: p.outcomes.audiences[0] || 'Community members',
     coreOutcomes: p.outcomes.core
   }));
 }
