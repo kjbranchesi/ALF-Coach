@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import oceanDnaImage from '../../utils/hero/images/OceanDNATime Capsules.jpeg';
+import oceanDnaImage from '../../utils/hero/images/OceanDNATimeCapsules.jpeg';
 
 export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
   id: 'ocean-dna-time-capsules',

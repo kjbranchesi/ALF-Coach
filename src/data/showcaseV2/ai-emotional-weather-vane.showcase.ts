@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import emotionalVaneImage from '../../utils/hero/images/AIEmotionalWeather Vane.jpeg';
+import emotionalVaneImage from '../../utils/hero/images/AIEmotionalWeatherVane.jpeg';
 
 export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
   id: 'ai-emotional-weather-vane',

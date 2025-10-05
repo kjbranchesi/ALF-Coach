@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import spaceCuisineImage from '../../utils/hero/images/Bio‑LoopedSpaceCuisine.jpeg';
+import spaceCuisineImage from '../../utils/hero/images/Bio-LoopedSpaceCuisine.jpeg';
 
 export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
   id: 'bio-looped-space-cuisine',

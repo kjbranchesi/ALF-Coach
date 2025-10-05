@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import bioSymphonyImage from '../../utils/hero/images/Bio‑SymphonySkylines.jpeg';
+import bioSymphonyImage from '../../utils/hero/images/Bio-SymphonySkylines.jpeg';
 
 export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
   id: 'bio-symphony-skylines',

@@ -19,7 +19,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
   ],
   fullOverview:
     'Upper elementary students translate neuroscience into joyful, inclusive play. After exploring core executive functions (EF)—working memory, cognitive flexibility, and inhibitory control—teams design modular activities that train one skill at a time. With safe hand tools and clear supervision, they build and iterate stations, then host a Play Lab where younger buddies try them. Students collect simple observation measures (completion time, retries, smile scale) and adapt designs to improve accessibility and engagement.',
-  schedule: { totalWeeks: 4, lessonsPerWeek: 3, lessonLengthMin: 55 },
+  schedule: { totalWeeks: 5, lessonsPerWeek: 3, lessonLengthMin: 55 },
   runOfShow: [
     {
       weekLabel: 'Week 1',
@@ -53,12 +53,22 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     },
     {
       weekLabel: 'Week 4',
-      kind: 'Extension',
-      focus: 'Iterate designs and publish a Play Lab guide.',
-      teacher: ['Coach iteration', 'Review guide layout', 'Confirm storage plan'],
-      students: ['Revise stations', 'Publish guide', 'Host quick re‑test'],
-      deliverables: ['Revised stations', 'Play Lab guide'],
-      checkpoint: ['Storage + maintenance plan ready']
+      kind: 'Build',
+      focus: 'Iterate designs and strengthen accessibility.',
+      teacher: ['Coach iteration', 'Review accessibility', 'Confirm safety edges'],
+      students: ['Revise stations', 'Add access supports', 'Re‑test with peers'],
+      deliverables: ['Revised stations', 'Accessibility notes'],
+      checkpoint: ['Safety + access check passed'],
+      assignments: ['A4']
+    },
+    {
+      weekLabel: 'Week 5',
+      kind: 'Exhibit',
+      focus: 'Family Play Night and guide distribution.',
+      teacher: ['Invite families', 'Stage stations', 'Collect feedback'],
+      students: ['Host families', 'Explain EF targets', 'Share guide'],
+      deliverables: ['Family feedback log', 'Guide v1'],
+      checkpoint: ['Maintenance + storage plan ready']
     }
   ],
   outcomes: {
@@ -109,6 +119,15 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
       teacherSetup: ['Invite buddies', 'Model notes', 'Confirm supervision'],
       evidence: ['Observation log', 'Reflection note'],
       successCriteria: ['I host kindly', 'I measure simply', 'I reflect honestly']
+    },
+    {
+      id: 'A4',
+      title: 'Revise for Access + Family Night Plan',
+      summary: 'Improve accessibility and plan a family event.',
+      studentDirections: ['List barriers', 'Add supports', 'Re‑test safely', 'Plan event', 'Share invites'],
+      teacherSetup: ['Review supports', 'Check safety', 'Approve invites'],
+      evidence: ['Access notes', 'Event plan'],
+      successCriteria: ['I design accessibly', 'I keep safety first', 'I plan clearly']
     }
   ],
   polish: {

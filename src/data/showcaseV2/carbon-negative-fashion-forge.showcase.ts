@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import fashionForgeImage from '../../utils/hero/images/Carbon‑NegativeFashionForge.jpeg';
+import fashionForgeImage from '../../utils/hero/images/Carbon-NegativeFashionForge.jpeg';
 
 export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
   id: 'carbon-negative-fashion-forge',

@@ -1,5 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
-import civicOmbudsImage from '../../utils/hero/images/CivicAIOmbuds Office.jpeg';
+import civicOmbudsImage from '../../utils/hero/images/CivicAIOmbudsOffice.jpeg';
 
 export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
   id: 'civic-ai-ombuds-office',
