@@ -13,6 +13,12 @@ import { accessability_aiV2 } from '../data/showcaseV2/accessability-ai.showcase
 import { bio_symphony_skylinesV2 } from '../data/showcaseV2/bio-symphony-skylines.showcase';
 import { quantum_graffiti_labsV2 } from '../data/showcaseV2/quantum-graffiti-labs.showcase';
 import { luminous_mycelium_networksV2 } from '../data/showcaseV2/luminous-mycelium-networks.showcase';
+import { carbon_negative_fashion_forgeV2 } from '../data/showcaseV2/carbon-negative-fashion-forge.showcase';
+import { martian_water_architectsV2 } from '../data/showcaseV2/martian-water-architects.showcase';
+import { ai_emotional_weather_vaneV2 } from '../data/showcaseV2/ai-emotional-weather-vane.showcase';
+import { neuroplastic_playgroundsV2 } from '../data/showcaseV2/neuroplastic-playgrounds.showcase';
+import { plastic_to_protein_microfactoriesV2 } from '../data/showcaseV2/plastic-to-protein-microfactories.showcase';
+import { ocean_dna_time_capsulesV2 } from '../data/showcaseV2/ocean-dna-time-capsules.showcase';
 
 const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'sustainability-campaign': sustainability_campaignV2,
@@ -29,6 +35,12 @@ const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'bio-symphony-skylines': bio_symphony_skylinesV2,
   'quantum-graffiti-labs': quantum_graffiti_labsV2,
   'luminous-mycelium-networks': luminous_mycelium_networksV2,
+  'carbon-negative-fashion-forge': carbon_negative_fashion_forgeV2,
+  'martian-water-architects': martian_water_architectsV2,
+  'ai-emotional-weather-vane': ai_emotional_weather_vaneV2,
+  'neuroplastic-playgrounds': neuroplastic_playgroundsV2,
+  'plastic-to-protein-microfactories': plastic_to_protein_microfactoriesV2,
+  'ocean-dna-time-capsules': ocean_dna_time_capsulesV2,
 };
 
 export function getProjectV2(id: string): ProjectShowcaseV2 | undefined {

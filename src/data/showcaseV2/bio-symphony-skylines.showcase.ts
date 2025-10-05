@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import bioSymphonyImage from '../../utils/hero/images/Bio‑SymphonySkylines.jpeg';
 
 export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
   id: 'bio-symphony-skylines',
@@ -8,7 +9,8 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     tagline: 'Students turn biodiversity and city sounds into living music that reveals urban ecosystem health.',
     gradeBand: 'MS',
     timeframe: '4–6 weeks',
-    subjects: ['Biology', 'Data Science', 'Music & Sound', 'Environmental Science', 'Technology']
+    subjects: ['Biology', 'Data Science', 'Music & Sound', 'Environmental Science', 'Technology'],
+    image: bioSymphonyImage
   },
   microOverview: [
     'Teams soundwalk local blocks, logging species calls, noise sources, and habitat cues.',

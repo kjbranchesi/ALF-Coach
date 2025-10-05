@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import quantumGraffitiImage from '../../utils/hero/images/QuantumGraffitiLabs.jpeg';
 
 export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
   id: 'quantum-graffiti-labs',
@@ -8,7 +9,8 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     tagline: 'Students design “keyed” street art that only unlocks for those who can decode it—while learning real cryptography and design ethics.',
     gradeBand: 'HS',
     timeframe: '6–8 weeks',
-    subjects: ['Computer Science', 'Mathematics', 'Visual Arts', 'Civics', 'Media Literacy']
+    subjects: ['Computer Science', 'Mathematics', 'Visual Arts', 'Civics', 'Media Literacy'],
+    image: quantumGraffitiImage
   },
   microOverview: [
     'Students explore classical/quantum‑inspired ciphers and trust in public space.',

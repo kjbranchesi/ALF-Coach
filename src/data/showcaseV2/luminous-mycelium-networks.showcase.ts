@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import luminousMyceliumImage from '../../utils/hero/images/LuminousMyceliumNetworks.jpeg';
 
 export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
   id: 'luminous-mycelium-networks',
@@ -8,7 +9,8 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     tagline: 'Grow safe, pre‑inoculated bioluminescent fungi kits into living, low‑energy light prototypes.',
     gradeBand: 'MS',
     timeframe: '4–6 weeks',
-    subjects: ['Biology', 'Engineering', 'Sustainability', 'Design & Fabrication']
+    subjects: ['Biology', 'Engineering', 'Sustainability', 'Design & Fabrication'],
+    image: luminousMyceliumImage
   },
   microOverview: [
     'Students study fungal growth and bioluminescence using sealed, pre‑inoculated kits.',
