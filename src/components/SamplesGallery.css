@@ -42,6 +42,20 @@
   transform: rotateY(180deg);
 }
 
+/* Subtle floating animation for badge */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .flip-inner {
@@ -50,5 +64,8 @@
   .group:hover .flip-inner,
   .group:focus-within .flip-inner {
     transform: none;
+  }
+  .animate-float {
+    animation: none;
   }
 }

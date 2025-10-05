@@ -104,20 +104,30 @@ export default function SamplesGallery() {
     <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
       <div className="hidden dark:block pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(94,118,255,0.28),transparent_55%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.22),transparent_45%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.18),transparent_55%)] opacity-80" />
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-32">
-        <header className="text-center mb-16 space-y-3">
-          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white mb-1 tracking-tight">
-            Alf Studio Project Showcase
+        <header className="text-center mb-16 space-y-5">
+          {/* Animated floating badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 animate-float">
+            <Sparkles className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+              Built with ALF Studio
+            </span>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white tracking-tight">
+            Real Projects, Ready to Remix
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Explore projects designed inside Alf Studio—the planning builder educators use to shape full learning arcs. Adapt one for your community or remix the flow, deliverables, and supports for your learners.
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Every project here was designed in a single planning session with ALF Studio.
+            Explore the full learning arc, steal what works, and adapt the flow for your students and community.
           </p>
         </header>
 
         <section className="space-y-10">
           <div className="text-center space-y-2">
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Curated Projects</h2>
-            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
-              Each project was drafted inside the Alf Project Builder to demonstrate what you can produce in a focused planning session. Explore the full arc, grab what helps, and remix the flow, assignments, or materials for your learners.
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Browse the Collection</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
+              From sustainability campaigns to AI ethics audits—each project shows what's possible
+              when you co-design with ALF.
             </p>
           </div>
 
