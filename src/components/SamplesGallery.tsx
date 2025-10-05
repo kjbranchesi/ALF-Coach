@@ -158,7 +158,7 @@ export default function SamplesGallery() {
                 return (
                 <article
                   key={project.id}
-                  className="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 transition-shadow duration-300">
+                  className="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_48px_rgba(15,23,42,0.16)] dark:hover:shadow-[0_24px_56px_rgba(0,0,0,0.6)] hover:border-primary-200/70 dark:hover:border-primary-700/70">
 
                   {/* Image container with overlay */}
                   <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
@@ -166,35 +166,35 @@ export default function SamplesGallery() {
                       <img
                         src={project.image as string}
                         alt={`${project.title} hero`}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                         loading="lazy"
                       />
                     )}
 
                     {/* Slide-up overlay with tagline */}
-                    <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out bg-gradient-to-t from-slate-900/95 via-slate-900/90 to-slate-900/60 backdrop-blur-sm flex items-end p-6">
-                      <p className="text-sm text-white leading-relaxed">
+                    <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-all duration-500 ease-out bg-gradient-to-t from-slate-900/96 via-slate-900/92 to-slate-900/70 backdrop-blur-md flex items-end p-6">
+                      <p className="text-sm text-white leading-relaxed font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                         {shortTagline}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4 p-6 sm:p-7">
+                  <div className="flex flex-col gap-4 p-6 sm:p-7 transition-colors duration-300 group-hover:bg-gradient-to-b group-hover:from-primary-50/30 group-hover:to-transparent dark:group-hover:from-primary-950/20">
                     <div className="space-y-2">
-                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight transition-colors duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400">
                         {project.title}
                       </h3>
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        <span className="brand-chip">
+                        <span className="brand-chip transition-all duration-300 group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
                           <Users className="w-4 h-4" />
                           {project.gradeBand}
                         </span>
-                        <span className="brand-chip">
+                        <span className="brand-chip transition-all duration-300 delay-[25ms] group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
                           <Clock className="w-4 h-4" />
                           {project.timeframe}
                         </span>
                         {project.subjects.length > 0 && (
-                          <span className="brand-chip max-w-full">
+                          <span className="brand-chip max-w-full transition-all duration-300 delay-[50ms] group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
                             <BookOpen className="w-4 h-4 flex-shrink-0" />
                             <span className="truncate">
                               {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
@@ -207,10 +207,18 @@ export default function SamplesGallery() {
                     <div className="pt-2 mt-auto">
                       <button
                         type="button"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        className="group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 hover:shadow-[0_18px_38px_rgba(59,130,246,0.35)] hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
-                        View project
+                        <span>View project</span>
+                        <svg
+                          className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                       </button>
                     </div>
                   </div>
