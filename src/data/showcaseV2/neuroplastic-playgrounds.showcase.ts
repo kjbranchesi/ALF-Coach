@@ -18,7 +18,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     'A Play Lab invites younger buddies to test and give feedback with simple measures.'
   ],
   fullOverview:
-    'Upper elementary students translate neuroscience into joyful, inclusive play. After exploring core executive functions (working memory, cognitive flexibility, inhibitory control), teams design modular activities that train one skill at a time. With safe hand tools and clear supervision, they build and iterate stations, then host a Play Lab where younger buddies try them. Students collect simple observation measures (completion time, retries, smile scale) and adapt designs to improve accessibility and engagement.',
+    'Upper elementary students translate neuroscience into joyful, inclusive play. After exploring core executive functions (EF)—working memory, cognitive flexibility, and inhibitory control—teams design modular activities that train one skill at a time. With safe hand tools and clear supervision, they build and iterate stations, then host a Play Lab where younger buddies try them. Students collect simple observation measures (completion time, retries, smile scale) and adapt designs to improve accessibility and engagement.',
   schedule: { totalWeeks: 4, lessonsPerWeek: 3, lessonLengthMin: 55 },
   runOfShow: [
     {

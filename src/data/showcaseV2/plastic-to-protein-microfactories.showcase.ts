@@ -18,7 +18,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     'A demo day shows microfactory designs, dashboards, and an ethics brief.'
   ],
   fullOverview:
-    'Students prototype small, sealed microfactories that model plastic→biomass conversion using BSL‑1 organisms/kits only. They design safe feedstock preparation (pre‑treated plastic analogs), monitor growth (optical density, mass), and compare yields across recipes and temperature. A dashboard aggregates growth and cost data, while an ethics brief examines safety, food/feed viability, and environmental trade‑offs. Demo day invites partners to inspect designs and data, with clear documentation and disposal logs.',
+    'Students prototype small, sealed microfactories that model plastic→biomass conversion using Biosafety Level 1 (BSL‑1) educational kits only. They design safe feedstock preparation (pre‑treated plastic analogs), monitor growth via optical density (OD) and mass, and compare yields across recipes and temperature. Safety Data Sheets (SDS) and personal protective equipment (PPE) are embedded throughout. A dashboard aggregates growth and cost data, while an ethics brief examines safety, food/feed viability, and environmental trade‑offs. Demo day invites partners to inspect designs and data, with clear documentation and disposal logs.',
   schedule: { totalWeeks: 7, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {

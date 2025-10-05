@@ -18,7 +18,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     'Teams stage a climate‑neutral runway with technical cards and LCA summaries.'
   ],
   fullOverview:
-    'Learners become climate material designers. After sampling bio‑based inputs (algae pastes, bio‑binders, plant fibers) and reading safety data sheets, teams produce textile swatches via casting, coating, or non‑woven mats. They build a simple test rig for tensile strength, flexibility, and water resistance, then run back‑of‑the‑envelope life‑cycle assessments using emissions factors (transport, energy, end‑of‑life). Students communicate results with design artifacts—technical cards, LCA dashboards, and a climate‑neutral micro runway—and present adoption pathways for local makers and brands.',
+    'Learners become climate material designers. After sampling bio‑based inputs (algae pastes, bio‑binders, plant fibers) and reviewing Safety Data Sheets (SDS), teams produce textile swatches via casting, coating, or non‑woven mats. They build a simple test rig for tensile strength, flexibility, and water resistance, then run back‑of‑the‑envelope life‑cycle assessments (LCA) using emissions factors (transport, energy, end‑of‑life). Students communicate results with design artifacts—technical cards, LCA dashboards, and a climate‑neutral micro runway—and present adoption pathways for local makers and brands.',
   schedule: { totalWeeks: 7, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {

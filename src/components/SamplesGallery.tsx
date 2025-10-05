@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Users, Clock, BookOpen } from 'lucide-react';
 import { listProjectsV2 } from '../utils/showcaseV2-registry';
 
 export default function SamplesGallery() {
   const navigate = useNavigate();
-  const projects = listProjectsV2();
+  const allProjects = listProjectsV2();
+  const [band, setBand] = useState<'All' | 'ES' | 'MS' | 'HS'>('All');
+  const [subject, setSubject] = useState<string>('All');
+
+  const subjects = useMemo(() => {
+    const set = new Set<string>();
+    allProjects.forEach(p => p.subjects.forEach(s => set.add(s)));
+    return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+  }, [allProjects]);
+
+  const projects = useMemo(() => {
+    return allProjects.filter(p => (band === 'All' || p.gradeBand === band) && (subject === 'All' || p.subjects.includes(subject)));
+  }, [allProjects, band, subject]);
 
   return (
     <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
@@ -26,6 +38,21 @@ export default function SamplesGallery() {
             <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
               Each project was drafted inside the Alf Project Builder to demonstrate what you can produce in a focused planning session. Explore the full arc, grab what helps, and remix the flow, assignments, or materials for your learners.
             </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="band" className="text-sm text-slate-600 dark:text-slate-300">Grade band</label>
+              <select id="band" className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value={band} onChange={(e) => setBand(e.target.value as any)}>
+                {['All','ES','MS','HS'].map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="subject" className="text-sm text-slate-600 dark:text-slate-300">Subject</label>
+              <select id="subject" className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value={subject} onChange={(e) => setSubject(e.target.value)}>
+                {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
 
           {projects.length === 0 ? (

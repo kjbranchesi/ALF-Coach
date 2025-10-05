@@ -18,7 +18,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     'Teams publish mission briefs and 3D site plans for candidate habitats.'
   ],
   fullOverview:
-    'Students operate as ISRU (in‑situ resource utilization) engineers. Using public Mars datasets (elevation models, suspected ice, temperature bands) and simplified water demand models, they pick habitat sites and design capture systems that balance energy, yield, and logistics. Teams build 3D terrain mockups or digital models, run route/energy trade‑offs, and produce mission briefs with schematics, risks, and EVA protocols. The project ends with a mission review panel and deployment storyboard.',
+    'Students operate as in‑situ resource utilization (ISRU) engineers. Using public Mars datasets—digital elevation models (DEM), suspected ice layers, and temperature bands—and simplified water demand models, they pick habitat sites and design capture systems that balance energy, yield, and logistics. Teams build 3D terrain mockups or digital models, run route/energy trade‑offs, and produce mission briefs with schematics, risks, and extra‑vehicular activity (EVA) protocols. The project ends with a mission review panel and deployment storyboard.',
   schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {

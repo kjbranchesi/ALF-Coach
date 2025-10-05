@@ -18,7 +18,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     'Teams model future shifts and publish a community briefing with stewardship ideas.'
   ],
   fullOverview:
-    'Learners explore environmental DNA to understand local marine life. With coastal partners (aquariums, labs), they assemble safe samplers (filters, syringes, bottles), plan tide‑aware routes, and document water collection under supervision. Samples go to a partner lab or are modeled with classroom proxy kits; results feed a simple trends dashboard and future‑scenario model (temperature/acidification). Students host a mini symposium for families and stakeholders, sharing methods, limits, and stewardship actions.',
+    'Learners explore environmental DNA (eDNA) to understand local marine life. With coastal partners (aquariums, labs), they assemble safe samplers (filters, syringes, bottles), plan tide‑aware routes, and document water collection under supervision. Samples go to a partner lab or are modeled with classroom proxy kits; results feed a simple trends dashboard and future‑scenario model (temperature/acidification). Chain‑of‑custody (CoC) logs and permissions are kept throughout. Students host a mini symposium for families and stakeholders, sharing methods, limits, and stewardship actions.',
   schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {

@@ -19,6 +19,16 @@ import { ai_emotional_weather_vaneV2 } from '../data/showcaseV2/ai-emotional-wea
 import { neuroplastic_playgroundsV2 } from '../data/showcaseV2/neuroplastic-playgrounds.showcase';
 import { plastic_to_protein_microfactoriesV2 } from '../data/showcaseV2/plastic-to-protein-microfactories.showcase';
 import { ocean_dna_time_capsulesV2 } from '../data/showcaseV2/ocean-dna-time-capsules.showcase';
+import { ar_disaster_wardensV2 } from '../data/showcaseV2/ar-disaster-wardens.showcase';
+import { solarpunk_seed_vaultsV2 } from '../data/showcaseV2/solarpunk-seed-vaults.showcase';
+import { metabolic_city_dashboardsV2 } from '../data/showcaseV2/metabolic-city-dashboards.showcase';
+import { interspecies_language_translatorsV2 } from '../data/showcaseV2/interspecies-language-translators.showcase';
+import { bio_looped_space_cuisineV2 } from '../data/showcaseV2/bio-looped-space-cuisine.showcase';
+import { climate_justice_wearablesV2 } from '../data/showcaseV2/climate-justice-wearables.showcase';
+import { inclusive_exoskeleton_studiosV2 } from '../data/showcaseV2/inclusive-exoskeleton-studios.showcase';
+import { geoengineering_ethics_expeditionV2 } from '../data/showcaseV2/geoengineering-ethics-expedition.showcase';
+import { civic_ai_ombuds_officeV2 } from '../data/showcaseV2/civic-ai-ombuds-office.showcase';
+import { synesthetic_data_galleriesV2 } from '../data/showcaseV2/synesthetic-data-galleries.showcase';
 
 const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'sustainability-campaign': sustainability_campaignV2,
@@ -41,6 +51,16 @@ const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'neuroplastic-playgrounds': neuroplastic_playgroundsV2,
   'plastic-to-protein-microfactories': plastic_to_protein_microfactoriesV2,
   'ocean-dna-time-capsules': ocean_dna_time_capsulesV2,
+  'ar-disaster-wardens': ar_disaster_wardensV2,
+  'solarpunk-seed-vaults': solarpunk_seed_vaultsV2,
+  'metabolic-city-dashboards': metabolic_city_dashboardsV2,
+  'interspecies-language-translators': interspecies_language_translatorsV2,
+  'bio-looped-space-cuisine': bio_looped_space_cuisineV2,
+  'climate-justice-wearables': climate_justice_wearablesV2,
+  'inclusive-exoskeleton-studios': inclusive_exoskeleton_studiosV2,
+  'geoengineering-ethics-expedition': geoengineering_ethics_expeditionV2,
+  'civic-ai-ombuds-office': civic_ai_ombuds_officeV2,
+  'synesthetic-data-galleries': synesthetic_data_galleriesV2,
 };
 
 export function getProjectV2(id: string): ProjectShowcaseV2 | undefined {

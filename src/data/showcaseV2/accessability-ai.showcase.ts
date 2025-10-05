@@ -17,7 +17,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     'Teams deliver polished accessibility kits, editorial guardrails, and training for content creators.'
   ],
   fullOverview:
-    'Learners become accessibility technologists who pair AI efficiency with human judgment. They study disability justice, benchmark current media, and prototype human-in-the-loop pipelines that maintain voice and accuracy. Their work leaves the school with sustainable systems and empowered storytellers.',
+    'Learners become accessibility technologists who pair artificial intelligence (AI) efficiency with human judgment. They study disability justice, benchmark current media, and prototype human‑in‑the‑loop pipelines that maintain voice and accuracy. Their work leaves the school with sustainable systems and empowered storytellers.',
   schedule: { totalWeeks: 7, lessonsPerWeek: 3, lessonLengthMin: 55 },
   runOfShow: [
     {
@@ -26,7 +26,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
       focus: 'Ground the team in disability justice and media accessibility standards.',
       teacher: [
         'Invite disabled creators for panel',
-        'Introduce WCAG accessibility guidelines',
+        'Introduce Web Content Accessibility Guidelines (WCAG)',
         'Model gap analysis workflow'
       ],
       students: [

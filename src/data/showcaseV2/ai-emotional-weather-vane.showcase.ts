@@ -18,7 +18,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     'A school‑safe kinetic sculpture displays daily climate with opt‑in insights.'
   ],
   fullOverview:
-    'Students build a respectful, privacy‑aware “emotional weather vane” that turns aggregated climate data into shared awareness. They co‑design opt‑in micro check‑ins (emoji sliders, color taps) with IRB‑lite guardrails, then run a lightweight sentiment pipeline (rule‑based or zero‑shot classifier on anonymized text). Mapping outputs to servo motion and LED color patterns, teams prototype a kinetic sculpture for public spaces. Ethics are central: de‑identification, consent, opt‑outs, and clear disclaimers drive the design. A final exhibit shares the artifact, methods, and a wellbeing resource guide.',
+    'Students build a respectful, privacy‑aware “emotional weather vane” that turns aggregated climate data into shared awareness. They co‑design opt‑in micro check‑ins (emoji sliders, color taps) with IRB‑lite guardrails and align to the Protection of Pupil Rights Amendment (PPRA) and the Family Educational Rights and Privacy Act (FERPA). A lightweight sentiment pipeline (rule‑based or zero‑shot classifier on anonymized text) maps outputs to servo motion and light‑emitting diode (LED) color patterns for a kinetic sculpture. Ethics are central: de‑identification, consent, opt‑outs, and clear disclaimers drive the design. A final exhibit shares the artifact, methods, and a wellbeing resource guide.',
   schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {
