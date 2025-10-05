@@ -1,0 +1,47 @@
+/* Flip card helpers for SamplesGallery cards */
+.flip-card {
+  perspective: 1000px;
+  height: 100%;
+}
+
+.flip-inner {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+/* Programmatic flip (e.g., mobile tap) */
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Trigger flip on hover (and focus-within for accessibility) */
+.group:hover .flip-inner,
+.group:focus-within .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+  .group:hover .flip-inner,
+  .group:focus-within .flip-inner {
+    transform: none;
+  }
+}
