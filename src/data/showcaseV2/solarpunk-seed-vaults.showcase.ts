@@ -21,30 +21,62 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     'Students build a welcoming, off‑grid seed library for their campus or neighborhood. They co‑design a durable box, wire a child‑safe solar lighting setup, and stock region‑appropriate seeds with clear labels. Care agreements assign responsibilities for restocking and seasonal swaps. The culminating “Solarpunk Exchange” invites families to trade seeds, learn climate‑smart gardening, and sign up for upkeep rotations.',
   schedule: { totalWeeks: 4, lessonsPerWeek: 3, lessonLengthMin: 55 },
   runOfShow: [
-    { weekLabel: 'Week 1', kind: 'Foundations', focus: 'Why seed saving? Simple renewable power and stewardship.',
-      teacher: ['Show seed diversity', 'Demo safe solar kit', 'Introduce care agreements'],
-      students: ['List local crops', 'Sketch box ideas', 'Practice labeling'],
-      deliverables: ['Crop list', 'Box sketch'], checkpoint: ['Teacher approves parts'], assignments: ['A1'] },
-    { weekLabel: 'Week 2', kind: 'Build', focus: 'Build the box and wire a safe solar light.',
-      teacher: ['Approve materials', 'Supervise safe wiring', 'Model labels'],
-      students: ['Assemble box', 'Wire light', 'Design labels'],
-      deliverables: ['Seed box', 'Solar light'], checkpoint: ['Safety check passed'], assignments: ['A2'] },
-    { weekLabel: 'Week 3', kind: 'Exhibit', focus: 'Host a pop‑up exchange and teach seed handling.',
-      teacher: ['Invite families', 'Stage exchange', 'Print care forms'],
-      students: ['Guide families', 'Label donations', 'Explain storage'],
-      deliverables: ['Exchange plan', 'Care signup sheet'], checkpoint: ['Two caretakers signed'], assignments: ['A3'] },
-    { weekLabel: 'Week 4', kind: 'Build', focus: 'Publish the care guide and plan seasonal swaps.',
-      teacher: ['Review guide', 'Set swap dates', 'Coordinate signage'],
-      students: ['Publish guide', 'Post schedule', 'Assign stewards'],
-      deliverables: ['Care guide', 'Swap calendar'], checkpoint: ['Steward list complete'] }
-    ,
-    { weekLabel: 'Week 5', kind: 'Exhibit', focus: 'Community mini‑launch with seed safety and labels.',
-      teacher: ['Invite families', 'Stage launch', 'Capture feedback'],
-      students: ['Host launch', 'Explain labels', 'Collect signups'],
-      deliverables: ['Launch plan', 'Feedback notes'], checkpoint: ['Two stewards reconfirmed'], assignments: ['A4'] }
+    {
+      weekLabel: 'Week 1',
+      kind: 'Foundations',
+      focus: 'Why seed saving? Simple renewable power and stewardship.',
+      teacher: ['Show seed diversity stories from community', 'Demo safe solar kit wiring with adult helper', 'Introduce care agreement expectations'],
+      students: ['List local crops and climates', 'Sketch seed box ideas with compartments', 'Create labels in multiple languages'],
+      deliverables: ['Crop list', 'Box sketch'],
+      checkpoint: ['Teacher approves parts'],
+      assignments: ['A1']
+    },
+    {
+      weekLabel: 'Week 2',
+      kind: 'Build',
+      focus: 'Build the box and wire a safe solar light.',
+      teacher: ['Approve materials and tool plan', 'Supervise safe wiring step by step', 'Model durable labeling standards'],
+      students: ['Assemble seed box structure carefully', 'Wire solar light with adult supervision', 'Design weather-ready labels and icons'],
+      deliverables: ['Seed box', 'Solar light'],
+      checkpoint: ['Safety check passed'],
+      assignments: ['A2']
+    },
+    {
+      weekLabel: 'Week 3',
+      kind: 'Exhibit',
+      focus: 'Host a pop‑up exchange and teach seed handling.',
+      teacher: ['Invite families and garden partners', 'Stage exchange with sign-in and signage', 'Print care agreement forms and translations'],
+      students: ['Guide families through exchange process', 'Label donations clearly with origin', 'Explain storage and climate tips kindly'],
+      deliverables: ['Exchange plan', 'Care signup sheet'],
+      checkpoint: ['Two caretakers signed'],
+      assignments: ['A3']
+    },
+    {
+      weekLabel: 'Week 4',
+      kind: 'Build',
+      focus: 'Publish the care guide and plan seasonal swaps.',
+      teacher: ['Review care guide for clarity', 'Set swap dates with partners', 'Coordinate signage and placements'],
+      students: ['Publish illustrated care guide', 'Post seasonal swap schedule visibly', 'Assign stewards and share responsibilities'],
+      deliverables: ['Care guide', 'Swap calendar'],
+      checkpoint: ['Steward list complete']
+    },
+    {
+      weekLabel: 'Week 5',
+      kind: 'Exhibit',
+      focus: 'Community mini‑launch with seed safety and labels.',
+      teacher: ['Invite families and local gardeners', 'Stage launch with accessible flow', 'Capture feedback and photos consentingly'],
+      students: ['Host launch and explain labels', 'Share care agreements and sign-ups', 'Collect community feedback for improvements'],
+      deliverables: ['Launch plan', 'Feedback notes'],
+      checkpoint: ['Two stewards reconfirmed'],
+      assignments: ['A4']
+    }
   ],
   outcomes: {
-    core: ['Install a working seed vault with care agreements'],
+    core: [
+      'Design and build a safe off-grid seed vault with lighting',
+      'Create multilingual labeling and care agreements for community stewardship',
+      'Design seed exchanges that teach climate-resilient practices'
+    ],
     extras: ['Create bilingual labels', 'Design kid‑friendly storage tips', 'Coordinate seasonal swaps', 'Partner with garden club'],
     audiences: ['Families', 'Garden clubs', 'PTA', 'Local library']
   },
@@ -54,23 +86,62 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     safetyEthics: ['Adult supervision for tools', 'Use low‑voltage kits', 'Avoid treated lumber']
   },
   assignments: [
-    { id: 'A1', title: 'Local Crops + Box Sketch', summary: 'Choose seeds and sketch a welcoming box.',
-      studentDirections: ['List local crops', 'Draw box', 'Pick label icons', 'Share ideas', 'Vote'],
-      teacherSetup: ['Provide examples', 'Model icons', 'Set vote'],
-      evidence: ['Crop list', 'Sketch'], successCriteria: ['I pick local', 'I draw clearly', 'I include labels'] },
-    { id: 'A2', title: 'Build + Solar Light', summary: 'Assemble the box and wire a safe light.',
-      studentDirections: ['Assemble box', 'Wire light', 'Add labels', 'Test switch', 'Fix issues'],
-      teacherSetup: ['Approve tools', 'Supervise wiring', 'Check labels'],
-      evidence: ['Box', 'Lighted photo'], successCriteria: ['I build safely', 'I wire correctly', 'I label clearly'] },
-    { id: 'A3', title: 'Exchange + Care Signups', summary: 'Host the exchange and secure caretakers.',
-      studentDirections: ['Guide visitors', 'Label donations', 'Explain care', 'Collect signups', 'Thank families'],
-      teacherSetup: ['Invite families', 'Print forms', 'Stage space'],
-      evidence: ['Signup sheet', 'Exchange photo'], successCriteria: ['I host kindly', 'I explain clearly', 'I recruit stewards'] }
-    ,
-    { id: 'A4', title: 'Mini‑Launch + Feedback', summary: 'Run a small launch and capture improvements.',
-      studentDirections: ['Host launch', 'Explain labels', 'Collect feedback', 'List improvements', 'Share next steps'],
-      teacherSetup: ['Invite partners', 'Stage space', 'Collect notes'],
-      evidence: ['Feedback notes', 'Improvement list'], successCriteria: ['I host kindly', 'I listen actively', 'I improve clearly'] }
+    {
+      id: 'A1',
+      title: 'Local Crops + Box Sketch',
+      summary: 'Choose seeds and sketch a welcoming box.',
+      studentDirections: ['List local crops and climate needs', 'Draw box with climate-safe materials', 'Pick label icons in multiple languages', 'Share ideas for community welcome', 'Vote on favorite design respectfully'],
+      teacherSetup: ['Provide seed diversity examples', 'Model icon creation and translation', 'Facilitate design vote'],
+      evidence: ['Crop list', 'Sketch'],
+      successCriteria: ['I select crops that match our community climate', 'I sketch a welcoming, organized box design', 'I plan labeling that is clear for all families'],
+      aiOptional: {
+        toolUse: 'Generate friendly label icons from crop list',
+        critique: 'Ensure AI icons are culturally respectful',
+        noAIAlt: 'Use art center to hand-draw icons'
+      }
+    },
+    {
+      id: 'A2',
+      title: 'Build + Solar Light',
+      summary: 'Assemble the box and wire a safe light.',
+      studentDirections: ['Assemble seed box panels safely', 'Wire solar light with adult helper', 'Add waterproof labels and instructions', 'Test switch and charging outdoors', 'Fix issues using troubleshooting log'],
+      teacherSetup: ['Approve tools and safety gear', 'Supervise solar wiring steps', 'Check labels for durability'],
+      evidence: ['Box', 'Lighted photo'],
+      successCriteria: ['I build sturdy structures that stay safe', 'I wire the solar kit correctly with supervision', 'I label clearly so families know what to do'],
+      aiOptional: {
+        toolUse: 'Suggest troubleshooting ideas if light fails',
+        critique: 'Verify AI suggestions follow safety rules',
+        noAIAlt: 'Use solar troubleshooting chart'
+      }
+    },
+    {
+      id: 'A3',
+      title: 'Exchange + Care Signups',
+      summary: 'Host the exchange and secure caretakers.',
+      studentDirections: ['Guide visitors through exchange steps kindly', 'Label donations with origin and planting tips', 'Explain care agreement expectations', 'Collect steward signups and contact info', 'Thank families with follow-up note'],
+      teacherSetup: ['Invite families and community gardeners', 'Print care forms and translations', 'Stage exchange with clear flow'],
+      evidence: ['Signup sheet', 'Exchange photo'],
+      successCriteria: ['I host visitors with kindness and clarity', 'I explain care steps that protect seeds', 'I recruit stewards who understand their commitment'],
+      aiOptional: {
+        toolUse: 'Draft reminder message for stewards after exchange',
+        critique: 'Ensure reminder honors community tone',
+        noAIAlt: 'Use class-written thank you template'
+      }
+    },
+    {
+      id: 'A4',
+      title: 'Mini‑Launch + Feedback',
+      summary: 'Run a small launch and capture improvements.',
+      studentDirections: ['Host launch event with assigned roles', 'Explain label system and solar care', 'Collect family feedback respectfully', 'List improvements and next steps', 'Share plan with stewards and teachers'],
+      teacherSetup: ['Invite partners and manage schedule', 'Stage space and signage', 'Collect feedback forms and photos with consent'],
+      evidence: ['Feedback notes', 'Improvement list'],
+      successCriteria: ['I host families warmly and confidently', 'I explain labels and solar care clearly', 'I turn feedback into actionable improvements'],
+      aiOptional: {
+        toolUse: 'Summarize feedback themes into action list',
+        critique: 'Check AI summary matches actual notes',
+        noAIAlt: 'Use group sorting activity with sticky notes'
+      }
+    }
   ],
   polish: {
     microRubric: ['Safe build & wiring', 'Clear labels', 'Active care plan', 'Community engagement'],

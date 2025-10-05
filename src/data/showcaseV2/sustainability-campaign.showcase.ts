@@ -67,7 +67,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
       ],
       students: [
         'Collect meter readings and waste tallies',
-        'Document stakeholder insights in logs',
+        'Synthesize stakeholder insights in logs',
         'Upload data to shared dashboards'
       ],
       deliverables: ['Audit data sets', 'Stakeholder interview notes', 'Photo evidence archive'],
@@ -103,9 +103,9 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
         'Coordinate approvals for in-situ tests'
       ],
       students: [
-        'Design campaign collateral drafts',
-        'Pilot quick wins in target zones',
-        'Capture before and after metrics'
+        'Design campaign collateral drafts with clear calls to action',
+        'Pilot quick wins in target zones and document results',
+        'Analyze before-and-after metrics and capture partner reactions'
       ],
       deliverables: ['Pilot data log', 'Campaign asset drafts', 'User feedback notes'],
       checkpoint: ['Teacher reviews pilot safety plan'],
@@ -135,7 +135,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
       focus: 'Launch campaigns and establish accountability structures.',
       teacher: [
         'Coordinate communications with district PR',
-        'Support grant or funding requests',
+        'Coordinate grant or funding requests',
         'Set review cadence with leadership'
       ],
       students: [
@@ -149,7 +149,11 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deliver a costed sustainability roadmap with measurable impact'],
+    core: [
+      'Design a costed sustainability roadmap with measurable impact claims',
+      'Prototype campaign assets and simplified reading supports with staff partners',
+      'Communicate data-driven recommendations to decision makers for adoption'
+    ],
     extras: [
       'Design behavior-change campaign kits',
       'Prototype low-cost efficiency upgrades',
@@ -215,7 +219,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
         'Provide approval checklist'
       ],
       evidence: ['Approved audit plan', 'Calibrated data template'],
-      successCriteria: ['Metrics align to goals', 'Roles cover collection tasks', 'Tools are ready to use'],
+      successCriteria: ['I align metrics to our audit goals', 'I assign roles that cover every collection task', 'I confirm tools are ready and documented for use'],
       checkpoint: 'Teacher signs audit plan before fieldwork',
       aiOptional: {
         toolUse: 'Draft interview questions from objectives',
@@ -242,7 +246,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
         'Offer storytelling sentence stems'
       ],
       evidence: ['Impact dashboard', 'Insight headline statement'],
-      successCriteria: ['Charts match evidence', 'ROI math checks out', 'Headline cites specific data'],
+      successCriteria: ['I build charts that match the evidence exactly', 'I verify ROI math is correct and transparent', 'I write headlines that cite specific data points'],
       checkpoint: 'Teacher reviews dashboards for clarity',
       aiOptional: {
         toolUse: 'Suggest chart titles from data',
@@ -257,7 +261,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
       studentDirections: [
         'Finalize deck with visuals and metrics',
         'Rehearse timed pitch with roles',
-        'Prepare leave-behind executive summary',
+        'Produce leave-behind executive summary',
         'Design launch timeline and owner chart',
         'Capture stakeholder commitments live'
       ],
@@ -268,7 +272,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
         'Coordinate campaign launch calendar'
       ],
       evidence: ['Pitch recording', 'Launch timeline', 'Commitment log'],
-      successCriteria: ['Pitch stays within time', 'Ask includes clear next steps', 'Evidence feels trustworthy'],
+      successCriteria: ['I keep the pitch within the agreed time', 'I make an ask that includes clear next steps', 'I present evidence that feels trustworthy to stakeholders'],
       checkpoint: 'Teacher validates commitments are documented',
       aiOptional: {
         toolUse: 'Draft follow-up email summarizing pitch',

@@ -25,8 +25,8 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 1',
       kind: 'Foundations',
       focus: 'Trust, secrecy, and ethics of public expression.',
-      teacher: ['Launch crypto stories', 'Set legal boundaries', 'Model analog ciphers', 'Discuss harm scenarios'],
-      students: ['Discuss speech ethics', 'Crack simple codes', 'Draft “consent” norms', 'Propose misuse mitigations'],
+      teacher: ['Launch crypto stories', 'Set legal boundaries', 'Model analog ciphers', 'Facilitate harm scenario analysis'],
+      students: ['Debate speech ethics', 'Crack simple codes', 'Draft “consent” norms', 'Propose misuse mitigations'],
       deliverables: ['Crypto ethics charter', 'Cipher notebook', 'Harm mitigation list'],
       checkpoint: ['All sign legal/safety policies'],
       assignments: ['A1']
@@ -46,7 +46,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       kind: 'Build',
       focus: 'Prototype visual language and decode flows in studio.',
       teacher: ['Critique readability', 'Coach color contrast', 'Set test scripts', 'Check PPE readiness'],
-      students: ['Stencil/paste‑up tests', 'Run peer decode tests', 'Revise cipher rules', 'Prepare signage'],
+      students: ['Stencil/paste‑up tests', 'Run peer decode tests', 'Revise cipher rules', 'Create signage'],
       deliverables: ['Design system sheet', 'Decode test notes', 'Signage draft'],
       checkpoint: ['First decode test passes'],
       assignments: ['A3']
@@ -65,7 +65,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 5',
       kind: 'Build',
       focus: 'Produce final, removable installations with consent.',
-      teacher: ['Stage install window', 'Supervise PPE use', 'Document permits', 'Coordinate spotters'],
+      teacher: ['Stage install window', 'Supervise PPE use', 'Log permits with authorities', 'Coordinate spotters'],
       students: ['Install with spotters', 'Photograph artifacts', 'Record GPS + label', 'File cleanup schedule'],
       deliverables: ['Install log', 'Geo‑labeled photos', 'Cleanup schedule'],
       checkpoint: ['Post‑install safety sweep']
@@ -91,7 +91,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Run a legal, safe Decode Walk with measurable learning gains'],
+    core: ['Design and run a legal, safe Decode Walk with measurable learning gains'],
     extras: [
       'Publish open design system',
       'Prototype a key‑exchange app',
@@ -126,7 +126,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       id: 'A2',
       title: 'Key Exchange + Site Plan',
       summary: 'Design decode ritual and secure permissions.',
-      studentDirections: ['Map route', 'List stakeholders', 'Draft consent letter', 'Define key ritual', 'Plan safety roles'],
+      studentDirections: ['Map route', 'List stakeholders', 'Draft consent letter', 'Define key ritual', 'Assign safety roles'],
       teacherSetup: ['Provide templates', 'Pre‑contact sites', 'Review legal notes'],
       evidence: ['Permission packet', 'Key plan'],
       successCriteria: ['I get consent', 'I design for safety', 'I document plan'],

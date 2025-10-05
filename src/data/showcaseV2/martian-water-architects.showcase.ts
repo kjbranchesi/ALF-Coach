@@ -81,7 +81,11 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish a mission brief with site plan and capture design'],
+    core: [
+      'Analyze Martian datasets to select viable water capture sites',
+      'Design and model capture systems that balance yield, energy, and EVA safety',
+      'Communicate mission briefs with risks, mitigations, and deployment plans'
+    ],
     extras: [
       '3D printed terrain tiles',
       'Annotated EVA protocol',
@@ -107,10 +111,15 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
       id: 'A1',
       title: 'Mars Site Recon & Needs Math',
       summary: 'Scout candidate sites and compute daily water needs.',
-      studentDirections: ['Compare three sites', 'Compute needs', 'List constraints', 'Cite sources', 'Pick top two'],
-      teacherSetup: ['Provide datasets', 'Model needs math', 'Review citations'],
+      studentDirections: ['Compare three sites using DEM and ice data', 'Compute daily water needs for crew scenario', 'List environmental constraints and hazards', 'Cite NASA/ESA sources for data and assumptions', 'Pick top two candidate sites with rationale'],
+      teacherSetup: ['Provide datasets and calculators', 'Model mission water math', 'Review citations and assumptions'],
       evidence: ['Site table', 'Needs worksheet'],
-      successCriteria: ['I use data', 'I show math', 'I cite sources']
+      successCriteria: ['I compare candidate sites using real data', 'I show water needs math with correct units', 'I cite datasets and mission assumptions transparently'],
+      aiOptional: {
+        toolUse: 'Summarize key terrain features for candidate sites',
+        critique: 'Check AI summary against official datasets',
+        noAIAlt: 'Use site comparison worksheet'
+      }
     },
     {
       id: 'A2',
@@ -136,10 +145,15 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
       id: 'A4',
       title: 'Mission Brief + EVA Risk',
       summary: 'Present design and defend trade‑offs and risks.',
-      studentDirections: ['Present brief', 'Defend choices', 'Log Q&A', 'Revise risks', 'Publish deck'],
-      teacherSetup: ['Invite panel', 'Time talks', 'Record decisions'],
+      studentDirections: ['Present mission brief to review panel', 'Defend trade-offs with data and assumptions', 'Log Q&A decisions and action items', 'Revise risk register and mitigations', 'Publish mission deck and data pack'],
+      teacherSetup: ['Invite panel and schedule review', 'Time presentations and Q&A', 'Record decisions and commitments'],
       evidence: ['Brief deck', 'Risk register'],
-      successCriteria: ['I defend choices', 'I log clearly', 'I refine risk']
+      successCriteria: ['I defend site and system choices with evidence', 'I log panel feedback and decisions clearly', 'I refine risk register to include mitigations and owners'],
+      aiOptional: {
+        toolUse: 'Draft mission summary sheet from brief notes',
+        critique: 'Ensure AI summary keeps units and caveats accurate',
+        noAIAlt: 'Use mission summary template with peers'
+      }
     }
   ],
   polish: {

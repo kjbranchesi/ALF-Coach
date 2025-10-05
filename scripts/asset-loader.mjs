@@ -1,17 +1,13 @@
-import { extname } from 'node:path';
-
-const SUPPORTED_ASSETS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg']);
+const ASSET_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp', '.svg'];
 
 export async function load(url, context, defaultLoad) {
-  const extension = extname(new URL(url).pathname).toLowerCase();
-
-  if (SUPPORTED_ASSETS.has(extension)) {
+  const lower = url.toLowerCase();
+  if (ASSET_EXTENSIONS.some(ext => lower.endsWith(ext))) {
     return {
       format: 'module',
-      shortCircuit: true,
-      source: `export default ${JSON.stringify(url)};`
+      source: 'export default "";\n',
+      shortCircuit: true
     };
   }
-
   return defaultLoad(url, context, defaultLoad);
 }

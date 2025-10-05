@@ -31,9 +31,9 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         'Model sensor handling and data logging'
       ],
       students: [
-        'Discuss who suffers most during heat waves',
+        'Analyze who suffers most during heat waves',
         'Set personal goals for climate justice work',
-        'Practice using sensors safely in stations'
+        'Operate sensors safely in stations'
       ],
       deliverables: ['Heat stories empathy map', 'Sensor safety checklist'],
       checkpoint: ['Students explain why heat equity matters'],
@@ -69,7 +69,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
       students: [
         'Log surface and air temperatures hourly',
         'Interview neighbors about cooling challenges',
-        'Document shade assets and heat traps'
+        'Map shade assets and heat traps for comparison'
       ],
       deliverables: ['Calibrated sensor data sets', 'Resident interview notes', 'Heat field photo log'],
       checkpoint: ['Teacher checks first data upload for accuracy'],
@@ -131,7 +131,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish neighborhood heat dashboard with community-sourced evidence'],
+    core: ['Build neighborhood heat dashboards with community-sourced evidence'],
     extras: [
       'Design pop-up cooling activation for residents',
       'Produce policy brief for city council',
@@ -198,7 +198,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         'Check guardian consent packets'
       ],
       evidence: ['Approved fieldwork plan', 'Signed safety acknowledgement'],
-      successCriteria: ['Routes cover heat disparities', 'Protocols keep teams safe', 'Partners know expectations'],
+      successCriteria: ['I design routes that cover neighborhood heat disparities', 'I follow protocols that keep teams safe in the field', 'I ensure partners know expectations and consent steps'],
       checkpoint: 'Teacher signs fieldwork plan before launch',
       aiOptional: {
         toolUse: 'Generate risk checklist from plan details',
@@ -225,7 +225,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         'Check citation tracker templates'
       ],
       evidence: ['Cleaned data sheet', 'Storyboard with captions', 'Citation tracker'],
-      successCriteria: ['Data sources are transparent', 'Visuals show equity gap', 'Narrative centers residents'],
+      successCriteria: ['I make data sources transparent for every visualization', 'I design visuals that show the equity gap clearly', 'I tell the story in ways that center resident experiences'],
       checkpoint: 'Teacher approves storyboard before publishing dashboard',
       aiOptional: {
         toolUse: 'Suggest chart options based on dataset',
@@ -251,7 +251,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         'Facilitate pitch rehearsal feedback'
       ],
       evidence: ['Prototype test log', 'Temperature delta chart', 'Action brief handout'],
-      successCriteria: ['Prototype is feasible locally', 'Data proves impact', 'Call to action is clear'],
+      successCriteria: ['I build prototypes that are feasible for local implementation', 'I back up recommendations with clear impact data', 'I deliver a call to action that is clear and actionable'],
       checkpoint: 'Teacher signs off on pitch deck before summit',
       aiOptional: {
         toolUse: 'Draft slide outline from action brief',

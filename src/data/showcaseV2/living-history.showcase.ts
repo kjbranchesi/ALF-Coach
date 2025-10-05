@@ -32,7 +32,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
       ],
       students: [
         'Surface community storytellers they trust',
-        'Practice mindful listening in triads',
+        'Guide mindful listening triads with reflection prompts',
         'Draft wonderings on story web'
       ],
       deliverables: ['Community storytellers brainstorm wall', 'Ethics pledge signatures'],
@@ -51,7 +51,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
       students: [
         'Finalize respectful outreach messages',
         'Assign roles for interviews',
-        'Prepare recording kits checklist'
+        'Assemble recording kit checklist and backup gear'
       ],
       deliverables: ['Interview outreach email draft', 'Team logistics board', 'Equipment readiness checklist'],
       checkpoint: ['Teacher approves outreach contacts'],
@@ -99,7 +99,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
       focus: 'Design the living museum experience.',
       teacher: [
         'Model story card layout in CMS',
-        'Support students balancing media rights',
+        'Coach students on balancing media rights and releases',
         'Coordinate translation accessibility checks'
       ],
       students: [
@@ -133,7 +133,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
       kind: 'Extension',
       focus: 'Publish archive online and plan next storytellers.',
       teacher: [
-        'Support students exporting files for web',
+        'Coach students as they export files for web accessibility',
         'Connect teams with library partners',
         'Schedule next round of storytelling sessions'
       ],
@@ -148,7 +148,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish a living history micro-archive that preserves community voices'],
+    core: ['Curate a living history micro-archive that preserves community voices'],
     extras: [
       'Stage immersive exhibit for families',
       'Record bilingual story introductions',
@@ -215,7 +215,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
         'Review consent process with counselors'
       ],
       evidence: ['Approved outreach plan', 'Signed consent packets'],
-      successCriteria: ['Our outreach tone is respectful', 'We document consent securely', 'Roles cover interviewing workflow'],
+      successCriteria: ['I craft outreach with a respectful tone that partners approve', 'I document consent securely and follow agreements', 'I assign roles that cover the full interviewing workflow'],
       checkpoint: 'Teacher approves outreach before any contact',
       aiOptional: {
         toolUse: 'Draft email variations for different storytellers',
@@ -244,10 +244,10 @@ export const living_historyV2: ProjectShowcaseV2 = {
       ],
       evidence: ['Annotated transcript with selected quotes', 'Audio rough cut file', 'Intro script draft'],
       successCriteria: [
-        "Clip centers storyteller's voice",
-        'Context intro feels inviting',
-        'Audio levels sound balanced',
-        'Artifacts deepen understanding'
+        "I edit clips that center the storyteller's voice",
+        'I record introductions that feel inviting and contextual',
+        'I deliver audio with balanced, accessible levels',
+        'I select artifacts that deepen understanding of the story'
       ],
       checkpoint: 'Teacher reviews rough cut before publishing',
       aiOptional: {
@@ -277,10 +277,10 @@ export const living_historyV2: ProjectShowcaseV2 = {
       ],
       evidence: ['Exhibit plan with roles', 'Visitor feedback summaries'],
       successCriteria: [
-        'Hosts welcome guests warmly',
-        'Story pitch honors storyteller',
-        'Visitors feel invited to respond',
-        'Feedback captured for follow-up'
+        'I welcome guests warmly and guide them through the exhibit',
+        'I pitch each story in ways that honor the storyteller',
+        'I invite visitors to respond and contribute reflections',
+        'I capture feedback for follow-up and share it with the team'
       ],
       checkpoint: 'Teacher checks stations before doors open',
       safety: ['Secure recordings when event ends', 'Honor no-photography requests']

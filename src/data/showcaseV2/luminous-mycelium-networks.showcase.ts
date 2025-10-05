@@ -56,7 +56,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       kind: 'Exhibit',
       focus: 'Night Garden exhibit and ethical reflection.',
       teacher: ['Invite partners', 'Light‑safe staging', 'Collect visitor input'],
-      students: ['Curate best builds', 'Explain ethics', 'Plan care/retire'],
+      students: ['Curate best builds', 'Explain ethics', 'Design care and retire plan'],
       deliverables: ['Exhibit labels', 'Care/retire plan'],
       checkpoint: ['Post‑event care confirmed'],
       assignments: ['A4']
@@ -65,15 +65,15 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 6',
       kind: 'Extension',
       focus: 'Compare substrates/conditions and publish a protocol zine.',
-      teacher: ['Coach data synthesis', 'Review disposal protocol', 'Support zine layout'],
-      students: ['Analyze trends', 'Draft protocol zine', 'Plan safe kit retirement'],
+      teacher: ['Coach data synthesis', 'Review disposal protocol', 'Coach zine layout'],
+      students: ['Analyze trends', 'Draft protocol zine', 'Engineer safe kit retirement workflow'],
       deliverables: ['Protocol zine v1', 'Disposal log'],
       checkpoint: ['Teacher signs disposal log'],
       assignments: ['A5']
     }
   ],
   outcomes: {
-    core: ['Grow and assess luminous fungal prototypes with safe practice'],
+    core: ['Develop and assess luminous fungal prototypes with safe practice'],
     extras: [
       'Publish growth protocol zine',
       'Design modular diffuser set',
@@ -109,7 +109,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       id: 'A2',
       title: 'Enclosure Design Plan',
       summary: 'Plan a breathable, light‑shaping habitat.',
-      studentDirections: ['Sketch design', 'Select materials', 'Define airflow', 'Plan measures', 'Request approval', 'Add care schedule'],
+      studentDirections: ['Sketch design', 'Select materials', 'Define airflow', 'Define measurement plan', 'Request approval', 'Add care schedule'],
       teacherSetup: ['Share scaffold parts', 'Approve BOM', 'Check feasibility', 'Review care schedule'],
       evidence: ['Sketch and BOM', 'Test plan'],
       successCriteria: ['I ensure airflow', 'I plan measures', 'I justify materials'],
@@ -129,7 +129,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       id: 'A4',
       title: 'Night Garden Exhibit',
       summary: 'Share prototypes and living‑artifact ethics.',
-      studentDirections: ['Curate builds', 'Write label', 'Explain ethics', 'Collect feedback', 'Plan retirement', 'Photograph exhibit'],
+      studentDirections: ['Curate builds', 'Write label', 'Explain ethics', 'Collect feedback', 'Design retirement plan', 'Photograph exhibit'],
       teacherSetup: ['Invite partners', 'Stage safely', 'Provide label templates', 'Confirm power needs'],
       evidence: ['Exhibit label set', 'Care/retire plan'],
       successCriteria: ['I present clearly', 'I respect organisms', 'I plan care'],

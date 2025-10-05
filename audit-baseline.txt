@@ -1,0 +1,50 @@
+Project Enrichment Audit (ProjectShowcaseV2)
+================================================================================
+┌─────────┬─────────────────────────────────────┬───────┬──────────────┬──────────────┬────────────────┬─────────────────┬──────────────────┬─────────────┬────────────────┬───────────────┬──────────────┬───────────────────────┐
+│ (index) │ id                                  │ batch │ ai           │ checkpoints  │ weakDirections │ weakWeekBullets │ studentVoiceGaps │ microRubric │ noTechFallback │ planningNotes │ safetyEthics │ unknownAssignmentRefs │
+├─────────┼─────────────────────────────────────┼───────┼──────────────┼──────────────┼────────────────┼─────────────────┼──────────────────┼─────────────┼────────────────┼───────────────┼──────────────┼───────────────────────┤
+│ 0       │ 'accessability-ai'                  │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 0              │ 3               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 1       │ 'ai-emotional-weather-vane'         │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 1              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 2       │ 'ar-disaster-wardens'               │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 0              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 3       │ 'assistive-tech'                    │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 2              │ 4               │ 9                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 4       │ 'bio-looped-space-cuisine'          │ 'A'   │ '0/4 (0%)'   │ '5/5 (100%)' │ 1              │ 2               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 5       │ 'carbon-negative-fashion-forge'     │ 'A'   │ '2/5 (40%)'  │ '6/6 (100%)' │ 1              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 6       │ 'civic-ai-ombuds-office'            │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 1              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 7       │ 'civic-signals'                     │ 'A'   │ '4/4 (100%)' │ '7/7 (100%)' │ 4              │ 8               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 8       │ 'climate-justice-wearables'         │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 0              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 9       │ 'future-food'                       │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 3              │ 2               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 10      │ 'geoengineering-ethics-expedition'  │ 'A'   │ '0/4 (0%)'   │ '6/6 (100%)' │ 2              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 11      │ 'harbor-health'                     │ 'A'   │ '4/4 (100%)' │ '7/7 (100%)' │ 1              │ 4               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 12      │ 'inclusive-exoskeleton-studios'     │ 'A'   │ '0/4 (0%)'   │ '6/6 (100%)' │ 1              │ 2               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 13      │ 'interspecies-language-translators' │ 'A'   │ '0/4 (0%)'   │ '6/6 (100%)' │ 0              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 14      │ 'living-history'                    │ 'A'   │ '3/4 (75%)'  │ '7/7 (100%)' │ 0              │ 4               │ 9                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 15      │ 'luminous-mycelium-networks'        │ 'A'   │ '4/5 (80%)'  │ '5/5 (100%)' │ 2              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 16      │ 'metabolic-city-dashboards'         │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 1              │ 4               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 17      │ 'move-fair'                         │ 'A'   │ '4/4 (100%)' │ '7/7 (100%)' │ 2              │ 2               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 18      │ 'neuroplastic-playgrounds'          │ 'A'   │ '0/4 (0%)'   │ '5/5 (100%)' │ 2              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 19      │ 'ocean-dna-time-capsules'           │ 'A'   │ '1/3 (33%)'  │ '6/6 (100%)' │ 0              │ 1               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 20      │ 'plastic-to-protein-microfactories' │ 'A'   │ '1/4 (25%)'  │ '6/6 (100%)' │ 1              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 21      │ 'playable-city'                     │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 1              │ 4               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 22      │ 'quantum-graffiti-labs'             │ 'A'   │ '3/5 (60%)'  │ '7/7 (100%)' │ 1              │ 4               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 23      │ 'sensing-self'                      │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 2              │ 2               │ 12               │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 24      │ 'solarpunk-seed-vaults'             │ 'A'   │ '0/4 (0%)'   │ '5/5 (100%)' │ 0              │ 1               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 25      │ 'sustainability-campaign'           │ 'A'   │ '4/4 (100%)' │ '7/7 (100%)' │ 1              │ 2               │ 9                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 26      │ 'synesthetic-data-galleries'        │ 'A'   │ '0/4 (0%)'   │ '5/5 (100%)' │ 0              │ 2               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 27      │ 'urban-heat'                        │ 'A'   │ '4/4 (100%)' │ '6/6 (100%)' │ 0              │ 3               │ 9                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 28      │ 'bio-symphony-skylines'             │ 'B'   │ '3/5 (60%)'  │ '6/6 (100%)' │ 0              │ 3               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+│ 29      │ 'martian-water-architects'          │ 'B'   │ '2/4 (50%)'  │ '6/6 (100%)' │ 0              │ 0               │ 0                │ 4           │ 3              │ 'ok'          │ 3            │ 0                     │
+└─────────┴─────────────────────────────────────┴───────┴──────────────┴──────────────┴────────────────┴─────────────────┴──────────────────┴─────────────┴────────────────┴───────────────┴──────────────┴───────────────────────┘
+
+Batch Assignments
+------------------
+Batch A (28): accessability-ai, ai-emotional-weather-vane, ar-disaster-wardens, assistive-tech, bio-looped-space-cuisine, carbon-negative-fashion-forge, civic-ai-ombuds-office, civic-signals, climate-justice-wearables, future-food, geoengineering-ethics-expedition, harbor-health, inclusive-exoskeleton-studios, interspecies-language-translators, living-history, luminous-mycelium-networks, metabolic-city-dashboards, move-fair, neuroplastic-playgrounds, ocean-dna-time-capsules, plastic-to-protein-microfactories, playable-city, quantum-graffiti-labs, sensing-self, solarpunk-seed-vaults, sustainability-campaign, synesthetic-data-galleries, urban-heat
+Batch B (2): bio-symphony-skylines, martian-water-architects
+Batch C (0): 
+
+Portfolio Stats
+----------------
+Average AI coverage: 52%
+Average checkpoint coverage: 100%
+Total weak student directions: 30
+Total weak week bullets: 72
+Assignments missing student voice criteria: 120

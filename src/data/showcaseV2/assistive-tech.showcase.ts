@@ -32,7 +32,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       students: [
         'Reflect on biases using journaling prompts',
         'Map community partners and expertise',
-        'Practice active listening roleplays'
+        'Lead active listening roleplays with peers'
       ],
       deliverables: ['Design ethics pledge', 'Community asset map', 'Interview practice notes'],
       checkpoint: ['Students articulate design commitments'],
@@ -49,7 +49,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       ],
       students: [
         'Conduct guided interviews with partners',
-        'Document functional and emotional needs',
+        'Capture functional and emotional needs in shared notes',
         'Draft measurable success metrics'
       ],
       deliverables: ['Partner profile', 'Needs statement matrix', 'Design brief v1'],
@@ -80,14 +80,14 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       kind: 'Build',
       focus: 'Engineer high-fidelity devices and validate performance.',
       teacher: [
-        'Support advanced fabrication techniques',
+        'Coach teams through advanced fabrication techniques',
         'Model tolerance testing routines',
         'Connect teams with clinical advisors'
       ],
       students: [
         'Fabricate refined device version',
         'Conduct stress and safety tests',
-        'Document maintenance instructions'
+        'Compile maintenance instructions into a shared guide'
       ],
       deliverables: ['Device vfinal', 'Test certification checklist', 'Care manual draft'],
       checkpoint: ['Teacher clears device for showcase'],
@@ -131,7 +131,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deliver co-designed assistive devices that pass partner usability tests'],
+    core: ['Co-design assistive devices that pass partner usability tests'],
     extras: [
       'Build open-source fabrication library',
       'Host accessibility awareness workshop',
@@ -158,7 +158,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       title: 'Design Equity Primer',
       summary: 'Students surface personal assumptions and align on inclusive design commitments.',
       studentDirections: [
-        'Complete disability justice reading notes',
+        'Analyze disability justice readings and take notes',
         'Journal three personal design biases',
         'Share takeaways in circle dialogue',
         'Draft team inclusive design norms',
@@ -171,7 +171,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         'Model vulnerability through personal story'
       ],
       evidence: ['Reflection journal entry', 'Signed design pledge'],
-      successCriteria: ['I reference voices respectfully', 'I name growth commitments', 'I agree to shared norms'],
+      successCriteria: ['I reference our partners’ voices respectfully in my notes', 'I name personal growth commitments for inclusive design', 'I agree to shared design norms and honour them'],
       checkpoint: 'Teacher reviews pledges for specificity',
       aiOptional: {
         toolUse: 'Summarize reading in plain language',
@@ -197,7 +197,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         'Offer feedback on scope realism'
       ],
       evidence: ['Partner-approved design brief', 'Concept sketch sheet'],
-      successCriteria: ['Goals echo partner voice', 'Constraints feel realistic', 'Sketches communicate intent'],
+      successCriteria: ['I write design goals that echo partner voices', 'I capture constraints that feel realistic and ethical', 'I sketch concepts that communicate intent clearly to partners'],
       checkpoint: 'Teacher signs brief before prototyping',
       aiOptional: {
         toolUse: 'Draft user story from quotes',
@@ -224,7 +224,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         'Coach teams through difficult feedback'
       ],
       evidence: ['Testing feedback log', 'Iteration backlog plan'],
-      successCriteria: ['Feedback captured verbatim', 'Next steps feel achievable', 'Safety checks are documented'],
+      successCriteria: ['I capture feedback verbatim with context', 'I plan achievable next steps that partners endorse', 'I document safety checks and comfort notes for every test'],
       checkpoint: 'Teacher approves iteration plan',
       aiOptional: {
         toolUse: 'Organize feedback into themes',
@@ -242,7 +242,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         'Co-write care and maintenance guide',
         'Rehearse showcase story with partner',
         'Host training session for caregivers',
-        'Document follow-up schedule'
+        'Publish follow-up schedule with partners'
       ],
       teacherSetup: [
         'Arrange accessible showcase space',
@@ -251,7 +251,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         'Review care guides for clarity'
       ],
       evidence: ['Care guide', 'Showcase recording', 'Support schedule'],
-      successCriteria: ['Instructions feel user-friendly', 'Partner feels empowered', 'Next steps are clear'],
+      successCriteria: ['I write instructions that feel user-friendly to partners', 'I deliver support that helps partners feel empowered and informed', 'I outline next steps and support commitments clearly'],
       checkpoint: 'Teacher confirms partner receives kit',
       aiOptional: {
         toolUse: 'Draft quick-start card layout',

@@ -81,7 +81,11 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deploy a privacy‑respecting climate sculpture with documented methods'],
+    core: [
+      'Design consent-forward SEL check-ins aligned to privacy policies',
+      'Build and tune emotion-aware pipelines that power kinetic feedback safely',
+      'Communicate wellbeing resources and transparent methods to the school community'
+    ],
     extras: [
       'Publish opt‑in UI templates',
       'Create educator privacy checklist',
@@ -106,38 +110,57 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
       id: 'A1',
       title: 'Consent + Check‑In UI',
       summary: 'Draft opt‑in language and design a safe UI.',
-      studentDirections: ['Draft consent line', 'Sketch UI', 'Define opt‑out', 'List harms/mitigations', 'Submit for review'],
-      teacherSetup: ['Share policy templates', 'Review language', 'Coordinate counselor review'],
+      studentDirections: ['Draft consent language in student voice', 'Sketch opt-in UI wireframe', 'Define clear opt-out paths and reminders', 'List harms and mitigations with counselors', 'Submit for review and revisions'],
+      teacherSetup: ['Share policy templates and exemplars', 'Review language with counselor', 'Coordinate admin approval'],
       evidence: ['Consent + UI draft'],
-      successCriteria: ['I respect privacy', 'I use clear language', 'I plan opt‑out']
+      successCriteria: ['I write consent that families understand easily', 'I design opt-in UI that protects privacy', 'I document opt-out paths and mitigations clearly'],
+      aiOptional: {
+        toolUse: 'Suggest plain-language consent sentences',
+        critique: 'Verify AI text stays accurate and trauma-informed',
+        noAIAlt: 'Use counselor feedback sentence bank'
+      }
     },
     {
       id: 'A2',
       title: 'Pipeline + Mapping Plan',
       summary: 'Choose classifier and define outputs→motion/light mapping.',
-      studentDirections: ['Pick classifier', 'Define outputs', 'Set mapping rules', 'List risks', 'Cite sources'],
-      teacherSetup: ['Provide options', 'Review mapping choices', 'Check sources'],
+      studentDirections: ['Pick classifier option and justify choice', 'Define outputs and thresholds with counselors', 'Set mapping rules for servo and LED patterns', 'List risks and mitigations in register', 'Cite sources for models and datasets'],
+      teacherSetup: ['Provide classifier options and supports', 'Review mapping choices with counseling team', 'Check sources and licensing'],
       evidence: ['Pipeline plan', 'Risk register v1'],
-      successCriteria: ['I choose feasible', 'I map clearly', 'I cite sources'],
-      aiOptional: { toolUse: 'Generate mapping ideas', critique: 'Flag privacy risks', noAIAlt: 'Peer ethics review' }
+      successCriteria: ['I choose a feasible, ethical classifier', 'I map outputs to motion and light transparently', 'I cite every dataset and tool responsibly'],
+      aiOptional: {
+        toolUse: 'Brainstorm servo/light pattern ideas from classifier outputs',
+        critique: 'Reject AI ideas that reveal individual data',
+        noAIAlt: 'Use peer ethics review protocol'
+      }
     },
     {
       id: 'A3',
       title: 'Demo Prototype',
       summary: 'Test sentiment and show motion/light response.',
-      studentDirections: ['Run demo data', 'Record video', 'Tune thresholds', 'Note failure modes', 'Log next steps'],
-      teacherSetup: ['Provide sample data', 'Check wiring/PPE', 'Coach tuning'],
+      studentDirections: ['Run demo data through pipeline safely', 'Record video showing outputs', 'Tune thresholds with counselor feedback', 'Note failure modes and privacy flags', 'Log next steps with timestamps'],
+      teacherSetup: ['Provide de-identified sample data', 'Check wiring/PPE before demos', 'Coach tuning and documentation'],
       evidence: ['Demo video', 'Tuning notes'],
-      successCriteria: ['I wire safely', 'I tune sensibly', 'I log issues']
+      successCriteria: ['I operate wiring and hardware safely', 'I tune thresholds to avoid false alarms', 'I document issues and privacy checks carefully'],
+      aiOptional: {
+        toolUse: 'Analyze demo logs for misclassifications',
+        critique: 'Ensure AI analysis ignores personal identifiers',
+        noAIAlt: 'Use manual confusion table review'
+      }
     },
     {
       id: 'A4',
       title: 'Enclosure + Signage',
       summary: 'Assemble display and finalize consent signage.',
-      studentDirections: ['Assemble enclosure', 'Test stability', 'Post signage', 'Plan mounting', 'Confirm location'],
-      teacherSetup: ['Review stability', 'Approve signage', 'Confirm location'],
+      studentDirections: ['Assemble enclosure with cable management', 'Test stability and access with admin', 'Post consent and opt-out signage visibly', 'Implement mounting and nightly storage plan', 'Confirm installation location with facilities'],
+      teacherSetup: ['Review enclosure stability and safety', 'Approve signage language with counselors', 'Confirm location logistics and power'],
       evidence: ['Enclosure spec', 'Signage photos'],
-      successCriteria: ['I ensure stability', 'I inform clearly', 'I confirm placement']
+      successCriteria: ['I ensure the sculpture is stable and tamper safe', 'I communicate consent and privacy clearly on signage', 'I secure approvals for placement and maintenance'],
+      aiOptional: {
+        toolUse: 'Draft signage layout from approved language',
+        critique: 'Check AI layout maintains required legal wording',
+        noAIAlt: 'Use school signage template manually'
+      }
     }
   ],
   polish: {

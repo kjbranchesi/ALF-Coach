@@ -22,12 +22,12 @@ export const metabolic_city_dashboardsV2: ProjectShowcaseV2 = {
   schedule: { totalWeeks: 7, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     { weekLabel: 'Week 1', kind: 'Foundations', focus: 'Urban metabolism and equitable indicators.',
-      teacher: ['Show example flows', 'Share data portals', 'Discuss equity'],
+      teacher: ['Show example flows', 'Share data portals', 'Facilitate equity dialogues'],
       students: ['Define metrics', 'List datasets', 'Sketch dashboard'],
       deliverables: ['Metric plan', 'Data inventory'], checkpoint: ['Teacher approves metrics'], assignments: ['A1'] },
     { weekLabel: 'Week 2', kind: 'Planning', focus: 'Build data pipeline and cleaning plan.',
       teacher: ['Model cleaning', 'Review schemas', 'Coach joins'],
-      students: ['Clean datasets', 'Join tables', 'Document pipeline'],
+      students: ['Clean datasets', 'Join tables', 'Capture pipeline steps meticulously'],
       deliverables: ['Cleaned tables', 'Pipeline doc'], checkpoint: ['Reproducible steps logged'], assignments: ['A2'] },
     { weekLabel: 'Weeks 3–4', kind: 'Build', focus: 'Design dashboard and run scenarios.',
       teacher: ['Share UI patterns', 'Check performance', 'Coach scenarios'],
@@ -42,12 +42,16 @@ export const metabolic_city_dashboardsV2: ProjectShowcaseV2 = {
       students: ['Demo dashboard', 'Present brief', 'Log feedback'],
       deliverables: ['Pitch deck', 'Feedback log'], checkpoint: ['Stakeholder actions recorded'], assignments: ['A4'] },
     { weekLabel: 'Week 7', kind: 'Extension', focus: 'Publish toolkit and commit to updates.',
-      teacher: ['Review toolkit', 'Schedule update cadence', 'Document governance'],
-      students: ['Publish toolkit', 'Plan updates', 'Assign maintainers'],
+      teacher: ['Review toolkit', 'Schedule update cadence', 'Record governance plan'],
+      students: ['Publish toolkit', 'Schedule updates', 'Assign maintainers'],
       deliverables: ['Toolkit v1', 'Update plan'], checkpoint: ['Maintainer list complete'] }
   ],
   outcomes: {
-    core: ['Launch an interactive metabolism dashboard and a policy brief'],
+    core: [
+      'Design equity-centered metabolism metrics and data sources with stakeholders',
+      'Build reproducible pipelines and dashboards that reveal city resource flows',
+      'Develop policy interventions using scenario insights and community feedback'
+    ],
     extras: ['Open pipeline repo', 'Equity metric guide', 'Stakeholder interview library', 'Update governance plan'],
     audiences: ['City offices', 'Utilities', 'Neighborhood groups', 'Press']
   },
@@ -57,23 +61,62 @@ export const metabolic_city_dashboardsV2: ProjectShowcaseV2 = {
     safetyEthics: ['Respect data privacy', 'Verify sources', 'Avoid doxxing or sensitive geodata']
   },
   assignments: [
-    { id: 'A1', title: 'Metrics + Data Inventory', summary: 'Define metrics and list available datasets.',
-      studentDirections: ['Pick metrics', 'List datasets', 'Sketch dashboard', 'Flag gaps', 'Submit plan'],
-      teacherSetup: ['Share examples', 'Assess feasibility', 'Approve metrics'],
-      evidence: ['Metric plan', 'Inventory'], successCriteria: ['I pick meaningful', 'I find sources', 'I plan clearly'] },
-    { id: 'A2', title: 'Pipeline Build', summary: 'Clean, join, and document data steps.',
-      studentDirections: ['Clean tables', 'Join correctly', 'Document steps', 'Validate samples', 'Share repo'],
-      teacherSetup: ['Model cleaning', 'Review joins', 'Check validation'],
-      evidence: ['Cleaned data', 'Pipeline doc'], successCriteria: ['I reproduce steps', 'I join accurately', 'I validate data'],
-      aiOptional: { toolUse: 'Suggest join keys', critique: 'Flag schema issues', noAIAlt: 'Peer code review' } },
-    { id: 'A3', title: 'Dashboard + Scenario', summary: 'Design dashboard UI and run what‑ifs.',
-      studentDirections: ['Design UI', 'Add filters', 'Run scenario', 'Log changes', 'Cite data'],
-      teacherSetup: ['Share UI patterns', 'Review performance', 'Check citations'],
-      evidence: ['Dashboard v1', 'Scenario notes'], successCriteria: ['I design clearly', 'I run scenarios', 'I cite data'] },
-    { id: 'A4', title: 'Policy Brief + Demo', summary: 'Present a council‑style briefing.',
-      studentDirections: ['Draft brief', 'Present findings', 'Collect feedback', 'Revise brief', 'Publish'],
-      teacherSetup: ['Invite partners', 'Time pitches', 'Collect feedback'],
-      evidence: ['Brief', 'Feedback log'], successCriteria: ['I persuade with data', 'I answer questions', 'I refine well'] }
+    {
+      id: 'A1',
+      title: 'Metrics + Data Inventory',
+      summary: 'Define metrics and list available datasets.',
+      studentDirections: ['Pick metabolism metrics with equity lens', 'List datasets and source reliability', 'Sketch dashboard layout ideas', 'Flag data gaps and plan research', 'Submit plan for partner review'],
+      teacherSetup: ['Share example dashboards and metrics', 'Assess feasibility with data stewards', 'Approve metric scope'],
+      evidence: ['Metric plan', 'Inventory'],
+      successCriteria: ['I select metrics that reveal equity gaps', 'I find trustworthy sources and note limitations', 'I plan a dashboard structure that matches the story'],
+      aiOptional: {
+        toolUse: 'Summarize dataset descriptions from open data portals',
+        critique: 'Ensure AI summaries capture licensing and limitations',
+        noAIAlt: 'Use data inventory worksheet manually'
+      }
+    },
+    {
+      id: 'A2',
+      title: 'Pipeline Build',
+      summary: 'Clean, join, and document data steps.',
+      studentDirections: ['Clean tables with documented transformations', 'Join datasets accurately with data dictionary', 'Record every step for reproducibility', 'Validate samples against published stats', 'Share repo with version control'],
+      teacherSetup: ['Model cleaning workflows', 'Review joins for accuracy', 'Check validation sampling'],
+      evidence: ['Cleaned data', 'Pipeline doc'],
+      successCriteria: ['I create reproducible pipelines teammates can follow', 'I join datasets accurately and transparently', 'I validate data against trusted references'],
+      aiOptional: {
+        toolUse: 'Suggest join keys or transformation hints',
+        critique: 'Flag schema issues or missing values to investigate',
+        noAIAlt: 'Conduct peer code review session'
+      }
+    },
+    {
+      id: 'A3',
+      title: 'Dashboard + Scenario',
+      summary: 'Design dashboard UI and run what‑ifs.',
+      studentDirections: ['Design accessible UI with legends and tooltips', 'Add filters and comparisons for neighborhoods', 'Run what-if scenario and capture assumptions', 'Log changes and scenario insights', 'Cite data sources in dashboard and notes'],
+      teacherSetup: ['Share UI accessibility patterns', 'Review performance and load time', 'Check citations and assumptions'],
+      evidence: ['Dashboard v1', 'Scenario notes'],
+      successCriteria: ['I design dashboards that are clear and accessible', 'I run scenarios with transparent assumptions', 'I cite every dataset directly in the experience'],
+      aiOptional: {
+        toolUse: 'Recommend visual encodings for variables',
+        critique: 'Ensure AI recommendation matches accessibility needs',
+        noAIAlt: 'Use visualization design cards'
+      }
+    },
+    {
+      id: 'A4',
+      title: 'Policy Brief + Demo',
+      summary: 'Present a council‑style briefing.',
+      studentDirections: ['Draft policy brief with data-backed recommendations', 'Present findings to partners in council format', 'Collect feedback and commitments', 'Revise brief with new insights', 'Publish final brief and dashboard link'],
+      teacherSetup: ['Invite partners and officials', 'Time pitches and manage Q&A', 'Collect feedback forms or notes'],
+      evidence: ['Brief', 'Feedback log'],
+      successCriteria: ['I persuade decision makers using clear data stories', 'I answer questions transparently with evidence', 'I refine and publish briefs that partners can act on'],
+      aiOptional: {
+        toolUse: 'Draft executive summary from dashboard insights',
+        critique: 'Ensure AI summary reflects nuanced equity framing',
+        noAIAlt: 'Use policy brief rubric and peer review'
+      }
+    }
   ],
   polish: {
     microRubric: ['Reproducible pipeline', 'Accessible UI', 'Evidence‑based brief', 'Equity lens'],

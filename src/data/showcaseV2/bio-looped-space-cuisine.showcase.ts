@@ -21,29 +21,62 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     'Learners build classroom‑safe components of a closed‑loop food system: microgreens or dwarf crops, simple filtration, composting/vermiculture proxies, and LED lighting. They allocate limited energy, track growth and water use, and draft a mission day meal plan with nutrition constraints. Loop performance is documented in a mission journal, highlighting trade‑offs and reliability under failure scenarios. Final boards justify loop design for a hypothetical long‑duration mission.',
   schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
-    { weekLabel: 'Week 1', kind: 'Foundations', focus: 'Closed loops, energy limits, and food safety basics.',
-      teacher: ['Teach loop concepts', 'Set safety rules', 'Model journal'],
-      students: ['Sketch loop', 'Set goals', 'Start journal'],
-      deliverables: ['Loop sketch', 'Journal v1'], checkpoint: ['Safety rules passed'], assignments: ['A1'] },
-    { weekLabel: 'Week 2', kind: 'Planning', focus: 'Build plan and resource budget.',
-      teacher: ['Approve materials', 'Share energy budget', 'Review nutrition targets'],
-      students: ['Draft BOM', 'Plan layout', 'Budget energy/water'],
-      deliverables: ['BOM', 'Budget plan'], checkpoint: ['Teacher approves plan'], assignments: ['A2'] },
-    { weekLabel: 'Weeks 3–4', kind: 'Build', focus: 'Assemble mini loop; track growth and resource use.',
-      teacher: ['Supervise setup', 'Check logs', 'Coach adjustments'],
-      students: ['Build system', 'Log daily', 'Tune inputs'],
-      deliverables: ['Loop photos', 'Growth/resource logs'], checkpoint: ['Mid‑build audit'], assignments: ['A3'] },
-    { weekLabel: 'Week 5', kind: 'Build', focus: 'Failure scenarios and reliability improvements.',
-      teacher: ['Model failure', 'Guide safe tests', 'Check journaling'],
-      students: ['Run failure test', 'Record outcomes', 'Add redundancy'],
-      deliverables: ['Failure report', 'Revised plan'], checkpoint: ['Teacher confirms safety limits'] },
-    { weekLabel: 'Week 6', kind: 'Exhibit', focus: 'Mission board: loop schematic and meal plan.',
-      teacher: ['Invite reviewers', 'Coach nutrition math', 'Time talks'],
-      students: ['Present loop', 'Defend plan', 'Share trade‑offs'],
-      deliverables: ['Mission board', 'Journal excerpts'], checkpoint: ['Reviewers log notes'], assignments: ['A4'] }
+    {
+      weekLabel: 'Week 1',
+      kind: 'Foundations',
+      focus: 'Closed loops, energy limits, and food safety basics.',
+      teacher: ['Facilitate loop systems mini-lesson', 'Lead safety certification lab', 'Model mission journal entry'],
+      students: ['Sketch loop concept maps', 'Commit to mission goals', 'Launch journal with safety reflection'],
+      deliverables: ['Loop sketch', 'Journal v1'],
+      checkpoint: ['Safety rules passed'],
+      assignments: ['A1']
+    },
+    {
+      weekLabel: 'Week 2',
+      kind: 'Planning',
+      focus: 'Build plan and resource budget.',
+      teacher: ['Approve materials against constraints', 'Share energy budget scenarios', 'Review nutrition targets with examples'],
+      students: ['Draft detailed materials BOM', 'Storyboard component layout', 'Budget daily energy and water allowances'],
+      deliverables: ['BOM', 'Budget plan'],
+      checkpoint: ['Teacher approves plan'],
+      assignments: ['A2']
+    },
+    {
+      weekLabel: 'Weeks 3–4',
+      kind: 'Build',
+      focus: 'Assemble mini loop; track growth and resource use.',
+      teacher: ['Supervise build stations for safety', 'Audit mission logs daily', 'Coach tuning adjustments with data'],
+      students: ['Assemble loop hardware safely', 'Log growth and resource metrics daily', 'Tune inputs based on evidence'],
+      deliverables: ['Loop photos', 'Growth/resource logs'],
+      checkpoint: ['Mid‑build audit'],
+      assignments: ['A3']
+    },
+    {
+      weekLabel: 'Week 5',
+      kind: 'Build',
+      focus: 'Failure scenarios and reliability improvements.',
+      teacher: ['Demonstrate controlled failure tests', 'Guide safe contingency drills', 'Audit mission journal updates'],
+      students: ['Run failure simulations carefully', 'Log outcomes with timestamps', 'Add redundancy or backup plans'],
+      deliverables: ['Failure report', 'Revised plan'],
+      checkpoint: ['Teacher confirms safety limits']
+    },
+    {
+      weekLabel: 'Week 6',
+      kind: 'Exhibit',
+      focus: 'Mission board: loop schematic and meal plan.',
+      teacher: ['Invite NASA-style reviewers', 'Coach nutrition math run-throughs', 'Time final briefings'],
+      students: ['Present loop schematic clearly', 'Defend meal plan with data', 'Share trade-offs and next actions'],
+      deliverables: ['Mission board', 'Journal excerpts'],
+      checkpoint: ['Reviewers log notes'],
+      assignments: ['A4']
+    }
   ],
   outcomes: {
-    core: ['Build a safe mini loop and defend a mission meal plan'],
+    core: [
+      'Design and operate a closed-loop food prototype within mission constraints',
+      'Analyze growth and resource data to optimize loop performance',
+      'Communicate mission-ready meal plans with documented trade-offs and safety checks'
+    ],
     extras: ['Failure mode card set', 'Energy budget calculator', 'Nutrition target guide', 'Care/maintenance SOP'],
     audiences: ['STEM clubs', 'Space museum partners', 'Families', 'District showcase']
   },
@@ -53,22 +86,86 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     safetyEthics: ['No ingesting classroom crops', 'Avoid mold growth', 'Teacher handles any disposal']
   },
   assignments: [
-    { id: 'A1', title: 'Loop Sketch + Safety', summary: 'Sketch your loop and pass safety basics.',
-      studentDirections: ['Sketch loop', 'List components', 'Pass safety rules', 'Start journal', 'Set goals'],
-      teacherSetup: ['Share examples', 'Safety review', 'Journal template'],
-      evidence: ['Sketch', 'Journal v1'], successCriteria: ['I sketch clearly', 'I follow safety', 'I log consistently'] },
-    { id: 'A2', title: 'Plan + Budget', summary: 'Budget energy/water and plan materials.',
-      studentDirections: ['Draft BOM', 'Budget energy', 'Budget water', 'Layout plan', 'Submit'],
-      teacherSetup: ['Approve BOM', 'Share budgets', 'Review plans'],
-      evidence: ['BOM', 'Budgets'], successCriteria: ['I budget reasonably', 'I plan layout', 'I justify choices'] },
-    { id: 'A3', title: 'Build + Log', summary: 'Assemble loop and log performance.',
-      studentDirections: ['Build safely', 'Log daily', 'Tune inputs', 'Photo log', 'Flag issues'],
-      teacherSetup: ['Supervise builds', 'Check logs', 'Advise fixes'],
-      evidence: ['Loop photos', 'Logs'], successCriteria: ['I build safely', 'I log reliably', 'I tune thoughtfully'] },
-    { id: 'A4', title: 'Mission Board', summary: 'Present your loop with meal plan and trade‑offs.',
-      studentDirections: ['Present loop', 'Share meal plan', 'Explain trade‑offs', 'Answer questions', 'Submit board'],
-      teacherSetup: ['Invite reviewers', 'Time talks', 'Collect notes'],
-      evidence: ['Mission board', 'Q&A notes'], successCriteria: ['I defend choices', 'I show evidence', 'I accept feedback'] }
+    {
+      id: 'A1',
+      title: 'Loop Sketch + Safety',
+      summary: 'Sketch your loop and pass safety basics.',
+      studentDirections: [
+        'Sketch loop subsystems with labeled flows',
+        'List components and mission purpose',
+        'Pass safety certification quiz',
+        'Launch journal with mission log entry',
+        'Set measurable growth and nutrition goals'
+      ],
+      teacherSetup: ['Share exemplar loop diagrams', 'Facilitate safety certification lab', 'Provide mission journal template'],
+      evidence: ['Sketch', 'Journal v1'],
+      successCriteria: ['I diagram subsystems clearly', 'I meet every safety requirement', 'I log goals with mission voice'],
+      aiOptional: {
+        toolUse: 'Generate labeled loop diagram from component list',
+        critique: 'Check AI labels match safety protocols',
+        noAIAlt: 'Use teacher-provided labeling checklist'
+      }
+    },
+    {
+      id: 'A2',
+      title: 'Plan + Budget',
+      summary: 'Budget energy/water and plan materials.',
+      studentDirections: [
+        'Draft detailed BOM with sourcing notes',
+        'Calculate daily energy budget scenarios',
+        'Calculate water recycling requirements',
+        'Storyboard loop layout to scale',
+        'Publish plan packet for approval'
+      ],
+      teacherSetup: ['Approve BOM against constraints', 'Share sample budgets and templates', 'Review plans in design critique'],
+      evidence: ['BOM', 'Budgets'],
+      successCriteria: ['I justify every material choice', 'I balance energy and water budgets', 'I visualize layout to mission scale'],
+      aiOptional: {
+        toolUse: 'Suggest efficiency tips based on budget inputs',
+        critique: 'Verify tips respect classroom limits',
+        noAIAlt: 'Consult facilities mentor checklist'
+      }
+    },
+    {
+      id: 'A3',
+      title: 'Build + Log',
+      summary: 'Assemble loop and log performance.',
+      studentDirections: [
+        'Assemble loop safely following SOP',
+        'Log daily growth and resource metrics clearly',
+        'Tune inputs using evidence comparisons',
+        'Capture photo log with annotations',
+        'Flag issues and propose fixes in journal'
+      ],
+      teacherSetup: ['Supervise builds and safety checkpoints', 'Audit mission logs daily', 'Coach troubleshooting huddles'],
+      evidence: ['Loop photos', 'Logs'],
+      successCriteria: ['I operate the loop within safety limits', 'I record mission data consistently', 'I adjust inputs with evidence'],
+      aiOptional: {
+        toolUse: 'Analyze log data for pattern insights',
+        critique: 'Reject AI advice that breaks constraints',
+        noAIAlt: 'Use peer review protocol for logs'
+      }
+    },
+    {
+      id: 'A4',
+      title: 'Mission Board',
+      summary: 'Present your loop with meal plan and trade‑offs.',
+      studentDirections: [
+        'Design mission board with labeled schematic',
+        'Draft nutrition-balanced mission meal plan',
+        'Explain trade-offs and contingency plans',
+        'Rehearse mission briefing within time limit',
+        'Capture stakeholder feedback and commitments'
+      ],
+      teacherSetup: ['Invite reviewers and allocate roles', 'Time and film mission briefings', 'Collect reviewer debrief notes'],
+      evidence: ['Mission board', 'Q&A notes'],
+      successCriteria: ['I defend loop design with data', 'I articulate mission trade-offs clearly', 'I capture reviewer feedback for iteration'],
+      aiOptional: {
+        toolUse: 'Draft mission briefing script from notes',
+        critique: 'Ensure script stays factual and respectful',
+        noAIAlt: 'Use provided briefing outline template'
+      }
+    }
   ],
   polish: {
     microRubric: ['Safe operations', 'Evidence‑based tuning', 'Clear trade‑offs', 'Mission feasibility'],

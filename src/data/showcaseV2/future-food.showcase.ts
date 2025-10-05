@@ -62,7 +62,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
       focus: 'Collect waste, nutrition, and perception data.',
       teacher: [
         'Monitor audits for food safety',
-        'Support real-time data uploads',
+        'Coach real-time data uploads',
         'Host daily insight stand-ups'
       ],
       students: [
@@ -116,7 +116,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
       kind: 'Extension',
       focus: 'Launch pilots and monitor closed-loop metrics.',
       teacher: [
-        'Support scheduling of ongoing pilots',
+        'Coordinate scheduling of ongoing pilots',
         'Review data monitoring cadence',
         'Secure press coverage opportunities'
       ],
@@ -131,7 +131,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Launch a closed-loop pilot that reduces cafeteria waste measurably'],
+    core: ['Design and launch a closed-loop pilot that reduces cafeteria waste measurably'],
     extras: [
       'Develop student-led marketing campaign',
       'Design compost partnership agreements',
@@ -171,7 +171,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
         'Lead feedback gallery walk'
       ],
       evidence: ['Systems portrait', 'Interview summary'],
-      successCriteria: ['Map captures full flow', 'Insights echo staff voice', 'Opportunities feel specific'],
+      successCriteria: ['I capture the full cafeteria flow in our map', 'I craft insights that echo staff voices faithfully', 'I identify opportunities that feel specific and actionable'],
       checkpoint: 'Teacher reviews portrait before audit',
       aiOptional: {
         toolUse: 'Summarize interview recordings',
@@ -184,9 +184,9 @@ export const future_foodV2: ProjectShowcaseV2 = {
       title: 'Waste and Procurement Audit',
       summary: 'Teams design and execute a cafeteria waste and sourcing audit.',
       studentDirections: [
-        'Plan audit schedule with staff',
-        'Collect waste data by category',
-        'Document sourcing distances and costs',
+        'Coordinate audit schedule with staff partners',
+        'Collect waste data by category using agreed methods',
+        'Compile sourcing distances and costs carefully',
         'Survey students on meal satisfaction',
         'Publish findings in data brief'
       ],
@@ -197,7 +197,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
         'Coordinate staff liaison support'
       ],
       evidence: ['Audit dataset', 'Data brief report'],
-      successCriteria: ['Data is complete', 'Analysis links to goals', 'Brief communicates clearly'],
+      successCriteria: ['I compile data that is complete and verified', 'I connect analysis directly to our project goals', 'I write briefs that communicate clearly to stakeholders'],
       checkpoint: 'Teacher signs off on data quality',
       aiOptional: {
         toolUse: 'Visualize data automatically',
@@ -224,7 +224,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
         'Support impact data tracking'
       ],
       evidence: ['Prototype documentation', 'Impact log'],
-      successCriteria: ['Solution closes loop', 'Pilot data shows progress', 'Feedback informs iteration'],
+      successCriteria: ['I propose solutions that close the waste-to-resource loop', 'I show pilot data that demonstrates progress', 'I use feedback to inform the next iteration plan'],
       checkpoint: 'Teacher verifies pilot safety',
       aiOptional: {
         toolUse: 'Model cost savings quickly',
@@ -240,7 +240,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
         'Build pitch deck with data stories',
         'Host tasting or demo experience',
         'Request commitments during panel',
-        'Plan monitoring cadence with staff',
+        'Schedule monitoring cadence with staff partners',
         'Publish community update summary'
       ],
       teacherSetup: [
@@ -250,7 +250,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
         'Set up communication channels'
       ],
       evidence: ['Pitch recording', 'Monitoring plan', 'Community update draft'],
-      successCriteria: ['Pitch highlights data', 'Commitments are captured', 'Plan names responsible people'],
+      successCriteria: ['I pitch our solution by highlighting the key data', 'I capture commitments from partners during the pitch', 'I publish a plan that names responsible people and timelines'],
       checkpoint: 'Teacher confirms monitoring plan',
       aiOptional: {
         toolUse: 'Draft community newsletter copy',

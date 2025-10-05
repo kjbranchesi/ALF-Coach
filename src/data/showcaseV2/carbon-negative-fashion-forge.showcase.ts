@@ -83,7 +83,11 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Demonstrate a bio‑based textile with measured performance and LCA'],
+    core: [
+      'Investigate textile emissions and bio-based material options with safety protocols',
+      'Prototype and test carbon-negative swatches using controlled experiments',
+      'Communicate life-cycle assessment outcomes and adoption pathways to partners'
+    ],
     extras: [
       'Create brand‑ready technical cards',
       'Publish LCA tutorial for peers',
@@ -110,48 +114,71 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
       id: 'A1',
       title: 'Textile Climate Portrait + Safety Passport',
       summary: 'Map fashion emissions and pass lab safety basics.',
-      studentDirections: ['List top impacts', 'Sketch safer inputs', 'Pass safety quiz', 'Log PPE sizes', 'Propose lab roles'],
-      teacherSetup: ['Curate fashion impact data', 'Prepare safety quiz', 'Assign lab roles'],
+      studentDirections: ['List top fashion impacts with sources', 'Sketch safer material inputs', 'Pass lab safety quiz with 100%', 'Log PPE sizes and needs', 'Propose safe lab roles and responsibilities'],
+      teacherSetup: ['Curate fashion impact datasets', 'Prepare safety certification quiz', 'Assign lab roles and rotations'],
       evidence: ['Impact map', 'Signed passport'],
-      successCriteria: ['I name key impacts', 'I pass safety', 'I propose safe roles']
+      successCriteria: ['I explain key textile emissions drivers using data', 'I complete all lab safety requirements and PPE logs', 'I propose lab roles that keep teammates safe'],
+      aiOptional: {
+        toolUse: 'Summarize fashion impact data into infographic ideas',
+        critique: 'Verify AI infographic suggestions cite reliable sources',
+        noAIAlt: 'Use data visualization worksheet with teacher'
+      }
     },
     {
       id: 'A2',
       title: 'Recipe + Test Plan',
       summary: 'Design a material recipe and a fair test plan.',
-      studentDirections: ['Draft BOM', 'Add SDS links', 'Define variables', 'Set controls', 'Schedule tests'],
-      teacherSetup: ['Approve BOM + SDS', 'Share emissions factors', 'Model control setup'],
+      studentDirections: ['Draft BOM with quantities and vendors', 'Add SDS links for every material', 'Define variables and measurement methods', 'Set controls and replicates for fair tests', 'Schedule test sessions and curing windows'],
+      teacherSetup: ['Approve BOM and SDS compliance', 'Share emissions factors reference sheet', 'Model control setup and data tables'],
       evidence: ['BOM + SDS packet', 'Test plan matrix'],
-      successCriteria: ['I plan controls', 'I link SDS', 'I schedule feasibly'],
-      aiOptional: { toolUse: 'Estimate emissions factors', critique: 'Flag weak sources', noAIAlt: 'Library research set' }
+      successCriteria: ['I design experiments with clear controls and replicates', 'I link SDS and emissions sources transparently', 'I schedule lab work so curing and testing are feasible'],
+      aiOptional: {
+        toolUse: 'Estimate preliminary emissions factors for materials',
+        critique: 'Flag AI outputs that lack citations or realistic values',
+        noAIAlt: 'Use library research packet to gather factors'
+      }
     },
     {
       id: 'A3',
       title: 'Swatch Build + Bench Test',
       summary: 'Produce testable swatches and log performance.',
-      studentDirections: ['Cast or coat swatches', 'Cure and label', 'Run tests', 'Log data', 'Photo documentation'],
-      teacherSetup: ['Calibrate jigs', 'Supervise PPE', 'Check data sheets'],
+      studentDirections: ['Cast or coat swatches with PPE', 'Cure and label samples consistently', 'Run strength/flex/water tests accurately', 'Log data with units and trial counts', 'Photo document process and anomalies'],
+      teacherSetup: ['Calibrate test jigs and measurement tools', 'Supervise PPE and waste handling', 'Check data sheets for accuracy'],
       evidence: ['Swatch set', 'Data log'],
-      successCriteria: ['I follow PPE', 'I label clearly', 'I log accurately']
+      successCriteria: ['I follow every PPE and lab safety protocol', 'I label and store samples so tests stay valid', 'I log data accurately with units and notes'],
+      aiOptional: {
+        toolUse: 'Analyze data log for outliers automatically',
+        critique: 'Confirm AI outlier suggestions match raw data',
+        noAIAlt: 'Use statistical checklist with peers'
+      }
     },
     {
       id: 'A4',
       title: 'Mini‑LCA + Revision',
       summary: 'Compute kgCO₂e and revise for lower impact.',
-      studentDirections: ['Calculate baseline', 'Compare scenarios', 'Revise recipe', 'Note trade‑offs', 'Cite sources'],
-      teacherSetup: ['Provide LCA template', 'Review unit conversions', 'Coach trade‑offs'],
+      studentDirections: ['Calculate baseline emissions using template', 'Compare scenarios and highlight reductions', 'Revise recipe to lower kgCO₂e while meeting specs', 'Note trade-offs and next experiments', 'Cite every factor and dataset used'],
+      teacherSetup: ['Provide LCA template with unit guide', 'Review unit conversions and emission factors', 'Coach trade-off discussion'],
       evidence: ['LCA workbook', 'Revised swatch'],
-      successCriteria: ['I use units correctly', 'I cite sources', 'I justify changes'],
-      aiOptional: { toolUse: 'Summarize LCA factors', critique: 'Check math/units', noAIAlt: 'Peer LCA review' }
+      successCriteria: ['I compute emissions with correct units and math', 'I cite emissions sources and datasets properly', 'I justify recipe changes with LCA evidence'],
+      aiOptional: {
+        toolUse: 'Summarize LCA factor references into notes',
+        critique: 'Verify AI math and citations are correct',
+        noAIAlt: 'Use peer LCA review checklist'
+      }
     },
     {
       id: 'A5',
       title: 'Climate‑Neutral Runway + Toolkit',
       summary: 'Stage results and publish a reusable guide.',
-      studentDirections: ['Design tech cards', 'Plan neutral event', 'Present LCA', 'Collect feedback', 'Publish toolkit'],
-      teacherSetup: ['Invite partners', 'Review venue energy plan', 'Provide card template'],
+      studentDirections: ['Design technical cards with data and care', 'Orchestrate climate-neutral event logistics', 'Present LCA results and key insights', 'Collect partner feedback systematically', 'Publish toolkit and adoption plan for makers'],
+      teacherSetup: ['Invite partners and confirm venue sustainability plan', 'Review technical card drafts', 'Provide toolkit template and hosting checklist'],
       evidence: ['Technical card set', 'Toolkit link'],
-      successCriteria: ['I communicate clearly', 'I ensure safety', 'I share resources']
+      successCriteria: ['I communicate technical and climate impact details clearly', 'I ensure the runway event stays safe and low-carbon', 'I publish resources partners can adopt'],
+      aiOptional: {
+        toolUse: 'Draft technical card layout from data table',
+        critique: 'Check AI layout keeps units and sources accurate',
+        noAIAlt: 'Use design template and peer review'
+      }
     }
   ],
   polish: {

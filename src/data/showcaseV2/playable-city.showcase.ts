@@ -30,7 +30,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
         'Facilitate community storytelling circle'
       ],
       students: [
-        'Document space usage through sketches',
+        'Capture space usage through annotated sketches',
         'Interview residents about joyful moments',
         'Synthesize observations into opportunity map'
       ],
@@ -50,7 +50,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       students: [
         'Draft playable design principles',
         'Storyboard possible interventions',
-        'Plan prototype testing schedule'
+        'Schedule prototype testing sessions'
       ],
       deliverables: ['Design principles manifesto', 'Prototype storyboards', 'Testing schedule'],
       checkpoint: ['Teacher signs test plan'],
@@ -61,7 +61,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       kind: 'FieldworkLoop',
       focus: 'Prototype, playtest, and iterate interventions in public space.',
       teacher: [
-        'Support material sourcing and transport',
+        'Coordinate material sourcing and transport',
         'Ensure permits and safety protocols',
         'Guide reflection after each playtest'
       ],
@@ -116,7 +116,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       kind: 'Extension',
       focus: 'Pitch permanent installations and hand off assets.',
       teacher: [
-        'Support proposal writing workshops',
+        'Facilitate proposal writing workshops',
         'Connect students with urban planners',
         'Advise on maintenance partnerships'
       ],
@@ -131,7 +131,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Stage a joyful playable city festival with data-backed impact'],
+    core: ['Design and stage a joyful playable city festival with data-backed impact'],
     extras: [
       'Produce festival highlight reel',
       'Design bilingual play instructions',
@@ -171,7 +171,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
         'Highlight inclusive observation norms'
       ],
       evidence: ['Observation sketches', 'Insight summary'],
-      successCriteria: ['Notes capture behaviors', 'Insights cite evidence', 'Critique feedback is incorporated'],
+      successCriteria: ['I capture player behaviors accurately in my notes', 'I ground insights in evidence from observations', 'I incorporate critique feedback into the next iteration'],
       checkpoint: 'Teacher verifies opportunity statements',
       aiOptional: {
         toolUse: 'Transcribe recorded quotes',
@@ -186,7 +186,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       studentDirections: [
         'Write three design principles',
         'Storyboard interactive experience',
-        'Plan prototyping materials and roles',
+        'Organize prototyping materials and roles',
         'Outline safety and accessibility checks',
         'Submit blueprint for approval'
       ],
@@ -197,7 +197,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
         'Offer materials sourcing guidance'
       ],
       evidence: ['Design blueprint', 'Storyboard set'],
-      successCriteria: ['Principles guide decisions', 'Storyboard communicates flow', 'Safety plan feels thorough'],
+      successCriteria: ['I apply our design principles when making decisions', 'I create storyboards that communicate flow clearly', 'I document a safety plan that feels thorough and practical'],
       checkpoint: 'Teacher approves blueprint before prototyping',
       aiOptional: {
         toolUse: 'Generate color palette suggestions',
@@ -223,7 +223,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
         'Supply iteration planning template'
       ],
       evidence: ['Playtest log', 'Iteration plan'],
-      successCriteria: ['Metrics show participation', 'Feedback shapes revisions', 'Plan targets inclusivity'],
+      successCriteria: ['I track metrics that show participation across groups', 'I use feedback to shape revisions and next steps', 'I build plans that target inclusivity for different abilities'],
       checkpoint: 'Teacher reviews iteration plan',
       aiOptional: {
         toolUse: 'Summarize feedback themes',
@@ -249,7 +249,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
         'Document commitments with forms'
       ],
       evidence: ['Pitch deck', 'Commitment log', 'Festival media package'],
-      successCriteria: ['Pitch highlights community joy', 'Commitments feel concrete', 'Media assets tell story'],
+      successCriteria: ['I pitch the experience by highlighting community joy and impact', 'I secure commitments that feel concrete and trackable', 'I produce media assets that tell the story effectively'],
       checkpoint: 'Teacher confirms commitments recorded',
       aiOptional: {
         toolUse: 'Draft press release teaser',

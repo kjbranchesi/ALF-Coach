@@ -45,11 +45,11 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
       teacher: [
         'Demo captioning and alt-text tools',
         'Guide bias and error brainstorming',
-        'Help teams scope pilot media sets'
+        'Coach teams to scope pilot media sets'
       ],
       students: [
         'Select media assets for pilots',
-        'Plan AI plus human review workflow',
+        'Design AI plus human review workflow',
         'Define quality assurance checklist'
       ],
       deliverables: ['Pipeline flowchart', 'Pilot media inventory', 'QA checklist'],
@@ -100,7 +100,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
       teacher: [
         'Organize training workshops',
         'Coordinate resource distribution',
-        'Support reflection on impact'
+        'Facilitate reflection on impact'
       ],
       students: [
         'Deliver training to media teams',
@@ -131,7 +131,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Implement a human-guided AI accessibility workflow across school media'],
+    core: ['Design and implement a human-guided AI accessibility workflow across school media'],
     extras: [
       'Create student accessibility newsroom',
       'Produce awareness campaign around inclusive media',
@@ -171,7 +171,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
         'Debrief panel together'
       ],
       evidence: ['Listening log', 'Gap summary'],
-      successCriteria: ['Notes center speaker voice', 'Gaps feel specific', 'Reflection shows empathy'],
+      successCriteria: ['I center speaker voices in my notes', 'I identify specific accessibility gaps we can solve', 'I reflect with empathy and next steps'],
       checkpoint: 'Teacher reviews logs before planning',
       aiOptional: {
         toolUse: 'Transcribe panel audio quickly',
@@ -197,7 +197,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
         'Offer planning conferences'
       ],
       evidence: ['Workflow blueprint', 'Reviewer roster'],
-      successCriteria: ['Workflow protects voice', 'Roles are clear', 'Checkpoints prevent errors'],
+      successCriteria: ['I design workflows that protect original voices', 'I assign reviewer roles and responsibilities clearly', 'I insert checkpoints that prevent errors before publishing'],
       checkpoint: 'Teacher signs blueprint before drafting',
       aiOptional: {
         toolUse: 'Generate flowchart skeleton',
@@ -223,7 +223,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
         'Review drafts for tone'
       ],
       evidence: ['Sprint log', 'Revised assets'],
-      successCriteria: ['Logs capture reasoning', 'Assets meet accessibility guidelines', 'User tests confirm clarity'],
+      successCriteria: ['I log every edit with reasoning and partner feedback', 'I deliver assets that meet accessibility guidelines', 'I confirm clarity through user tests and document outcomes'],
       checkpoint: 'Teacher checks logs before showcase',
       aiOptional: {
         toolUse: 'Highlight unclear phrasing automatically',
@@ -250,7 +250,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
         'Review adoption commitments'
       ],
       evidence: ['Workshop recording', 'Governance handbook', 'Commitment log'],
-      successCriteria: ['Training is engaging', 'Handbook stays concise', 'Support plan names owners'],
+      successCriteria: ['I lead training that engages and empowers media teams', 'I publish a concise governance handbook teams can follow', 'I define a support plan with named owners and response times'],
       checkpoint: 'Teacher confirms commitments shared widely',
       aiOptional: {
         toolUse: 'Draft quick-reference guide layout',

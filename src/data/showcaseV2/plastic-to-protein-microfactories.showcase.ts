@@ -81,7 +81,11 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Operate a sealed, BSL‑1 microfactory model and publish data + ethics brief'],
+    core: [
+      'Design sealed BSL‑1 microfactory procedures that prioritize safety',
+      'Analyze growth, yield, and cost data for plastic-to-biomass recipes',
+      'Communicate climate and ethics implications through dashboards and briefs'
+    ],
     extras: [
       'Open protocol and dashboard',
       'Partner debrief on scale‑up',
@@ -107,10 +111,15 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
       id: 'A1',
       title: 'Safety + Concept Launch',
       summary: 'Pass BSL‑1 expectations and draft design concept.',
-      studentDirections: ['Pass quiz', 'Sketch design', 'List variables', 'Name controls', 'Cite SDS'],
-      teacherSetup: ['Prepare quiz', 'Provide SDS/BOM', 'Model variables/controls'],
+      studentDirections: ['Pass BSL-1 safety quiz with 100%', 'Sketch microfactory design and controls', 'List independent/dependent variables', 'Name controls and monitoring plan', 'Cite SDS and waste guidelines'],
+      teacherSetup: ['Prepare safety quiz and debrief', 'Provide SDS/BOM packet', 'Model variable/control planning'],
       evidence: ['Safety passport', 'Concept sketch'],
-      successCriteria: ['I pass safety', 'I define variables', 'I cite SDS']
+      successCriteria: ['I demonstrate full BSL-1 safety compliance', 'I define variables and controls for our design', 'I cite SDS and waste protocols for every material'],
+      aiOptional: {
+        toolUse: 'Generate design checklist from SDS notes',
+        critique: 'Ensure AI checklist matches lab rules',
+        noAIAlt: 'Use lab design checklist with mentor'
+      }
     },
     {
       id: 'A2',
@@ -126,19 +135,29 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
       id: 'A3',
       title: 'Growth Trials + Dashboard',
       summary: 'Run growth trials and keep a clean dashboard.',
-      studentDirections: ['Record OD', 'Weigh samples', 'Update dashboard', 'Photo log', 'Note anomalies'],
-      teacherSetup: ['Calibrate tools', 'Check logs', 'Review anomalies'],
+      studentDirections: ['Record OD readings with time stamps', 'Weigh samples and log mass', 'Update dashboard visuals daily', 'Photo log setup and anomalies', 'Note anomalies with potential causes'],
+      teacherSetup: ['Calibrate OD cards and scales', 'Check logs for completeness', 'Review anomalies with safety team'],
       evidence: ['Growth logs', 'Dashboard screenshots'],
-      successCriteria: ['I log accurately', 'I visualize clearly', 'I flag anomalies']
+      successCriteria: ['I log OD and mass data accurately with units', 'I visualize growth clearly for stakeholders', 'I flag anomalies and possible causes promptly'],
+      aiOptional: {
+        toolUse: 'Analyze logs for growth trends or anomalies',
+        critique: 'Verify AI trends align with recorded data',
+        noAIAlt: 'Use manual graphing and peer review'
+      }
     },
     {
       id: 'A4',
       title: 'Optimization + Cost',
       summary: 'Tune for higher yield and lower cost.',
-      studentDirections: ['Compare recipes', 'Tune variables', 'Compute cost/g', 'Cite sources', 'Plan next test'],
-      teacherSetup: ['Provide cost sheets', 'Review math', 'Coach next tests'],
+      studentDirections: ['Compare recipe yields with controls', 'Tune variables while keeping safety limits', 'Compute cost per gram using template', 'Cite every data and cost source', 'Design next test iteration with justification'],
+      teacherSetup: ['Provide cost sheets and templates', 'Review math and source citations', 'Coach iteration planning'],
       evidence: ['Optimization table', 'Cost/yield chart'],
-      successCriteria: ['I compare fairly', 'I compute correctly', 'I cite sources']
+      successCriteria: ['I compare recipes fairly with controls', 'I compute cost and yield accurately with citations', 'I plan next tests based on evidence and ethics'],
+      aiOptional: {
+        toolUse: 'Suggest optimization combinations based on data',
+        critique: 'Reject AI suggestions that break safety or ethics',
+        noAIAlt: 'Use design of experiments worksheet'
+      }
     }
   ],
   polish: {

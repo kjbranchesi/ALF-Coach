@@ -82,7 +82,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       teacher: [
         'Model data dashboard construction',
         'Guide comparative analysis with standards',
-        'Support fabrication of sensor housings'
+        'Coach fabrication of sensor housings'
       ],
       students: [
         'Visualize trends in dashboards',
@@ -105,7 +105,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       students: [
         'Draft policy briefs with evidence',
         'Design stewardship event concepts',
-        'Plan outreach for community partners'
+        'Coordinate outreach for community partners'
       ],
       deliverables: ['Policy brief draft', 'Stewardship event plan', 'Outreach contact list'],
       checkpoint: ['Teacher reviews feasibility of proposals'],
@@ -117,7 +117,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       focus: 'Host Harbor Health summit and publish data.',
       teacher: [
         'Coordinate venue logistics',
-        'Support digital publication setup',
+        'Coordinate digital publication setup',
         'Manage media and press outreach'
       ],
       students: [
@@ -134,7 +134,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       kind: 'Extension',
       focus: 'Deploy stations long-term and formalize partnerships.',
       teacher: [
-        'Support maintenance training sessions',
+        'Facilitate maintenance training sessions',
         'Draft MOUs with partner groups',
         'Schedule ongoing data check-ins'
       ],
@@ -149,7 +149,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deliver a harbor health data portal with action-ready policy briefs'],
+    core: ['Design a harbor health data portal with action-ready policy briefs'],
     extras: [
       'Launch citizen science steward program',
       'Design educational signage for shoreline',
@@ -189,7 +189,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         'Facilitate feedback discussions'
       ],
       evidence: ['Storyboard', 'Interview transcript notes'],
-      successCriteria: ['Voices feel authentic', 'Concerns tie to data', 'Storyboard guides project focus'],
+      successCriteria: ['I capture stakeholder voices authentically in our materials', 'I tie reported concerns to supporting data', 'I build a storyboard that guides project focus'],
       checkpoint: 'Teacher approves storyboard direction',
       aiOptional: {
         toolUse: 'Summarize interviews for storyboard captions',
@@ -215,7 +215,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         'Coordinate permit liaison'
       ],
       evidence: ['Monitoring blueprint', 'Safety plan'],
-      successCriteria: ['Indicators align to goals', 'Design is feasible', 'Safety plan is thorough'],
+      successCriteria: ['I choose indicators that align with our health goals', 'I design interventions that are feasible for partners', 'I document a safety plan that is thorough and approved'],
       checkpoint: 'Teacher signs blueprint before fieldwork',
       aiOptional: {
         toolUse: 'Draft CAD sketch of station',
@@ -233,7 +233,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         'Calibrate sensors before deployment',
         'Record field and lab results',
         'Iterate station design from findings',
-        'Document adjustments in engineering log'
+        'Log adjustments in the engineering journal'
       ],
       teacherSetup: [
         'Supervise sampling trips',
@@ -242,7 +242,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         'Support troubleshooting workshops'
       ],
       evidence: ['Data log', 'Engineering iteration record'],
-      successCriteria: ['Data is accurate', 'Stations improve with evidence', 'Logs show clear reasoning'],
+      successCriteria: ['I ensure collected data is accurate and validated', 'I improve stations using evidence from testing', 'I keep logs that show clear reasoning and decisions'],
       checkpoint: 'Teacher validates data before analysis',
       aiOptional: {
         toolUse: 'Flag data anomalies quickly',
@@ -268,7 +268,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         'Set up data portal infrastructure'
       ],
       evidence: ['Summit recording', 'Policy brief', 'Commitment MOU copies'],
-      successCriteria: ['Pitch references evidence', 'Commitments are secured', 'Portal is launched'],
+      successCriteria: ['I reference evidence throughout the pitch', 'I secure commitments and record next steps', 'I launch the portal and confirm partners can use it'],
       checkpoint: 'Teacher ensures deliverables shared widely',
       aiOptional: {
         toolUse: 'Draft policy brief summary',

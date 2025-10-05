@@ -26,7 +26,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       kind: 'Foundations',
       focus: 'Why soundscapes matter for urban ecology and wellbeing.',
       teacher: ['Model soundwalk protocol', 'Teach species/noise basics', 'Set safety boundaries', 'Share consent signage', 'Assign safety leaders'],
-      students: ['Practice quiet listening', 'Try tally sheets', 'Discuss equity impacts', 'Post consent signage', 'Nominate safety leaders'],
+      students: ['Lead quiet listening exercises', 'Try tally sheets', 'Analyze equity impacts', 'Post consent signage', 'Nominate safety leaders'],
       deliverables: ['Soundwalk checklist', 'Species/noise ID mini‑poster', 'Consent signage draft'],
       checkpoint: ['Teams recite safety and consent rules', 'Safety leaders identified'],
       assignments: ['A1']
@@ -75,7 +75,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 6',
       kind: 'Extension',
       focus: 'Prototype “quiet corner” interventions and evaluate change.',
-      teacher: ['Support small pilots', 'Review risk and consent', 'Coach impact write‑ups', 'Coordinate custodial support', 'Confirm maintenance owner'],
+      teacher: ['Coordinate small pilots', 'Review risk and consent', 'Coach impact write‑ups', 'Coordinate custodial support', 'Confirm maintenance owner'],
       students: ['Install micro‑habitats', 'Measure before/after', 'Publish mini brief', 'Share actions with PTA', 'Assign maintenance owner'],
       deliverables: ['Pilot spec sheet', 'Before/after data card', 'PTA share deck'],
       checkpoint: ['Teacher verifies safe install', 'Custodial sign‑off recorded'],
@@ -83,7 +83,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish a neighborhood soundscape portfolio with evidence notes'],
+    core: ['Curate a neighborhood soundscape portfolio with evidence notes'],
     extras: [
       'Prototype “quiet corners” micro‑habitats',
       'Create bilingual listening maps',

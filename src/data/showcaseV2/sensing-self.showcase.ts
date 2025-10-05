@@ -100,7 +100,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       teacher: [
         'Set up hands-on demo stations',
         'Invite health professionals for feedback',
-        'Support user-led storytelling scripts'
+        'Coach user-led storytelling scripts'
       ],
       students: [
         'Demo wearables alongside users',
@@ -122,7 +122,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       ],
       students: [
         'Publish build guides with code snippets',
-        'Plan ongoing data check-ins',
+        'Schedule ongoing data check-ins with users',
         'Draft recommendations for scaling program'
       ],
       deliverables: ['Open documentation site', 'Maintenance calendar', 'Scaling recommendation memo'],
@@ -131,7 +131,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deploy a biofeedback wearable that supports a personalized wellness plan'],
+    core: ['Design biofeedback wearables that support personalized wellness plans'],
     extras: [
       'Design mindfulness notification scripts',
       'Build parent-friendly wellness dashboards',
@@ -171,7 +171,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
         'Review consent templates'
       ],
       evidence: ['Insight map', 'Consent summary sheet'],
-      successCriteria: ['Insight honors user voice', 'Metric feels actionable', 'Consent terms are clear'],
+      successCriteria: ['I craft insights that honor each user’s voice', 'I choose metrics that feel actionable for wellbeing', 'I make consent terms clear and easy to understand'],
       checkpoint: 'Teacher initial approval before sensing',
       aiOptional: {
         toolUse: 'Draft insight summary paragraphs',
@@ -186,7 +186,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       studentDirections: [
         'Select primary sensors and libraries',
         'Design circuit and enclosure sketch',
-        'Plan data storage workflow',
+        'Design data storage workflow and privacy safeguards',
         'List safety checks before deployment',
         'Review blueprint with teacher'
       ],
@@ -197,7 +197,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
         'Share safety checklist expectations'
       ],
       evidence: ['Sensing blueprint', 'Safety checklist'],
-      successCriteria: ['Sensors match goals', 'Circuit sketch is readable', 'Safety plan is complete'],
+      successCriteria: ['I select sensors that match our wellbeing goals', 'I draw circuit sketches that teammates can read', 'I document a safety plan that protects users and data'],
       checkpoint: 'Teacher signs blueprint pre-build',
       aiOptional: {
         toolUse: 'Generate diagram labels automatically',
@@ -224,7 +224,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
         'Facilitate sprint feedback loop'
       ],
       evidence: ['Notebook file', 'Insight statement', 'User feedback record'],
-      successCriteria: ['Charts are legible', 'Insight is evidence-based', 'Nudge respects user agency'],
+      successCriteria: ['I design charts that are legible on small screens', 'I deliver insights that stay evidence-based and accurate', 'I recommend nudges that respect user agency and choice'],
       checkpoint: 'Teacher reviews notebook outputs',
       aiOptional: {
         toolUse: 'Suggest chart styles from dataset',
@@ -238,7 +238,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       summary: 'Teams co-present wearables and transfer ownership to users.',
       studentDirections: [
         'Rehearse demo with user partner',
-        'Document setup in quick-start guide',
+        'Compile setup steps in a quick-start guide',
         'Deliver wellness plan conversation',
         'Gather commitments for ongoing check-ins',
         'Publish open documentation package'
@@ -250,7 +250,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
         'Ensure accessibility accommodations'
       ],
       evidence: ['Showcase recording', 'Quick-start guide', 'Follow-up plan'],
-      successCriteria: ['Demo runs smoothly', 'Guide uses plain language', 'Plan honors user choice'],
+      successCriteria: ['I run demos smoothly without exposing personal data', 'I write guides using plain, accessible language', 'I create ongoing support plans that honor user choice'],
       checkpoint: 'Teacher verifies follow-up schedule',
       aiOptional: {
         toolUse: 'Draft quick-start layout',

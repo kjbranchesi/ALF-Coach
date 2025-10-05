@@ -31,7 +31,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       ],
       students: [
         'Audit personal assumptions about AI',
-        'Document partner priorities and needs',
+        'Record partner priorities and needs',
         'Draft problem statements collaboratively'
       ],
       deliverables: ['Ethics reflection', 'Partner priority map', 'Problem statement'],
@@ -45,11 +45,11 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       teacher: [
         'Model data governance checklist',
         'Introduce NLP toolkits',
-        'Support multilingual data strategies'
+        'Coach multilingual data strategies'
       ],
       students: [
         'Inventory data sources and permissions',
-        'Plan preprocessing workflow',
+        'Design preprocessing workflow',
         'Draft bias monitoring criteria'
       ],
       deliverables: ['Pipeline architecture diagram', 'Data inventory log', 'Bias monitoring plan'],
@@ -87,7 +87,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       students: [
         'Train classification or clustering models',
         'Evaluate performance and fairness',
-        'Document human review checkpoints'
+        'Log human review checkpoints'
       ],
       deliverables: ['Model training notebook', 'Evaluation report', 'Human-in-loop protocol'],
       checkpoint: ['Teacher signs off on bias mitigation'],
@@ -105,7 +105,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       students: [
         'Prototype dashboards with clear filters',
         'Draft narrative policy summaries',
-        'Prepare briefing materials for stakeholders'
+        'Develop briefing materials for stakeholders'
       ],
       deliverables: ['Dashboard v1', 'Policy summary draft', 'Briefing kit outline'],
       checkpoint: ['Teacher ensures clarity of visuals'],
@@ -118,7 +118,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       teacher: [
         'Organize Civic Signals roundtable',
         'Facilitate translation services',
-        'Document commitments from agencies'
+        'Record commitments from agencies'
       ],
       students: [
         'Demo dashboards live',
@@ -135,8 +135,8 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       focus: 'Deploy toolkits and formalize civic tech partnerships.',
       teacher: [
         'Review implementation documentation',
-        'Support training for agency staff',
-        'Plan ongoing data refresh cadence'
+        'Facilitate training for agency staff',
+        'Schedule ongoing data refresh cadence'
       ],
       students: [
         'Publish open governance playbook',
@@ -149,7 +149,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Deliver an ethical AI dashboard that surfaces community needs for action'],
+    core: ['Design an ethical AI dashboard that surfaces community needs for action'],
     extras: [
       'Launch plain-language explainer campaign',
       'Prototype SMS feedback bot',
@@ -177,7 +177,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       summary: 'Students interrogate AI use in civic contexts and articulate guardrails.',
       studentDirections: [
         'Analyze civic tech case study',
-        'Discuss benefits and harms',
+        'Debate benefits and harms',
         'Write personal AI ethics stance',
         'Co-create team guardrail list',
         'Share guardrails with partners'
@@ -189,7 +189,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Invite partner feedback'
       ],
       evidence: ['Ethics stance memo', 'Team guardrail document'],
-      successCriteria: ['Stance references evidence', 'Guardrails are actionable', 'Partners endorse guardrails'],
+      successCriteria: ['I state our stance with evidence partners can verify', 'I define guardrails that are actionable for teams', 'I secure partner endorsement for the guardrails we set'],
       checkpoint: 'Teacher validates guardrails before data ingestion',
       aiOptional: {
         toolUse: 'Summarize debate transcripts',
@@ -205,7 +205,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Inventory all approved data sources',
         'Draw pipeline architecture diagram',
         'Define preprocessing methods',
-        'Document access permissions',
+        'Record access permissions and security roles',
         'Submit plan for approval'
       ],
       teacherSetup: [
@@ -215,7 +215,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Host architecture critique session'
       ],
       evidence: ['Architecture plan', 'Permission log'],
-      successCriteria: ['Plan protects privacy', 'Diagram is readable', 'Permissions are documented'],
+      successCriteria: ['I design implementation plans that protect privacy and data rights', 'I draw diagrams that teammates can read quickly', 'I document permissions and consents thoroughly'],
       checkpoint: 'Teacher approves plan before coding',
       aiOptional: {
         toolUse: 'Generate diagram layout',
@@ -232,8 +232,8 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Train baseline model',
         'Evaluate accuracy and fairness',
         'Test bias mitigation techniques',
-        'Document human oversight checkpoints',
-        'Prepare evaluation brief'
+        'Log human oversight checkpoints',
+        'Draft evaluation brief'
       ],
       teacherSetup: [
         'Provide evaluation rubrics',
@@ -242,7 +242,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Review oversight documentation'
       ],
       evidence: ['Model notebook', 'Evaluation brief'],
-      successCriteria: ['Metrics include fairness', 'Mitigations are justified', 'Oversight plan is clear'],
+      successCriteria: ['I choose metrics that include fairness and bias checks', 'I justify mitigations with evidence and policies', 'I outline an oversight plan that is clear and enforceable'],
       checkpoint: 'Teacher approves model before deployment',
       aiOptional: {
         toolUse: 'Suggest hyperparameters quickly',
@@ -268,7 +268,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         'Coordinate translation support'
       ],
       evidence: ['Briefing deck', 'Policy summary', 'Roadmap document'],
-      successCriteria: ['Dashboard is clear', 'Policy asks are actionable', 'Ethics addressed confidently'],
+      successCriteria: ['I design a dashboard that is clear for community partners', 'I make policy asks that are actionable and concrete', 'I address ethical considerations confidently with supporting evidence'],
       checkpoint: 'Teacher ensures roadmap shared',
       aiOptional: {
         toolUse: 'Draft executive summary',

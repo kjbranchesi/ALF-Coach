@@ -26,7 +26,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
       kind: 'Foundations',
       focus: 'What is eDNA? Safety, ethics, and permissions for water sampling.',
       teacher: ['Explain eDNA concept', 'Review safety checklist', 'Confirm partner permissions'],
-      students: ['Assemble sampler kit', 'Practice labeling', 'Draft tide‑safe plan'],
+      students: ['Assemble sampler kit', 'Label sample bottles during practice', 'Draft tide‑safe plan'],
       deliverables: ['Sampler checklist', 'Safety acknowledgement'],
       checkpoint: ['Partner/guardian permission packets cleared'],
       assignments: ['A1']
@@ -80,7 +80,11 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish eDNA trends and a stewardship action brief'],
+    core: [
+      'Design and conduct safe eDNA sampling with partners and permissions',
+      'Analyze biodiversity trends and model climate stress scenarios',
+      'Develop stewardship action plans and communicate limits with community partners'
+    ],
     extras: [
       'Open chain‑of‑custody template',
       'Student tide‑safety guide',
@@ -105,10 +109,15 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
       id: 'A1',
       title: 'eDNA 101 + Safety',
       summary: 'Learn eDNA basics and pass safety/permissions.',
-      studentDirections: ['Explain eDNA', 'Assemble kit', 'Label samples', 'List safety rules', 'Sign acknowledgement'],
-      teacherSetup: ['Teach eDNA', 'Provide kit parts', 'Review safety + permissions'],
+      studentDirections: ['Explain eDNA and why it matters locally', 'Assemble sampler kit following SOP', 'Rehearse labeling and storage procedures', 'List safety rules and contingencies', 'Sign acknowledgement with partner approval'],
+      teacherSetup: ['Teach eDNA concepts with examples', 'Provide kit parts and SOPs', 'Review safety, permissions, and contingencies'],
       evidence: ['Safety acknowledgement', 'Kit checklist'],
-      successCriteria: ['I explain eDNA', 'I assemble correctly', 'I follow rules']
+      successCriteria: ['I explain eDNA in my own words with accuracy', 'I assemble and label kits following safety rules', 'I commit to safety and permission agreements'],
+      aiOptional: {
+        toolUse: 'Generate simple analogies to explain eDNA to families',
+        critique: 'Check AI analogies for scientific accuracy',
+        noAIAlt: 'Use partner-supplied explanation guide'
+      }
     },
     {
       id: 'A2',
@@ -124,10 +133,15 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
       id: 'A3',
       title: 'Trends Dashboard + Brief',
       summary: 'Visualize results and draft insights.',
-      studentDirections: ['Load data', 'Plot trends', 'Note hotspots', 'Draft briefing line', 'Cite sources'],
-      teacherSetup: ['Provide template', 'Model charts', 'Check sources'],
+      studentDirections: ['Load lab or proxy results into template', 'Plot trends and hotspots with annotations', 'Draft briefing statements tying data to climate drivers', 'Cite sources and partners in dashboard', 'Propose stewardship actions in brief'],
+      teacherSetup: ['Provide dashboard template and examples', 'Model chart interpretation', 'Check sources and partner acknowledgements'],
       evidence: ['Dashboard', 'Brief v1'],
-      successCriteria: ['I chart clearly', 'I cite data', 'I propose actions']
+      successCriteria: ['I chart biodiversity trends clearly for the community', 'I cite data sources, labs, and partners transparently', 'I propose stewardship actions grounded in the evidence'],
+      aiOptional: {
+        toolUse: 'Summarize biodiversity trends into plain-language captions',
+        critique: 'Verify AI captions do not overstate certainty',
+        noAIAlt: 'Use caption writing checklist with peers'
+      }
     }
   ],
   polish: {

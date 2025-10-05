@@ -23,7 +23,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
   runOfShow: [
     { weekLabel: 'Week 1', kind: 'Foundations', focus: 'Climate justice and safe sensing in the community.',
       teacher: ['Share case studies', 'Review safety/consent', 'Model sensor basics'],
-      students: ['Draft consent form', 'Practice routes', 'Plan metrics'],
+      students: ['Draft consent form', 'Rehearse routes safely', 'Design metrics'],
       deliverables: ['Consent draft', 'Metric plan'], checkpoint: ['Admin/guardian review passed'], assignments: ['A1'] },
     { weekLabel: 'Week 2', kind: 'Planning', focus: 'Assemble wearables and design route plan.',
       teacher: ['Approve BOM', 'Supervise assembly', 'Set sampling windows'],
@@ -43,11 +43,15 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
       deliverables: ['Pitch deck', 'Commitment tracker'], checkpoint: ['Partner commitments recorded'], assignments: ['A4'] },
     { weekLabel: 'Week 7', kind: 'Extension', focus: 'Pilot setup and monitoring plan.',
       teacher: ['Guide pilot scoping', 'Review safety plan', 'Assign roles'],
-      students: ['Plan pilot', 'Define metrics', 'Schedule check‑ins'],
+      students: ['Design pilot', 'Define metrics', 'Schedule check‑ins'],
       deliverables: ['Pilot plan', 'Metrics sheet'], checkpoint: ['Safety plan signed'] }
   ],
   outcomes: {
-    core: ['Deploy wearable sensing to document inequities and propose remedies'],
+    core: [
+      'Design consent-centered sensing plans with justice-oriented metrics',
+      'Analyze wearable climate data to highlight inequities',
+      'Communicate community remedies through dashboards, memos, and pilots'
+    ],
     extras: ['Open dataset', 'Consent + privacy kit', 'Policy memo library', 'Pilot plan with partners'],
     audiences: ['City council', 'Public health', 'Neighborhood groups', 'Press']
   },
@@ -57,23 +61,62 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     safetyEthics: ['Consent for routes', 'Avoid risky areas', 'De‑identify personal data']
   },
   assignments: [
-    { id: 'A1', title: 'Consent + Metrics', summary: 'Draft consent and choose justice‑oriented metrics.',
-      studentDirections: ['Draft consent', 'Pick metrics', 'Map concerns', 'Confirm safety', 'Submit'],
-      teacherSetup: ['Share templates', 'Review safety', 'Approve metrics'],
-      evidence: ['Consent draft', 'Metric plan'], successCriteria: ['I respect privacy', 'I choose meaningful', 'I plan safely'] },
-    { id: 'A2', title: 'Build + Calibrate', summary: 'Assemble wearables and test calibration.',
-      studentDirections: ['Assemble kits', 'Calibrate', 'Record notes', 'Fix issues', 'Retest'],
-      teacherSetup: ['Approve BOM', 'Check calibration', 'Coach fixes'],
-      evidence: ['Calibration notes', 'Kit photos'], successCriteria: ['I assemble safely', 'I calibrate correctly', 'I document fixes'],
-      aiOptional: { toolUse: 'Suggest calibration steps', critique: 'Flag suspicious data', noAIAlt: 'Peer calibration review' } },
-    { id: 'A3', title: 'Routes + Uploads', summary: 'Collect data and upload clean daily.',
-      studentDirections: ['Walk routes', 'Upload data', 'Log consent', 'Flag outliers', 'Share summary'],
-      teacherSetup: ['Check safety', 'Review uploads', 'Coach outliers'],
-      evidence: ['Dataset v1', 'Consent log'], successCriteria: ['I log safely', 'I upload cleanly', 'I spot outliers'] },
-    { id: 'A4', title: 'Dashboard + Memo', summary: 'Publish visuals and write a policy memo.',
-      studentDirections: ['Build visuals', 'Draft memo', 'Cite data', 'Present', 'Revise'],
-      teacherSetup: ['Model visuals', 'Provide memo template', 'Coach revisions'],
-      evidence: ['Dashboard', 'Memo'], successCriteria: ['I visualize clearly', 'I argue fairly', 'I cite properly'] }
+    {
+      id: 'A1',
+      title: 'Consent + Metrics',
+      summary: 'Draft consent and choose justice‑oriented metrics.',
+      studentDirections: ['Draft consent form with partners', 'Pick justice-focused metrics and justify', 'Map community concerns and permissions', 'Confirm safety plan for routes', 'Submit for admin/guardian approval'],
+      teacherSetup: ['Share consent templates and scripts', 'Review safety requirements', 'Approve metrics with partners'],
+      evidence: ['Consent draft', 'Metric plan'],
+      successCriteria: ['I respect privacy and consent requirements fully', 'I choose metrics that reveal inequities and explain why', 'I plan routes and safety procedures responsibly'],
+      aiOptional: {
+        toolUse: 'Summarize climate justice data for consent context',
+        critique: 'Ensure AI summary uses inclusive language and accurate facts',
+        noAIAlt: 'Use public health briefings with teacher guidance'
+      }
+    },
+    {
+      id: 'A2',
+      title: 'Build + Calibrate',
+      summary: 'Assemble wearables and test calibration.',
+      studentDirections: ['Assemble wearable kits safely with PPE', 'Calibrate sensors using reference tools', 'Record calibration notes and time stamps', 'Fix issues and document changes', 'Retest until readings are within tolerance'],
+      teacherSetup: ['Approve BOM and tool usage', 'Check calibration results daily', 'Coach troubleshooting approaches'],
+      evidence: ['Calibration notes', 'Kit photos'],
+      successCriteria: ['I assemble kits safely following instructions', 'I calibrate sensors until readings are reliable', 'I document fixes so others can repeat them'],
+      aiOptional: {
+        toolUse: 'Suggest calibration troubleshooting steps',
+        critique: 'Flag AI suggestions that violate safety rules',
+        noAIAlt: 'Use peer calibration review checklist'
+      }
+    },
+    {
+      id: 'A3',
+      title: 'Routes + Uploads',
+      summary: 'Collect data and upload clean daily.',
+      studentDirections: ['Walk or ride routes within safety plan', 'Upload data daily with metadata', 'Log consent and opt-outs faithfully', 'Flag outliers or anomalies for review', 'Share daily justice summary with team'],
+      teacherSetup: ['Check safety compliance', 'Review uploads for quality', 'Coach handling of outliers and privacy'],
+      evidence: ['Dataset v1', 'Consent log'],
+      successCriteria: ['I collect data safely with consent respected', 'I upload clean datasets with clear labels', 'I detect and report outliers or privacy risks quickly'],
+      aiOptional: {
+        toolUse: 'Detect anomalies in uploaded datasets',
+        critique: 'Verify AI anomaly alerts against raw data',
+        noAIAlt: 'Use statistical outlier guide'
+      }
+    },
+    {
+      id: 'A4',
+      title: 'Dashboard + Memo',
+      summary: 'Publish visuals and write a policy memo.',
+      studentDirections: ['Build dashboards with accessible visuals', 'Draft policy memo referencing justice frameworks', 'Cite data sources and community voices', 'Present findings to partners for feedback', 'Revise memo and visuals based on input'],
+      teacherSetup: ['Model data storytelling and accessibility', 'Provide memo template and rubric', 'Coach revision loop with partners'],
+      evidence: ['Dashboard', 'Memo'],
+      successCriteria: ['I visualize climate inequities clearly and accessibly', 'I argue for remedies using data and community voices', 'I cite data sources and partners properly'],
+      aiOptional: {
+        toolUse: 'Draft memo outline highlighting key policy asks',
+        critique: 'Ensure AI outline reflects justice lens and accurate data',
+        noAIAlt: 'Use memo outline worksheet with teacher feedback'
+      }
+    }
   ],
   polish: {
     microRubric: ['Consent + privacy', 'Reliable measurements', 'Accessible dashboard', 'Actionable policy'],

@@ -68,7 +68,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
       students: [
         'Log travel times and obstacles',
         'Capture geotagged observations',
-        'Document stories with consent'
+        'Capture stories with consent and audio releases'
       ],
       deliverables: ['GIS data layers', 'Narrative audio clips', 'Daily synthesis notes'],
       checkpoint: ['Teacher reviews data completeness'],
@@ -136,7 +136,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
       teacher: [
         'Review playbook structure',
         'Connect teams with city staff',
-        'Plan press and community rollout'
+        'Coordinate press and community rollout with communications team'
       ],
       students: [
         'Write action steps with timelines',
@@ -149,7 +149,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     }
   ],
   outcomes: {
-    core: ['Publish an equity-driven neighborhood mobility action playbook'],
+    core: ['Develop an equity-driven neighborhood mobility action playbook'],
     extras: [
       'Produce short documentary on commute stories',
       'Launch pop-up transportation resource fair',
@@ -189,7 +189,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
         'Facilitate restorative discussion'
       ],
       evidence: ['Story collage', 'Justice commitment list'],
-      successCriteria: ['Stories represent diverse voices', 'Commitments feel actionable', 'Presentation centers community'],
+      successCriteria: ['I surface stories that represent diverse community voices', 'I secure commitments that feel actionable and specific', 'I present findings in ways that center community needs'],
       checkpoint: 'Teacher reviews commitments before share',
       aiOptional: {
         toolUse: 'Transcribe audio interviews quickly',
@@ -204,7 +204,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
       studentDirections: [
         'Select routes for data collection',
         'Draft survey and interview questions',
-        'Plan walk audit logistics',
+        'Organize walk audit logistics with partners',
         'Assign research roles clearly',
         'Submit toolkit for approval'
       ],
@@ -215,7 +215,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
         'Offer translation resources'
       ],
       evidence: ['Research toolkit', 'Approved schedule'],
-      successCriteria: ['Methods triangulate data', 'Questions remain unbiased', 'Schedule supports inclusivity'],
+      successCriteria: ['I design methods that triangulate multiple data sources', 'I keep interview questions unbiased and respectful', 'I schedule engagement so participation stays inclusive'],
       checkpoint: 'Teacher signs toolkit pre-fieldwork',
       aiOptional: {
         toolUse: 'Generate draft survey translations',
@@ -241,7 +241,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
         'Arrange community feedback panel'
       ],
       evidence: ['Equity dashboard', 'Pilot test report'],
-      successCriteria: ['Insights cite data', 'Pilots respond to needs', 'Results include user feedback'],
+      successCriteria: ['I cite data sources for every insight we share', 'I design pilot ideas that respond to stated needs', 'I include user feedback when reporting results'],
       checkpoint: 'Teacher validates pilots are documented',
       aiOptional: {
         toolUse: 'Cluster data into themes',
@@ -256,7 +256,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
       summary: 'Teams publish action plans and secure stakeholder commitments.',
       studentDirections: [
         'Draft action steps with owners',
-        'Prepare summit presentation deck',
+        'Develop summit presentation deck with visuals',
         'Facilitate solution workshop',
         'Capture pledges and resources',
         'Distribute playbook widely'
@@ -268,7 +268,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
         'Support media outreach'
       ],
       evidence: ['Published playbook', 'Summit recording', 'Pledge tracker'],
-      successCriteria: ['Playbook lists clear actions', 'Stakeholders pledge support', 'Distribution plan reaches community'],
+      successCriteria: ['I publish a playbook that lists clear next actions', 'I document stakeholder pledges and timelines', 'I distribute the plan so the entire community can access it'],
       checkpoint: 'Teacher confirms playbook delivery',
       aiOptional: {
         toolUse: 'Design playbook layout draft',
