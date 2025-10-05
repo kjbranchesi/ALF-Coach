@@ -9,11 +9,6 @@ export default function SamplesGallery() {
   const allProjects = listProjectsV2();
   const [band, setBand] = useState<'All' | 'ES' | 'MS' | 'HS'>('All');
   const [subject, setSubject] = useState<string>('All');
-  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
-
-  const toggleFlip = (id: string) => {
-    setFlipped(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
   // Helper: expand project subjects to include rollups like "STEM"
   const expandSubjects = (list: string[]): string[] => {
@@ -158,123 +153,65 @@ export default function SamplesGallery() {
                 const canShowImage = typeof project.image === 'string' && project.image.length > 0;
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
-                const isFlipped = !!flipped[project.id];
                 const shortTagline = truncate(project.tagline);
 
                 return (
                 <article
                   key={project.id}
-                  className="squircle-card group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300">
-                  <div className="flip-card">
-                    <div className={`flip-inner ${isFlipped ? 'flipped' : ''}`}>
-                      {/* Front */}
-                      <div className="flip-face">
-                        <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
-                          {canShowImage && (
-                            <img
-                              src={project.image as string}
-                              alt={`${project.title} hero`}
-                              className="h-full w-full object-cover"
-                              loading="lazy"
-                            />
-                          )}
-                          {/* Mobile flip toggle (only show on small screens) */}
-                          <div className="absolute top-2 right-2 md:hidden">
-                            <button
-                              type="button"
-                              className="rounded-xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 px-3 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-200 shadow hover:bg-white"
-                              aria-label={isFlipped ? 'Show front of card' : 'Show back summary'}
-                              onClick={() => toggleFlip(project.id)}
-                            >
-                              {isFlipped ? 'Details' : 'Quick view'}
-                            </button>
-                          </div>
-                        </div>
+                  className="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 transition-shadow duration-300">
 
-                        <div className="flex flex-col gap-4 p-6 sm:p-7 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                              {project.title}
-                            </h3>
-                            <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                              <span className="brand-chip">
-                                <Users className="w-4 h-4" />
-                                {project.gradeBand}
-                              </span>
-                              <span className="brand-chip">
-                                <Clock className="w-4 h-4" />
-                                {project.timeframe}
-                              </span>
-                              {project.subjects.length > 0 && (
-                                <span className="brand-chip max-w-full">
-                                  <BookOpen className="w-4 h-4 flex-shrink-0" />
-                                  <span className="truncate">
-                                    {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
-                                  </span>
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                  {/* Image container with overlay */}
+                  <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
+                    {canShowImage && (
+                      <img
+                        src={project.image as string}
+                        alt={`${project.title} hero`}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    )}
 
-                          <div className="pt-2 mt-auto">
-                            <button
-                              type="button"
-                              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
-                              onClick={() => navigate(`/app/showcase/${project.id}`)}
-                            >
-                              View project
-                            </button>
-                          </div>
-                        </div>
+                    {/* Slide-up overlay with tagline */}
+                    <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out bg-gradient-to-t from-slate-900/95 via-slate-900/90 to-slate-900/60 backdrop-blur-sm flex items-end p-6">
+                      <p className="text-sm text-white leading-relaxed">
+                        {shortTagline}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4 p-6 sm:p-7">
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                        {project.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                        <span className="brand-chip">
+                          <Users className="w-4 h-4" />
+                          {project.gradeBand}
+                        </span>
+                        <span className="brand-chip">
+                          <Clock className="w-4 h-4" />
+                          {project.timeframe}
+                        </span>
+                        {project.subjects.length > 0 && (
+                          <span className="brand-chip max-w-full">
+                            <BookOpen className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate">
+                              {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
+                            </span>
+                          </span>
+                        )}
                       </div>
+                    </div>
 
-                      {/* Back */}
-                      <div className="flip-face flip-back">
-                        <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
-                          {canShowImage && (
-                            <img
-                              src={project.image as string}
-                              alt=""
-                              aria-hidden="true"
-                              className="h-full w-full object-cover opacity-80"
-                              loading="lazy"
-                            />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70" />
-                          {/* Mobile flip toggle on back */}
-                          <div className="absolute top-2 right-2 md:hidden">
-                            <button
-                              type="button"
-                              className="rounded-xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 px-3 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-200 shadow hover:bg-white"
-                              aria-label={isFlipped ? 'Show front of card' : 'Show back summary'}
-                              onClick={() => toggleFlip(project.id)}
-                            >
-                              {isFlipped ? 'Details' : 'Quick view'}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-4 p-6 sm:p-7 flex-1">
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                              {project.title}
-                            </h3>
-                            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                              {shortTagline}
-                            </p>
-                          </div>
-
-                          <div className="pt-2 mt-auto">
-                            <button
-                              type="button"
-                              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
-                              onClick={() => navigate(`/app/showcase/${project.id}`)}
-                            >
-                              View project
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="pt-2 mt-auto">
+                      <button
+                        type="button"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        onClick={() => navigate(`/app/showcase/${project.id}`)}
+                      >
+                        View project
+                      </button>
                     </div>
                   </div>
                 </article>
