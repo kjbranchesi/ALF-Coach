@@ -183,9 +183,11 @@ export default function SamplesGallery() {
                     </div>
                   </div>
 
-                  {/* DEFAULT CONTENT - visible by default, fades out on hover */}
-                  <div className="default-content absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:p-7 bg-white dark:bg-slate-900 opacity-100 group-hover:opacity-0 transition-opacity duration-[450ms] pointer-events-none group-hover:pointer-events-none">
-                    <div className="space-y-2">
+                  {/* Content area - absolute positioned to avoid affecting card height */}
+                  <div className="absolute inset-x-0 bottom-0 flex flex-col bg-white dark:bg-slate-900 p-6 sm:p-7">
+
+                    {/* DEFAULT CONTENT - visible by default, fades out on hover */}
+                    <div className="default-content space-y-2 opacity-100 group-hover:opacity-0 transition-opacity duration-[450ms] pointer-events-none group-hover:pointer-events-none">
                       <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
                         {project.title}
                       </h3>
@@ -208,13 +210,9 @@ export default function SamplesGallery() {
                         )}
                       </div>
                     </div>
-                  </div>
 
-                  {/* HOVER CONTENT - completely different information, hidden by default */}
-                  <div className="hover-content absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6 sm:p-7 bg-white dark:bg-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-[450ms] pointer-events-none group-hover:pointer-events-auto">
-
-                    {/* What students accomplish */}
-                    <div className="space-y-3">
+                    {/* HOVER CONTENT - completely different information, hidden by default */}
+                    <div className="hover-content absolute top-0 left-0 right-0 space-y-3 p-6 sm:p-7 opacity-0 group-hover:opacity-100 transition-all duration-[450ms] pointer-events-none group-hover:pointer-events-auto">
                       <div className="flex items-start gap-2.5">
                         <Presentation className="w-5 h-5 text-primary-500 dark:text-primary-400 flex-shrink-0 mt-0.5" />
                         <div className="flex-1 min-w-0">
@@ -234,14 +232,14 @@ export default function SamplesGallery() {
                       )}
                     </div>
 
-                    {/* CTA stays at bottom */}
-                    <div className="pt-2">
+                    {/* CTA ALWAYS VISIBLE at bottom */}
+                    <div className="pt-20 mt-auto">
                       <button
                         type="button"
                         className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
-                        <span>View full project</span>
+                        <span>View project</span>
                         <svg
                           className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
                           fill="none"
