@@ -154,17 +154,17 @@ export default function SamplesGallery() {
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
 
-                // NEW info revealed on hover - NOT visible by default!
+                // Hover reveals COMPLETELY different info
                 const whatStudentsCreate = project.coreOutcomes[0] || '';
                 const whoTheyPresentTo = project.primaryAudience;
-                const projectContext = project.microOverview[0] || project.tagline;
+                const projectSummary = project.microOverview[0] || project.tagline;
 
                 return (
                 <article
                   key={project.id}
-                  className="magnetic-card group relative overflow-hidden rounded-[22px] border border-black/8 dark:border-white/8 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(0,0,0,0.02)_inset] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.02)_inset] focus-within:ring-2 focus-within:ring-primary-300">
+                  className="magnetic-card group relative overflow-hidden rounded-[22px] border border-black/8 dark:border-white/8 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(0,0,0,0.02)_inset] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.02)_inset] focus-within:ring-2 focus-within:ring-primary-300 h-[480px]">
 
-                  {/* Image container */}
+                  {/* Image - stays visible, gets overlay on hover */}
                   <div className="image-container relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
                     {canShowImage && (
                       <img
@@ -175,31 +175,31 @@ export default function SamplesGallery() {
                       />
                     )}
 
-                    {/* Overlay - what students actually DO (hidden by default) */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/96 via-slate-900/92 to-slate-900/70 backdrop-blur-md flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-[450ms]">
-                      <p className="text-[13px] text-white/95 leading-relaxed font-medium tracking-tight">
-                        {projectContext}
+                    {/* Full overlay with summary on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary-900/98 via-primary-900/95 to-primary-900/80 backdrop-blur-md flex items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-[450ms]">
+                      <p className="text-sm text-white/95 leading-relaxed font-medium tracking-tight text-center">
+                        {projectSummary}
                       </p>
                     </div>
                   </div>
 
-                  <div className="magnetic-content flex flex-col gap-3 p-6 sm:p-7">
-                    {/* Title and existing badges */}
+                  {/* DEFAULT CONTENT - visible by default, fades out on hover */}
+                  <div className="default-content absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:p-7 bg-white dark:bg-slate-900 opacity-100 group-hover:opacity-0 transition-opacity duration-[450ms] pointer-events-none group-hover:pointer-events-none">
                     <div className="space-y-2">
-                      <h3 className="magnetic-title text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
                         {project.title}
                       </h3>
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        <span className="magnetic-badge brand-chip">
+                        <span className="brand-chip">
                           <Users className="w-4 h-4" />
                           {project.gradeBand}
                         </span>
-                        <span className="magnetic-badge brand-chip" style={{ transitionDelay: '25ms' }}>
+                        <span className="brand-chip">
                           <Clock className="w-4 h-4" />
                           {project.timeframe}
                         </span>
                         {project.subjects.length > 0 && (
-                          <span className="magnetic-badge brand-chip max-w-full" style={{ transitionDelay: '50ms' }}>
+                          <span className="brand-chip max-w-full">
                             <BookOpen className="w-4 h-4 flex-shrink-0" />
                             <span className="truncate">
                               {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
@@ -208,39 +208,40 @@ export default function SamplesGallery() {
                         )}
                       </div>
                     </div>
+                  </div>
 
-                    {/* NEW: What students create & who they present to (HIDDEN by default) */}
-                    <div className="magnetic-reveal overflow-hidden">
-                      <div className="space-y-2.5">
-                        {/* Authentic audience - NOT on card front */}
-                        <div className="flex items-start gap-2 text-[13px] text-slate-700 dark:text-slate-300">
-                          <Presentation className="w-4 h-4 text-primary-500 dark:text-primary-400 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <div className="font-semibold text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-0.5">
-                              Students present to
-                            </div>
-                            <div className="font-medium leading-tight">
-                              {whoTheyPresentTo}
-                            </div>
+                  {/* HOVER CONTENT - completely different information, hidden by default */}
+                  <div className="hover-content absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6 sm:p-7 bg-white dark:bg-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-[450ms] pointer-events-none group-hover:pointer-events-auto">
+
+                    {/* What students accomplish */}
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2.5">
+                        <Presentation className="w-5 h-5 text-primary-500 dark:text-primary-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-xs uppercase tracking-wide text-primary-600 dark:text-primary-400 mb-1">
+                            Students Present To
+                          </div>
+                          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+                            {whoTheyPresentTo}
                           </div>
                         </div>
-
-                        {/* Key outcome/deliverable - NOT on card front */}
-                        {whatStudentsCreate && (
-                          <div className="text-[12px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
-                            {whatStudentsCreate}
-                          </div>
-                        )}
                       </div>
+
+                      {whatStudentsCreate && (
+                        <div className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                          {whatStudentsCreate}
+                        </div>
+                      )}
                     </div>
 
-                    <div className="pt-2 mt-auto">
+                    {/* CTA stays at bottom */}
+                    <div className="pt-2">
                       <button
                         type="button"
                         className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
-                        <span>View project</span>
+                        <span>View full project</span>
                         <svg
                           className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
                           fill="none"
@@ -252,6 +253,7 @@ export default function SamplesGallery() {
                       </button>
                     </div>
                   </div>
+
                 </article>
               );
             })}

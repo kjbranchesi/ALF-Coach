@@ -1802,13 +1802,7 @@ function StageKickoffPanel({
   const guide = stageGuide(stage);
   const next = nextStage(stage);
   const continueLabel = next ? `Continue to ${labels[next]}` : 'Review project';
-  const stagePitfall: Record<Stage, string> = {
-    BIG_IDEA: 'Avoid topic-only statements (“solar panels”) or activity descriptions (“build a model”). Name the enduring understanding.',
-    ESSENTIAL_QUESTION: 'Avoid yes/no or recall questions. Aim for an open, arguable prompt.',
-    CHALLENGE: 'Anchor work in a real audience; avoid generic classroom-only tasks.',
-    JOURNEY: 'Plan in phases, not day-by-day tasks, so momentum is clear.',
-    DELIVERABLES: 'Focus on authentic artifacts and a light rubric—don’t grade every activity.'
-  };
+  // Pitfall hints removed per UX decision to keep panel lean.
   const prefersReducedMotion = useReducedMotion();
   const isSimpleStage = stage === 'BIG_IDEA' || stage === 'ESSENTIAL_QUESTION' || stage === 'CHALLENGE';
   const phasesCount = captured.journey?.phases?.length || 0;
@@ -1985,13 +1979,13 @@ function StageKickoffPanel({
             <div className="px-4 pb-4 pt-2 flex flex-col gap-2.5">
               <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
               {summary && summary.length > 0 && (
-                <div className="rounded-xl border border-gray-200/70 bg-white/80 px-3 py-2 shadow-sm dark:border-gray-800/70 dark:bg-gray-900/50">
-                  <p className="uppercase tracking-wide text-[10px] font-semibold text-gray-600 dark:text-gray-300 mb-1">Captured so far</p>
+                <div className="rounded-2xl border border-white/60 dark:border-white/10 bg-white/60 dark:bg-gray-900/40 backdrop-blur-sm px-3 py-2 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                  <p className="uppercase tracking-wide text-[10px] font-semibold text-gray-700 dark:text-gray-200 mb-1">Captured so far</p>
                   {renderSummary()}
                 </div>
               )}
-              <div className="text-[11px] text-gray-600 bg-white/70 border border-white/60 rounded-xl px-3 py-2 shadow-sm dark:border-gray-800/70 dark:bg-gray-900/50 dark:text-gray-300">
-                <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
+              <div className="text-[11px] text-gray-700 dark:text-gray-300 bg-white/60 dark:bg-gray-900/40 border border-white/60 dark:border-white/10 rounded-2xl px-3 py-2 shadow-sm backdrop-blur-sm">
+                <p className="font-semibold text-gray-700 dark:text-gray-200 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
                 <p className="leading-snug text-[12px]">{guide.tip}</p>
               </div>
               {/* Quick examples/tips and no public guardrails */}
@@ -2010,12 +2004,7 @@ function StageKickoffPanel({
                   <p className="mt-1 text-[11px] text-gray-600 dark:text-gray-400">Need ideas fast? Tap the lightbulb.</p>
                 )}
               </div>
-              {experience === 'new' && (
-                <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 shadow-sm dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
-                  <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>
-                  <p className="leading-snug">{stagePitfall[stage]}</p>
-                </div>
-              )}
+              {/* Gold Standard guidance merged above into "What good looks like" for simplicity */}
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
