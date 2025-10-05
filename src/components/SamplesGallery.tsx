@@ -9,14 +9,81 @@ export default function SamplesGallery() {
   const [band, setBand] = useState<'All' | 'ES' | 'MS' | 'HS'>('All');
   const [subject, setSubject] = useState<string>('All');
 
+  // Helper: expand project subjects to include rollups like "STEM"
+  const expandSubjects = (list: string[]): string[] => {
+    const norm = (s: string) => s.trim().toLowerCase();
+    const exact = new Set(list.map(norm));
+
+    const isStemExact = (
+      s: string
+    ) =>
+      [
+        // Science family
+        'science',
+        'environmental science',
+        'earth & space science',
+        'biology',
+        'marine biology',
+        'chemistry',
+        'physics',
+        'earth science',
+        'space science',
+        'geology',
+        'astronomy',
+        'oceanography',
+        'ecology',
+        'neuroscience',
+        'health sciences',
+        'nutrition',
+        'materials science',
+        'life science',
+        'physical science',
+        // Technology family
+        'technology',
+        'computer science',
+        'data science',
+        'artificial intelligence',
+        'ai',
+        'machine learning',
+        'robotics',
+        'sensors',
+        'digital fabrication',
+        // Engineering family
+        'engineering',
+        'design engineering',
+        'bioengineering',
+        'systems engineering',
+        'architecture',
+        // Mathematics family
+        'math',
+        'mathematics',
+        'statistics',
+        'data & statistics',
+        // Energy/Power (treated as STEM context in our showcases)
+        'energy',
+        // Legacy catch-all
+        'stem lab'
+      ].includes(s);
+
+    const isStem = Array.from(exact).some(isStemExact);
+    const out = new Set(list);
+    if (isStem) out.add('STEM');
+    return Array.from(out);
+  };
+
   const subjects = useMemo(() => {
     const set = new Set<string>();
-    allProjects.forEach(p => p.subjects.forEach(s => set.add(s)));
+    allProjects.forEach(p => expandSubjects(p.subjects).forEach(s => set.add(s)));
     return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
   }, [allProjects]);
 
   const projects = useMemo(() => {
-    return allProjects.filter(p => (band === 'All' || p.gradeBand === band) && (subject === 'All' || p.subjects.includes(subject)));
+    return allProjects.filter(p => {
+      if (band !== 'All' && p.gradeBand !== band) return false;
+      if (subject === 'All') return true;
+      const expanded = expandSubjects(p.subjects);
+      return expanded.includes(subject);
+    });
   }, [allProjects, band, subject]);
 
   return (
