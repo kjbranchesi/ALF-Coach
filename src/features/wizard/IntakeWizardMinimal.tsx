@@ -256,15 +256,16 @@ export default function IntakeWizardMinimal() {
               </p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.9fr)_minmax(0,1.15fr)] gap-4">
+            <div className="space-y-6">
+              {/* Age Range - 2x2 Grid on Desktop */}
               <div>
-                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Age range</div>
-                <div className="flex flex-col gap-2.5">
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2.5">Age range</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {AGE_GROUPS.map((a) => (
                     <button
                       key={a}
                       onClick={() => setAgeGroup(a)}
-                      className={`h-12 w-full rounded-full text-[14px] sm:text-[15px] font-medium border inline-flex items-center justify-center transition-all whitespace-nowrap ${
+                      className={`h-12 rounded-full text-[14px] sm:text-[15px] font-medium border inline-flex items-center justify-center transition-all ${
                         ageGroup === a
                           ? 'bg-primary-50 text-primary-700 border-primary-200 ring-2 ring-primary-200/70 shadow-[0_10px_20px_rgba(59,130,246,0.15)]'
                           : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 hover:shadow-sm'
@@ -275,25 +276,16 @@ export default function IntakeWizardMinimal() {
                   ))}
                 </div>
               </div>
+
+              {/* Project Duration - 2x2 Grid on Desktop */}
               <div>
-                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Class size (optional)</div>
-                <input
-                  value={classSize}
-                  onChange={(e) => setClassSize(e.target.value)}
-                  placeholder="e.g., 28"
-                  aria-label="Class size"
-                  inputMode="numeric"
-                  className="w-full h-12 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-4 text-[15px] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60 shadow-inner"
-                />
-              </div>
-              <div>
-                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Project duration</div>
-                <div className="flex flex-col gap-2.5">
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2.5">Project duration</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {DURATIONS.map((d) => (
                     <button
                       key={d.key}
                       onClick={() => setDuration(d.key)}
-                      className={`h-12 w-full rounded-full text-[15px] font-medium border inline-flex items-center justify-center transition-all ${
+                      className={`h-12 rounded-full text-[15px] font-medium border inline-flex items-center justify-center transition-all ${
                         duration === d.key
                           ? 'bg-primary-50 text-primary-700 border-primary-200 ring-2 ring-primary-200/70 shadow-[0_10px_20px_rgba(59,130,246,0.15)]'
                           : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 hover:shadow-sm'
@@ -304,6 +296,26 @@ export default function IntakeWizardMinimal() {
                   ))}
                 </div>
               </div>
+
+              {/* Class Size - Progressive Disclosure */}
+              <details className="group">
+                <summary className="cursor-pointer list-none text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors flex items-center gap-2">
+                  <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Add class size (optional)
+                </summary>
+                <div className="mt-2.5">
+                  <input
+                    value={classSize}
+                    onChange={(e) => setClassSize(e.target.value)}
+                    placeholder="e.g., 28"
+                    aria-label="Class size"
+                    inputMode="numeric"
+                    className="w-full sm:w-48 h-12 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-4 text-[15px] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60 shadow-inner"
+                  />
+                </div>
+              </details>
             </div>
 
             <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -333,10 +345,49 @@ export default function IntakeWizardMinimal() {
               </p>
             </header>
 
-            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.85fr)] lg:gap-6 xl:gap-8">
-              <div className="space-y-5">
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 bg-white/65 dark:bg-gray-900/60 shadow-sm space-y-3">
-                  <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            {/* Context Summary Banner */}
+            <div className="rounded-2xl border border-primary-200 dark:border-primary-700/60 bg-gradient-to-br from-primary-50/70 to-white dark:from-primary-900/20 dark:to-gray-900/60 p-5 shadow-sm">
+              <div className="text-xs uppercase tracking-wide font-semibold text-primary-700 dark:text-primary-300 mb-3">
+                Your Context
+              </div>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600 dark:text-gray-400">Subjects:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {selectedSubjects.length > 0
+                      ? selectedSubjects.map(subjectLabel).join(', ')
+                      : '—'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600 dark:text-gray-400">Age:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{ageGroup || '—'}</span>
+                </div>
+                {classSize && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 dark:text-gray-400">Class size:</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{classSize}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600 dark:text-gray-400">Duration:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {DURATIONS.find((d) => d.key === duration)?.label || '—'}
+                  </span>
+                </div>
+              </div>
+              {primarySubject && (
+                <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                  Primary focus: {subjectLabel(primarySubject)}
+                </div>
+              )}
+            </div>
+
+            {/* Project Details Form */}
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 bg-white/65 dark:bg-gray-900/60 shadow-sm space-y-4">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-2">
                     Project name
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">
                       Optional
@@ -345,23 +396,25 @@ export default function IntakeWizardMinimal() {
                   <input
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value.slice(0, 80))}
-                    placeholder="We’ll suggest names after the Big Idea"
+                    placeholder="We'll suggest names after the Big Idea"
                     aria-label="Project name"
                     maxLength={80}
                     className="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
                   />
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                    Skip this for now—we’ll generate name ideas once the Big Idea is set.
+                  <p className="mt-2 text-[11px] text-gray-500 dark:text-gray-400">
+                    Skip this for now—we'll generate name ideas once the Big Idea is set.
                   </p>
+                </div>
 
-                  <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-2">
                     Working topic or theme
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700 border border-rose-200">
                       Required
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    A rough starting point (e.g., “renewable energy”). We’ll turn this into a pedagogically rich Big Idea next.
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    A rough starting point (e.g., "renewable energy"). We'll turn this into a pedagogically rich Big Idea next.
                   </p>
                   <textarea
                     value={initialIdea}
@@ -372,61 +425,34 @@ export default function IntakeWizardMinimal() {
                     rows={3}
                     className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
                   />
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400">Max 200 characters</div>
-                </div>
-
-                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <button
-                    onClick={() => setStep(2)}
-                    className="px-6 h-12 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[15px] font-medium hover:bg-gray-200/90"
-                  >
-                    Back
-                  </button>
-                  <div className="flex flex-col gap-2 sm:items-end">
-                    <button
-                      onClick={startBuilding}
-                      disabled={isLaunching || !initialIdea.trim()}
-                      className="px-6 h-12 rounded-2xl bg-primary-600 text-white text-[15px] font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:bg-gray-300"
-                    >
-                      {isLaunching ? 'Preparing…' : 'Design Your Project'}
-                    </button>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center sm:text-right">
-                      Next: co-design in five short steps (Big Idea → Deliverables)
-                    </p>
-                  </div>
+                  <div className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">Max 200 characters</div>
                 </div>
               </div>
 
-              <aside className="space-y-4 mt-6 lg:mt-0 lg:sticky lg:top-6 lg:self-start">
-                <div className="space-y-3">
-                  <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 bg-white/65 dark:bg-gray-900/60 shadow-sm">
-                    <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Subjects</div>
-                    <div className="mt-1 text-sm text-gray-800 dark:text-gray-200">
-                      {selectedSubjects.length > 0
-                        ? selectedSubjects.map(subjectLabel).join(', ')
-                        : '—'}
-                    </div>
-                    {primarySubject && (
-                      <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                        Primary: {subjectLabel(primarySubject)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 bg-white/65 dark:bg-gray-900/60 shadow-sm">
-                    <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Class profile</div>
-                    <div className="mt-1 text-sm text-gray-800 dark:text-gray-200">{ageGroup || '—'}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Class size: {classSize || '—'}</div>
-                  </div>
-                  <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 bg-white/65 dark:bg-gray-900/60 shadow-sm">
-                    <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Duration</div>
-                    <div className="mt-1 text-sm text-gray-800 dark:text-gray-200">
-                      {DURATIONS.find((d) => d.key === duration)?.label}
-                    </div>
-                  </div>
-                </div>
+              {/* What Happens Next Preview */}
+              <StageRoadmapPreview variant="compact" />
 
-                <StageRoadmapPreview variant="compact" />
-              </aside>
+              {/* Navigation */}
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-6 h-12 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[15px] font-medium hover:bg-gray-200/90"
+                >
+                  Back
+                </button>
+                <div className="flex flex-col gap-2 sm:items-end">
+                  <button
+                    onClick={startBuilding}
+                    disabled={isLaunching || !initialIdea.trim()}
+                    className="px-6 h-12 rounded-2xl bg-primary-600 text-white text-[15px] font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:bg-gray-300"
+                  >
+                    {isLaunching ? 'Preparing…' : 'Design Your Project'}
+                  </button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center sm:text-right">
+                    Next: co-design in five short steps (Big Idea → Deliverables)
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
