@@ -23,7 +23,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore bio-sensing fundamentals and define wellness questions to anchor the project.',
+      focus: 'Explore bio-sensing fundamentals and define wellness questions to anchor the project. Teachers demonstrate commercial wearable dashboards. Students audit personal wellness data habits.',
       teacher: [
         'Demonstrate commercial wearable dashboards',
         'Guide consent and data ethics discussion',
@@ -41,7 +41,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan sensing approach and data architecture so prototypes respect privacy.',
+      focus: 'Plan sensing approach and data architecture so prototypes respect privacy. Teachers introduce sensor options and libraries. Students select sensors matched to goals.',
       teacher: [
         'Introduce sensor options and libraries',
         'Model low-voltage circuit planning',
@@ -59,7 +59,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype wearable hardware and collect pilot data to translate insights into form.',
+      focus: 'Prototype wearable hardware and collect pilot data to translate insights into form. Teachers facilitate soldering and fabrication labs. Students assemble wearable prototypes carefully.',
       teacher: [
         'Facilitate soldering and fabrication labs',
         'Run code review office hours',
@@ -78,7 +78,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Visualize data and design behavior nudges that motivate meaningful wellness choices.',
+      focus: 'Visualize data and design behavior nudges that motivate meaningful wellness choices. Teachers model dashboard prototyping in notebooks. Students clean datasets for clarity.',
       teacher: [
         'Model dashboard prototyping in notebooks',
         'Facilitate behavior science mini-lessons',
@@ -96,7 +96,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Showcase wearables and co-present wellness plans with the users who inspired them.',
+      focus: 'Showcase wearables and co-present wellness plans with the users who inspired them. Teachers set up hands-on demo stations. Students demo wearables alongside users.',
       teacher: [
         'Set up hands-on demo stations',
         'Invite health professionals for feedback',
@@ -114,7 +114,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Publish documentation and handoff support routines so support continues beyond class.',
+      focus: 'Publish documentation and handoff support routines so support continues beyond class. Teachers review maintenance documentation expectations. Students publish build guides with code snippets.',
       teacher: [
         'Review maintenance documentation expectations',
         'Connect teams with school wellness staff',
@@ -155,7 +155,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Wellness Insight Map',
-      summary: 'Students define user needs and articulate ethical data boundaries to guide every design choice.',
+      summary: 'Students define user needs and articulate ethical data boundaries to guide every design choice. Students interview user about wellness goals. Teachers provide interview scaffolds.',
       studentDirections: [
         'Interview user about wellness goals',
         'Map current habits and supports',
@@ -181,7 +181,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Sensing Blueprint',
-      summary: 'Teams outline sensing strategy, data flow, and safety plans to safeguard users and data.',
+      summary: 'Teams outline sensing strategy, data flow, and safety plans to safeguard users and data. Students select primary sensors and libraries. Teachers provide blueprint template.',
       studentDirections: [
         'Select primary sensors and libraries',
         'Design circuit and enclosure sketch',
@@ -207,7 +207,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Data Story Sprint',
-      summary: 'Students clean pilot data and craft actionable insights that inform wellness nudges.',
+      summary: 'Students clean pilot data and craft actionable insights that inform wellness nudges. Students import data into notebook. Teachers share starter notebooks.',
       studentDirections: [
         'Import data into notebook',
         'Remove anomalies responsibly',
@@ -233,7 +233,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Wearable Launch Studio',
-      summary: 'Teams co-present wearables and transfer ownership to users.',
+      summary: 'Teams co-present wearables and transfer ownership to users. Students rehearse demo with user partner. Teachers schedule showcase slots.',
       studentDirections: [
         'Rehearse demo with user partner',
         'Compile setup steps in a quick-start guide',

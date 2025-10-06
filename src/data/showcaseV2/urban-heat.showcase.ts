@@ -24,7 +24,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch urgent questions about neighborhood heat inequities to rally shared purpose.',
+      focus: 'Launch urgent questions about neighborhood heat inequities to rally shared purpose. Teachers showcase heat map data from local news. Students analyze who suffers most during heat waves.',
       teacher: [
         'Showcase heat map data from local news',
         'Facilitate empathy interviews with heat-vulnerable neighbors',
@@ -42,7 +42,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan data collection routes and partnership protocols so fieldwork earns community trust.',
+      focus: 'Plan data collection routes and partnership protocols so fieldwork earns community trust. Teachers co-design fieldwork routes with GIS layers. Students map priority blocks for heat sampling.',
       teacher: [
         'Co-design fieldwork routes with GIS layers',
         'Review safety expectations with partners',
@@ -60,7 +60,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Capture temperature, interviews, and observations in the field to reveal lived heat realities.',
+      focus: 'Capture temperature, interviews, and observations in the field to reveal lived heat realities. Teachers shadow teams to ensure data integrity. Students log surface and air temperatures hourly.',
       teacher: [
         'Shadow teams to ensure data integrity',
         'Coordinate backup cooling stations',
@@ -78,7 +78,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and storyboard community heat narratives that connect data to people.',
+      focus: 'Analyze findings and storyboard community heat narratives that connect data to people. Teachers model data cleaning in spreadsheets. Students visualize hotspots versus canopy coverage.',
       teacher: [
         'Model data cleaning in spreadsheets',
         'Coach teams synthesizing equity indicators',
@@ -96,7 +96,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype and test cooling interventions to show impact before the summit.',
+      focus: 'Prototype and test cooling interventions to show impact before the summit. Teachers facilitate material sourcing and budget tracking. Students construct small-scale cooling prototypes.',
       teacher: [
         'Facilitate material sourcing and budget tracking',
         'Coordinate pilot testing locations',
@@ -114,7 +114,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host the HeatSafe summit sharing action plans with stakeholders to secure commitments.',
+      focus: 'Host the HeatSafe summit sharing action plans with stakeholders to secure commitments. Teachers invite city, health, and youth partners. Students stage interactive cooling demos.',
       teacher: [
         'Invite city, health, and youth partners',
         'Coach students rehearsing solution pitches',
@@ -156,7 +156,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Heat Watch Story Launch',
-      summary: 'Students build background knowledge and craft community empathy profiles.',
+      summary: 'Students build background knowledge and craft community empathy profiles. Students analyze local heat data headlines in teams. Teachers curate heat news gallery walk.',
       studentDirections: [
         'Analyze local heat data headlines in teams',
         'Interview partner about hot-weather experiences',
@@ -182,7 +182,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Fieldwork Safety Plan',
-      summary: 'Teams chart data routes, protocols, and partner commitments for heat mapping.',
+      summary: 'Teams chart data routes, protocols, and partner commitments for heat mapping. Students map three priority blocks per team. Teachers provide GIS layers and census overlays.',
       studentDirections: [
         'Map three priority blocks per team',
         'List safety checkpoints and hydration spots',
@@ -208,7 +208,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Heat Story Data Sprint',
-      summary: 'Teams synthesize heat data into narrative dashboards and briefs.',
+      summary: 'Teams synthesize heat data into narrative dashboards and briefs. Students clean data and flag anomalies. Teachers model spreadsheet cleaning shortcuts.',
       studentDirections: [
         'Clean data and flag anomalies',
         'Visualize temperatures against tree canopy',
@@ -234,7 +234,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Cooling Intervention Pitch',
-      summary: 'Teams design, test, and pitch cooling interventions to stakeholders.',
+      summary: 'Teams design, test, and pitch cooling interventions to stakeholders. Students prototype cooling solution with budget sheet. Teachers provide prototyping materials and sensors.',
       studentDirections: [
         'Prototype cooling solution with budget sheet',
         'Test intervention and record temperature delta',

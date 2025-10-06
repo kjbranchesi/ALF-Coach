@@ -23,7 +23,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore the science of play and observe local public spaces to find joyful gaps.',
+      focus: 'Explore the science of play and observe local public spaces to find joyful gaps. Teachers share global playable city examples. Students capture space usage through annotated sketches.',
       teacher: [
         'Share global playable city examples',
         'Lead observational walk audits',
@@ -41,7 +41,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Define design principles and prototype strategy so testing stays intentional.',
+      focus: 'Define design principles and prototype strategy so testing stays intentional. Teachers model rapid game mechanic ideation. Students draft playable design principles.',
       teacher: [
         'Model rapid game mechanic ideation',
         'Introduce accessibility design toolkit',
@@ -59,7 +59,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype, playtest, and iterate interventions in public space to see what sparks connection.',
+      focus: 'Prototype, playtest, and iterate interventions in public space to see what sparks connection. Teachers coordinate material sourcing and transport. Students build low-fidelity play installations.',
       teacher: [
         'Coordinate material sourcing and transport',
         'Ensure permits and safety protocols',
@@ -78,7 +78,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Fabricate high-fidelity installations and design the festival experience for real-world durability.',
+      focus: 'Fabricate high-fidelity installations and design the festival experience for real-world durability. Teachers coach fabrication and finishing techniques. Students construct durable final installations.',
       teacher: [
         'Coach fabrication and finishing techniques',
         'Coordinate multisensory accessibility features',
@@ -96,7 +96,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host the playable city festival and capture impact to show joy as infrastructure.',
+      focus: 'Host the playable city festival and capture impact to show joy as infrastructure. Teachers manage event logistics with city partners. Students facilitate installations with visitors.',
       teacher: [
         'Manage event logistics with city partners',
         'Coordinate volunteer training',
@@ -114,7 +114,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Pitch permanent installations and hand off assets so the city keeps playing.',
+      focus: 'Pitch permanent installations and hand off assets so the city keeps playing. Teachers facilitate proposal writing workshops. Students develop permanent installation proposals.',
       teacher: [
         'Facilitate proposal writing workshops',
         'Connect students with urban planners',
@@ -155,7 +155,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Play Observation Field Notes',
-      summary: 'Students analyze public space play behaviors and gaps to ground opportunity mapping.',
+      summary: 'Students analyze public space play behaviors and gaps to ground opportunity mapping. Students observe public space behavior patterns. Teachers model observation techniques.',
       studentDirections: [
         'Observe public space behavior patterns',
         'Sketch how people interact',
@@ -181,7 +181,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Playable Concept Blueprint',
-      summary: 'Teams articulate design principles and prototype plans that give playtests a clear purpose.',
+      summary: 'Teams articulate design principles and prototype plans that give playtests a clear purpose. Students write three design principles. Teachers share blueprint exemplars.',
       studentDirections: [
         'Write three design principles',
         'Storyboard interactive experience',
@@ -207,7 +207,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Playtest Sprint Log',
-      summary: 'Students run iterative playtests and document improvements with real community feedback.',
+      summary: 'Students run iterative playtests and document improvements with real community feedback. Students run playtest with community. Teachers schedule playtest windows.',
       studentDirections: [
         'Run playtest with community',
         'Record engagement metrics',
@@ -233,7 +233,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Playable Festival Pitch',
-      summary: 'Teams showcase installations and pitch permanent adoption.',
+      summary: 'Teams showcase installations and pitch permanent adoption. Students craft story-driven pitch deck. Teachers coordinate festival logistics.',
       studentDirections: [
         'Craft story-driven pitch deck',
         'Facilitate festival installation',

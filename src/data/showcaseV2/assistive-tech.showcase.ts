@@ -23,7 +23,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore disability justice and human-centered engineering norms to anchor co-design partnerships.',
+      focus: 'Explore disability justice and human-centered engineering norms to anchor co-design partnerships. Teachers share disability justice framework. Students reflect on biases using journaling prompts.',
       teacher: [
         'Share disability justice framework',
         'Model asset-based interview techniques',
@@ -41,7 +41,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Co-create design briefs with partner stakeholders so specs mirror lived experience.',
+      focus: 'Co-create design briefs with partner stakeholders so specs mirror lived experience. Teachers facilitate co-design kickoff meetings. Students conduct guided interviews with partners.',
       teacher: [
         'Facilitate co-design kickoff meetings',
         'Model translating interviews into needs',
@@ -59,7 +59,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype, test, and iterate assistive concepts with partners to capture authentic feedback.',
+      focus: 'Prototype, test, and iterate assistive concepts with partners to capture authentic feedback. Teachers coach fabrication tool safety. Students build low-fidelity prototypes quickly.',
       teacher: [
         'Coach fabrication tool safety',
         'Run daily stand-ups for blockers',
@@ -78,7 +78,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Engineer high-fidelity devices and validate performance to prove everyday reliability.',
+      focus: 'Engineer high-fidelity devices and validate performance to prove everyday reliability. Teachers coach teams through advanced fabrication techniques. Students fabricate refined device version.',
       teacher: [
         'Coach teams through advanced fabrication techniques',
         'Model tolerance testing routines',
@@ -96,7 +96,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host inclusive product launch and training sessions that empower partners to use devices confidently.',
+      focus: 'Host inclusive product launch and training sessions that empower partners to use devices confidently. Teachers coordinate accessible showcase logistics. Students co-present story with partner voice.',
       teacher: [
         'Coordinate accessible showcase logistics',
         'Coach storytelling with partners',
@@ -114,7 +114,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Plan long-term support and open-source documentation so solutions stay maintainable after showcase.',
+      focus: 'Plan long-term support and open-source documentation so solutions stay maintainable after showcase. Teachers facilitate sustainability planning workshop. Students publish open-source build guide.',
       teacher: [
         'Facilitate sustainability planning workshop',
         'Review IP and sharing considerations',
@@ -155,7 +155,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Design Equity Primer',
-      summary: 'Students surface personal assumptions and align on inclusive design commitments.',
+      summary: 'Students surface personal assumptions and align on inclusive design commitments. Students analyze disability justice readings and take notes. Teachers curate multimedia disability voices.',
       studentDirections: [
         'Analyze disability justice readings and take notes',
         'Journal three personal design biases',
@@ -181,7 +181,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Co-Design Brief',
-      summary: 'Teams translate partner interviews into actionable design briefs.',
+      summary: 'Teams translate partner interviews into actionable design briefs. Students transcribe interview highlights. Teachers provide brief templates.',
       studentDirections: [
         'Transcribe interview highlights',
         'Cluster needs into themes',
@@ -207,7 +207,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Prototype Testing Lab',
-      summary: 'Students iterate assistive prototypes using structured partner feedback.',
+      summary: 'Students iterate assistive prototypes using structured partner feedback. Students build prototype addressing top need. Teachers schedule protected testing windows.',
       studentDirections: [
         'Build prototype addressing top need',
         'Test device with partner guidance',
@@ -233,7 +233,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Device Launch + Support Kit',
-      summary: 'Teams deliver final devices with training and sustainability plans.',
+      summary: 'Teams deliver final devices with training and sustainability plans. Students finalize device and safety checklist. Teachers arrange accessible showcase space.',
       studentDirections: [
         'Finalize device and safety checklist',
         'Co-write care and maintenance guide',

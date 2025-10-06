@@ -24,7 +24,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore how soundscapes reflect urban ecology and wellbeing to frame advocacy.',
+      focus: 'Explore how soundscapes reflect urban ecology and wellbeing to frame advocacy. Teachers model soundwalk protocol with safety, consent, and hydration cues. Students conduct quiet listening sessions logging baseline soundscape notes.',
       teacher: [
         'Model soundwalk protocol with safety, consent, and hydration cues',
         'Teach species and noise identification using local recordings',
@@ -46,7 +46,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan routes, timing, and data schema for repeatable soundwalk datasets.',
+      focus: 'Plan routes, timing, and data schema for repeatable soundwalk datasets. Teachers share map tiles highlighting habitat assets and safety considerations. Students map two routes noting habitat features and gathering points.',
       teacher: [
         'Share map tiles highlighting habitat assets and safety considerations',
         'Approve team routes with partner timing and consent windows',
@@ -68,7 +68,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'FieldworkLoop',
-      focus: 'Collect clips and tallies while maintaining data quality, safety, and consent.',
+      focus: 'Collect clips and tallies while maintaining data quality, safety, and consent. Teachers shadow first outing to validate protocol and safety. Students capture short clips following consent signage and privacy rules.',
       teacher: [
         'Shadow first outing to validate protocol and safety',
         'Check data uploads for labeling accuracy and completeness',
@@ -90,7 +90,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Translate data into musical rules and compose first soundscape drafts.',
+      focus: 'Translate data into musical rules and compose first soundscape drafts. Teachers share mapping examples linking data patterns to musical elements. Students draft mapping rules connecting counts to tempo, pitch, and dynamics.',
       teacher: [
         'Share mapping examples linking data patterns to musical elements',
         'Coach rule choices with evidence and accessibility in mind',
@@ -111,7 +111,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Curate the Listening Gallery highlighting insights and concrete action prompts.',
+      focus: 'Curate the Listening Gallery highlighting insights and concrete action prompts. Teachers invite partners and coordinate accessibility supports for gallery. Students refine soundscape scores with clear evidence labels.',
       teacher: [
         'Invite partners and coordinate accessibility supports for gallery',
         'Finalize exhibit curation ensuring flow and sensory access',
@@ -133,7 +133,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Prototype quiet corner interventions and evaluate impact for community partners.',
+      focus: 'Prototype quiet corner interventions and evaluate impact for community partners. Teachers coordinate small pilots with facilities and custodial teams. Students install micro-habitats or signage following safety approvals.',
       teacher: [
         'Coordinate small pilots with facilities and custodial teams',
         'Review risk, consent, and maintenance plans for interventions',
@@ -177,7 +177,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Soundwalk 101 + ID Mini‑Poster',
-      summary: 'Students practice quiet listening and species/noise identification to ground data work.',
+      summary: 'Students practice quiet listening and species/noise identification to ground data work. Students walk in silence following safety zones and hydration cues. Teachers define safety zone and consent expectations for soundwalks.',
       studentDirections: [
         'Walk in silence following safety zones and hydration cues',
         'Mark sound sources on map with consistent symbols',
@@ -197,7 +197,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Route + Data Schema',
-      summary: 'Teams plan soundwalk routes and data schema for consistent, ethical capture.',
+      summary: 'Teams plan soundwalk routes and data schema for consistent, ethical capture. Students pick two routes highlighting habitat assets and safety notes. Teachers share map layers and historical sound data.',
       studentDirections: [
         'Pick two routes highlighting habitat assets and safety notes',
         'Set timing windows aligned with partner and daylight needs',
@@ -218,7 +218,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Data→Music Mapping',
-      summary: 'Students translate biodiversity and noise data into musical rules and loops.',
+      summary: 'Students translate biodiversity and noise data into musical rules and loops. Students clean tally data to remove duplicates and anomalies. Teachers provide sample DAW or browser synth templates.',
       studentDirections: [
         'Clean tally data to remove duplicates and anomalies',
         'Pick three musical parameters representing key data patterns',
@@ -240,7 +240,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Listening Gallery',
-      summary: 'Teams curate Listening Gallery experiences that connect data insights to community action.',
+      summary: 'Teams curate Listening Gallery experiences that connect data insights to community action. Students select best clips that represent contrasting soundscapes. Teachers invite partners and families with clear accessibility info.',
       studentDirections: [
         'Select best clips that represent contrasting soundscapes',
         'Label stations with evidence and mapping explanations',
@@ -259,7 +259,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     {
       id: 'A5',
       title: 'Quiet Corner Pilot',
-      summary: 'Students prototype quiet corner interventions and evaluate ecological impact.',
+      summary: 'Students prototype quiet corner interventions and evaluate ecological impact. Students design pilot intervention aligned with partner priorities. Teachers review consent and risk mitigation plans.',
       studentDirections: [
         'Design pilot intervention aligned with partner priorities',
         'Install safely with protective gear and permission checks',

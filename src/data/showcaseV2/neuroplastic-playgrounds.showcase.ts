@@ -24,7 +24,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Learn EF basics and safe prototyping routines to ground joyful design in care.',
+      focus: 'Learn EF basics and safe prototyping routines to ground joyful design in care. Teachers teach EF concepts with movement examples. Students name EF targets they will support.',
       teacher: ['Teach EF concepts with movement examples', 'Demonstrate safe hand tool routines', 'Define buddy protocols and consent signals'],
       students: ['Name EF targets they will support', 'Pass tool and station safety routine', 'Sketch station ideas with EF labels'],
       deliverables: ['Safety checklist', 'Idea sketches'],
@@ -34,7 +34,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Build',
-      focus: 'Prototype modular stations with accessibility in mind so every child can participate.',
+      focus: 'Prototype modular stations with accessibility in mind so every child can participate. Teachers approve materials list for safety. Students build modular stations safely.',
       teacher: ['Approve materials list for safety', 'Coach inclusive design choices', 'Set testing space with clear zones'],
       students: ['Build modular stations safely', 'Add safety edges and padding', 'Create station instruction cards'],
       deliverables: ['Prototype set', 'Station cards'],
@@ -44,7 +44,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Exhibit',
-      focus: 'Host Play Lab with younger buddies and collect observations to guide evidence-based tweaks.',
+      focus: 'Host Play Lab with younger buddies and collect observations to guide evidence-based tweaks. Teachers invite buddy class and family helpers. Students guide buddies through stations kindly.',
       teacher: ['Invite buddy class and family helpers', 'Stage stations with rotation timing', 'Model caring observation notes'],
       students: ['Guide buddies through stations kindly', 'Record timing or smile measures carefully', 'Reflect on feedback with teammates'],
       deliverables: ['Observation log', 'Buddy feedback notes'],
@@ -54,7 +54,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Iterate designs and strengthen accessibility based on buddy feedback and data.',
+      focus: 'Iterate designs and strengthen accessibility based on buddy feedback and data. Teachers coach iteration brainstorming circles. Students revise stations based on evidence.',
       teacher: ['Coach iteration brainstorming circles', 'Review accessibility updates closely', 'Confirm safety edges and storage plans'],
       students: ['Revise stations based on evidence', 'Add access supports like visuals or timers', 'Re‑test with peer feedback'],
       deliverables: ['Revised stations', 'Accessibility notes'],
@@ -64,7 +64,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Host Family Play Night and share guides to extend play beyond class.',
+      focus: 'Host Family Play Night and share guides to extend play beyond class. Teachers invite families and assign roles. Students host families through stations.',
       teacher: ['Invite families and assign roles', 'Stage stations with flow signage', 'Collect family feedback respectfully'],
       students: ['Host families through stations', 'Explain EF targets using kid language', 'Share take-home guide and storage plan'],
       deliverables: ['Family feedback log', 'Guide v1'],
@@ -99,7 +99,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'EF Explorer + Safety Passport',
-      summary: 'Students learn EF targets and pass safety routines so play remains intentional and safe.',
+      summary: 'Students learn EF targets and pass safety routines so play remains intentional and safe. Students define EF terms with examples. Teachers teach EF mini‑lesson with movement demos.',
       studentDirections: ['Define EF terms with examples', 'Spot real-life EF moments', 'Pass tool and station safety routine', 'Sketch station idea with EF focus', 'Share buddy norms and consent rules'],
       teacherSetup: ['Teach EF mini‑lesson with movement demos', 'Demo safety expectations', 'Provide sketch frames and icon library'],
       evidence: ['Safety passport', 'Sketch sheet'],
@@ -113,7 +113,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prototype + Station Card',
-      summary: 'Teams build safe, inclusive stations with clear directions tailored to EF goals.',
+      summary: 'Teams build safe, inclusive stations with clear directions tailored to EF goals. Students build module safely with teammates. Teachers approve materials and tools.',
       studentDirections: ['Build module safely with teammates', 'Add safety edges and padding everywhere', 'Write station card with EF target and steps', 'Design accessibility supports for different bodies', 'Test with peers and note changes'],
       teacherSetup: ['Approve materials and tools', 'Check safety edges thoroughly', 'Coach inclusion strategies'],
       evidence: ['Prototype', 'Station card'],
@@ -127,7 +127,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Play Lab + Reflection',
-      summary: 'Students run buddy tests and reflect with evidence to understand how play is working.',
+      summary: 'Students run buddy tests and reflect with evidence to understand how play is working. Students guide buddies kindly through station steps. Teachers invite buddy class and confirm permissions.',
       studentDirections: ['Guide buddies kindly through station steps', 'Time or tally buddy attempts accurately', 'Record smile or effort ratings respectfully', 'Note design changes we should try next', 'Share thanks and encouragement with buddies'],
       teacherSetup: ['Invite buddy class and confirm permissions', 'Model observation note-taking', 'Confirm supervision ratios'],
       evidence: ['Observation log', 'Reflection note'],
@@ -141,7 +141,7 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Revise for Access + Family Night Plan',
-      summary: 'Teams improve accessibility and plan a family event that keeps the play mission going.',
+      summary: 'Teams improve accessibility and plan a family event that keeps the play mission going. Students list barriers buddies experienced during play. Teachers review accessibility supports thoroughly.',
       studentDirections: ['List barriers buddies experienced during play', 'Add supports or visuals to remove barriers', 'Re-test stations with classroom peers safely', 'Orchestrate family night roles and timeline', 'Share invites and care instructions with guardians'],
       teacherSetup: ['Review accessibility supports thoroughly', 'Check safety compliance post-iteration', 'Approve invites and communication plan'],
       evidence: ['Access notes', 'Event plan'],

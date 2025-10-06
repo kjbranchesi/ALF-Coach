@@ -24,7 +24,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Surface community FAQs and ethics frameworks to define safe AI advisory scope.',
+      focus: 'Surface community FAQs and ethics frameworks to define safe AI advisory scope. Teachers host agency listening session about resident questions and pain points. Students gather resident FAQs from partners and public datasets.',
       teacher: [
         'Host agency listening session about resident questions and pain points',
         'Model translating policy jargon into plain-language summaries',
@@ -42,7 +42,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design transparent advisor prompts with citations and escalation protecting residents.',
+      focus: 'Design transparent advisor prompts with citations and escalation protecting residents. Teachers coach prompt pattern building with rationales and guardrails. Students draft advisor prompts that state role, limits, and tone.',
       teacher: [
         'Coach prompt pattern building with rationales and guardrails',
         'Review citation formatting using compliance templates',
@@ -60,7 +60,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Prototype advisors and run usability tests to ensure clarity and fairness.',
+      focus: 'Prototype advisors and run usability tests to ensure clarity and fairness. Teachers provide structured testing scripts for diverse community testers. Students build advisor prototype with transparent prompt documentation.',
       teacher: [
         'Provide structured testing scripts for diverse community testers',
         'Audit advisor logs for accuracy, tone, and bias issues',
@@ -78,7 +78,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Stage pop-up booth with accessibility supports and volunteer readiness.',
+      focus: 'Stage pop-up booth with accessibility supports and volunteer readiness. Teachers coordinate accessible venue setup with signage approvals. Students design booth layout with privacy and accessibility zones.',
       teacher: [
         'Coordinate accessible venue setup with signage approvals',
         'Review booth scripts covering consent and escalation steps',
@@ -95,7 +95,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Run the Ombuds booth, support residents, and capture improvement data.',
+      focus: 'Run the Ombuds booth, support residents, and capture improvement data. Teachers oversee safety compliance and on-site data handling. Students assist residents with AI advisor using consent scripts.',
       teacher: [
         'Oversee safety compliance and on-site data handling',
         'Monitor escalation cases and human follow-up logs',
@@ -113,7 +113,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Publish transparent methods and deliver partner handoff for sustained support.',
+      focus: 'Publish transparent methods and deliver partner handoff for sustained support. Teachers review methods document for accuracy and accessible tone. Students publish methods and limitations page with citations.',
       teacher: [
         'Review methods document for accuracy and accessible tone',
         'Confirm privacy safeguards and data deletion steps',
@@ -145,7 +145,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'FAQ + Ethics Scope',
-      summary: 'Teams gather resident FAQs and co-create ethics scope for the advisor.',
+      summary: 'Teams gather resident FAQs and co-create ethics scope for the advisor. Students interview partners and residents about recurring policy questions. Teachers invite agency partners to validate FAQ priorities.',
       studentDirections: [
         'Interview partners and residents about recurring policy questions',
         'Consolidate FAQs with citations and context notes',
@@ -169,7 +169,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prompt + Citations',
-      summary: 'Teams craft transparent prompts with citations and escalation safeguards for advisors.',
+      summary: 'Teams craft transparent prompts with citations and escalation safeguards for advisors. Students draft advisor prompts that state role and limits. Teachers coach prompt documentation and rationale annotation.',
       studentDirections: [
         'Draft advisor prompts that state role and limits',
         'Attach citations and URL references to each answer',
@@ -193,7 +193,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Usability + Bias Test',
-      summary: 'Students run usability and bias tests to keep advisors accurate and fair.',
+      summary: 'Students run usability and bias tests to keep advisors accurate and fair. Students conduct usability sessions with diverse community testers. Teachers provide testing scripts and consent tracking sheets.',
       studentDirections: [
         'Conduct usability sessions with diverse community testers',
         'Measure clarity, accuracy, and trust using rubrics',
@@ -217,7 +217,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Booth + Handoff',
-      summary: 'Teams host the Ombuds booth, document requests, and deliver partner handoff.',
+      summary: 'Teams host the Ombuds booth, document requests, and deliver partner handoff. Students operate ombuds booth using consent and privacy scripts. Teachers oversee safety, privacy, and de-escalation protocols.',
       studentDirections: [
         'Operate ombuds booth using consent and privacy scripts',
         'Log issues without personal data and tag themes',

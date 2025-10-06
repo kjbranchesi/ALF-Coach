@@ -24,7 +24,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Study BSL-1 safety, plastic chemistry, and microfactory concepts to launch responsibly.',
+      focus: 'Study BSL-1 safety, plastic chemistry, and microfactory concepts to launch responsibly. Teachers review BSL‑1 rules. Students sign safety passport.',
       teacher: ['Review BSL‑1 rules', 'Introduce feedstock analogs', 'Model growth logging'],
       students: ['Sign safety passport', 'List variables/controls', 'Sketch design'],
       deliverables: ['Safety passport', 'Design scamps'],
@@ -34,7 +34,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Develop recipes and growth plans with an ethics register to balance ambition with care.',
+      focus: 'Develop recipes and growth plans with an ethics register to balance ambition with care. Teachers approve BOM + SDS. Students draft recipe.',
       teacher: ['Approve BOM + SDS', 'Review ethics risks', 'Model OD/weight measures'],
       students: ['Draft recipe', 'Set controls', 'Draft ethics register'],
       deliverables: ['Recipe + BOM', 'Ethics register v1'],
@@ -44,7 +44,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Run growth trials and log OD plus weight data to build reliable yield curves.',
+      focus: 'Run growth trials and log OD plus weight data to build reliable yield curves. Teachers supervise PPE. Students run trials.',
       teacher: ['Supervise PPE', 'Calibrate OD/scale', 'Check logs daily'],
       students: ['Run trials', 'Record OD & mass', 'Update dashboard'],
       deliverables: ['Growth logs', 'Yield curves'],
@@ -54,7 +54,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Compare recipes, optimize conditions, and compute cost versus yield to guide iteration.',
+      focus: 'Compare recipes, optimize conditions, and compute cost versus yield to guide iteration. Teachers provide cost sheet. Students compare yields.',
       teacher: ['Provide cost sheet', 'Coach optimization choices', 'Review math'],
       students: ['Compare yields', 'Tune variables', 'Compute cost per g'],
       deliverables: ['Optimization table', 'Cost/yield chart'],
@@ -64,7 +64,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host demo day showcasing microfactory hardware, dashboards, and ethics briefs for partners.',
+      focus: 'Host demo day showcasing microfactory hardware, dashboards, and ethics briefs for partners. Teachers invite partners. Students stage microfactory.',
       teacher: ['Invite partners', 'Check safety signage', 'Time demos'],
       students: ['Stage microfactory', 'Present dashboard', 'Share ethics brief'],
       deliverables: ['Demo script', 'Ethics brief v1'],
@@ -73,7 +73,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Close waste loops and publish open protocols plus dashboards so others can replicate safely.',
+      focus: 'Close waste loops and publish open protocols plus dashboards so others can replicate safely. Teachers review disposal logs. Students file disposal log.',
       teacher: ['Review disposal logs', 'Coach protocol write‑up', 'Publish dashboard'],
       students: ['File disposal log', 'Publish protocol', 'Share dataset'],
       deliverables: ['Disposal log', 'Protocol v1', 'Dataset link'],
@@ -109,7 +109,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Safety + Concept Launch',
-      summary: 'Students pass BSL-1 expectations and draft design concepts to earn access to the lab.',
+      summary: 'Students pass BSL-1 expectations and draft design concepts to earn access to the lab. Students pass BSL-1 safety quiz with 100%. Teachers prepare safety quiz and debrief.',
       studentDirections: ['Pass BSL-1 safety quiz with 100%', 'Sketch microfactory design and controls', 'List independent/dependent variables', 'Name controls and monitoring plan', 'Cite SDS and waste guidelines'],
       teacherSetup: ['Prepare safety quiz and debrief', 'Provide SDS/BOM packet', 'Model variable/control planning'],
       evidence: ['Safety passport', 'Concept sketch'],
@@ -123,7 +123,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Recipe + Ethics Register',
-      summary: 'Teams finalize recipes and document risks with mitigations to keep ethics front and center.',
+      summary: 'Teams finalize recipes and document risks with mitigations to keep ethics front and center. Students draft recipe. Teachers approve recipe.',
       studentDirections: ['Draft recipe', 'Set controls', 'List risks', 'Name mitigations', 'Submit register'],
       teacherSetup: ['Approve recipe', 'Review risks', 'Check mitigations'],
       evidence: ['Recipe + BOM', 'Ethics register v1'],
@@ -133,7 +133,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Growth Trials + Dashboard',
-      summary: 'Students run growth trials and maintain clean dashboards that make data shareable.',
+      summary: 'Students run growth trials and maintain clean dashboards that make data shareable. Students record OD readings with time stamps. Teachers calibrate OD cards and scales.',
       studentDirections: ['Record OD readings with time stamps', 'Weigh samples and log mass', 'Update dashboard visuals daily', 'Photo log setup and anomalies', 'Note anomalies with potential causes'],
       teacherSetup: ['Calibrate OD cards and scales', 'Check logs for completeness', 'Review anomalies with safety team'],
       evidence: ['Growth logs', 'Dashboard screenshots'],
@@ -147,7 +147,7 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Optimization + Cost',
-      summary: 'Teams tune for higher yield and lower cost while honoring safety and sourcing ethics.',
+      summary: 'Teams tune for higher yield and lower cost while honoring safety and sourcing ethics. Students compare recipe yields with controls. Teachers provide cost sheets and templates.',
       studentDirections: ['Compare recipe yields with controls', 'Tune variables while keeping safety limits', 'Compute cost per gram using template', 'Cite every data and cost source', 'Design next test iteration with justification'],
       teacherSetup: ['Provide cost sheets and templates', 'Review math and source citations', 'Coach iteration planning'],
       evidence: ['Optimization table', 'Cost/yield chart'],

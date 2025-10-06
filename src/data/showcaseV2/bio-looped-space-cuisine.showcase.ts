@@ -24,7 +24,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore closed loops, energy limits, and food safety basics to frame the mission challenge.',
+      focus: 'Explore closed loops, energy limits, and food safety basics to frame the mission challenge. Teachers facilitate loop systems mini-lesson. Students sketch loop concept maps.',
       teacher: ['Facilitate loop systems mini-lesson', 'Lead safety certification lab', 'Model mission journal entry'],
       students: ['Sketch loop concept maps', 'Commit to mission goals', 'Launch journal with safety reflection'],
       deliverables: ['Loop sketch', 'Journal v1'],
@@ -34,7 +34,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Build plan and resource budget so the loop stays within mission constraints from day one.',
+      focus: 'Build plan and resource budget so the loop stays within mission constraints from day one. Teachers approve materials against constraints. Students draft detailed materials BOM.',
       teacher: ['Approve materials against constraints', 'Share energy budget scenarios', 'Review nutrition targets with examples'],
       students: ['Draft detailed materials BOM', 'Storyboard component layout', 'Budget daily energy and water allowances'],
       deliverables: ['BOM', 'Budget plan'],
@@ -44,7 +44,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Assemble the mini loop and track growth plus resource use to ground iteration in evidence.',
+      focus: 'Assemble the mini loop and track growth plus resource use to ground iteration in evidence. Teachers supervise build stations for safety. Students assemble loop hardware safely.',
       teacher: ['Supervise build stations for safety', 'Audit mission logs daily', 'Coach tuning adjustments with data'],
       students: ['Assemble loop hardware safely', 'Log growth and resource metrics daily', 'Tune inputs based on evidence'],
       deliverables: ['Loop photos', 'Growth/resource logs'],
@@ -54,7 +54,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Run failure scenarios and reliability improvements to pressure-test the loop under stress.',
+      focus: 'Run failure scenarios and reliability improvements to pressure-test the loop under stress. Teachers demonstrate controlled failure tests. Students run failure simulations carefully.',
       teacher: ['Demonstrate controlled failure tests', 'Guide safe contingency drills', 'Audit mission journal updates'],
       students: ['Run failure simulations carefully', 'Log outcomes with timestamps', 'Add redundancy or backup plans'],
       deliverables: ['Failure report', 'Revised plan'],
@@ -63,7 +63,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Produce mission board showcasing loop schematic and meal plan for reviewer endorsement.',
+      focus: 'Produce mission board showcasing loop schematic and meal plan for reviewer endorsement. Teachers invite NASA-style reviewers. Students present loop schematic clearly.',
       teacher: ['Invite NASA-style reviewers', 'Coach nutrition math run-throughs', 'Time final briefings'],
       students: ['Present loop schematic clearly', 'Defend meal plan with data', 'Share trade-offs and next actions'],
       deliverables: ['Mission board', 'Journal excerpts'],
@@ -88,7 +88,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Loop Sketch + Safety',
-      summary: 'Students sketch their loop concept and complete safety certification for mission readiness.',
+      summary: 'Students sketch their loop concept and complete safety certification for mission readiness. Students sketch loop subsystems with labeled flows. Teachers share exemplar loop diagrams.',
       studentDirections: [
         'Sketch loop subsystems with labeled flows',
         'List components and mission purpose',
@@ -108,7 +108,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Plan + Budget',
-      summary: 'Teams budget energy and water while planning materials so every component earns its place.',
+      summary: 'Teams budget energy and water while planning materials so every component earns its place. Students draft detailed BOM with sourcing notes. Teachers approve BOM against constraints.',
       studentDirections: [
         'Draft detailed BOM with sourcing notes',
         'Calculate daily energy budget scenarios',
@@ -128,7 +128,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Build + Log',
-      summary: 'Students assemble the loop and log performance trends to steer evidence-based tuning.',
+      summary: 'Students assemble the loop and log performance trends to steer evidence-based tuning. Students assemble loop safely following SOP. Teachers supervise builds and safety checkpoints.',
       studentDirections: [
         'Assemble loop safely following SOP',
         'Log daily growth and resource metrics clearly',
@@ -148,7 +148,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mission Board',
-      summary: 'Teams present the loop with meal plan and trade-offs, inviting mission-style critique.',
+      summary: 'Teams present the loop with meal plan and trade-offs, inviting mission-style critique. Students design mission board with labeled schematic. Teachers invite reviewers and allocate roles.',
       studentDirections: [
         'Design mission board with labeled schematic',
         'Draft nutrition-balanced mission meal plan',

@@ -24,7 +24,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Align SEL check-ins with privacy policies and consent language to build trust.',
+      focus: 'Align SEL check-ins with privacy policies and consent language to build trust. Teachers review privacy policies with counselors highlighting PPRA and FERPA boundaries. Students draft consent text in student voice with counselor feedback.',
       teacher: [
         'Review privacy policies with counselors highlighting PPRA and FERPA boundaries',
         'Model opt-in flow and anonymized data handling for students',
@@ -42,7 +42,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan sentiment pipeline, sculpture mapping, and ethics risk register for deployment.',
+      focus: 'Plan sentiment pipeline, sculpture mapping, and ethics risk register for deployment. Teachers share classifier options with transparency around limitations. Students select sentiment pipeline and justify feasibility and ethics.',
       teacher: [
         'Share classifier options with transparency around limitations',
         'Review de-identification practices and storage safeguards',
@@ -60,7 +60,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Prototype sentiment demo linking pipeline outputs to servo and LED mapping responsibly.',
+      focus: 'Prototype sentiment demo linking pipeline outputs to servo and LED mapping responsibly. Teachers provide sample data ensuring de-identification and consent compliance. Students test classifier using de-identified sample data responsibly.',
       teacher: [
         'Provide sample data ensuring de-identification and consent compliance',
         'Coach safe tests and troubleshooting for hardware integration',
@@ -78,7 +78,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Assemble sculpture enclosure and finalize participant UI plus consent signage.',
+      focus: 'Assemble sculpture enclosure and finalize participant UI plus consent signage. Teachers review enclosure safety, ventilation, and cable management standards. Students assemble enclosure ensuring stability and tamper resistance.',
       teacher: [
         'Review enclosure safety, ventilation, and cable management standards',
         'Print signage with approved consent language and opt-out steps',
@@ -96,7 +96,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Conduct opt-in trial, distribute resources, and refine with counselor feedback.',
+      focus: 'Conduct opt-in trial, distribute resources, and refine with counselor feedback. Teachers invite counselors to co-observe trial and monitor wellbeing. Students run trial sessions guiding opt-in users through experience.',
       teacher: [
         'Invite counselors to co-observe trial and monitor wellbeing',
         'Monitor trial interactions and uphold privacy agreements',
@@ -113,7 +113,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Refine privacy safeguards, publish wellbeing guide, and document transparent methods.',
+      focus: 'Refine privacy safeguards, publish wellbeing guide, and document transparent methods. Teachers review de-identification pipeline for new safeguards. Students refine pipeline thresholds and logging from trial findings.',
       teacher: [
         'Review de-identification pipeline for new safeguards',
         'Coach guide layout focusing on clarity and accessibility',
@@ -156,7 +156,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Consent + Check‑In UI',
-      summary: 'Draft opt-in language and design a safe UI that protects privacy.',
+      summary: 'Draft opt-in language and design a safe UI that protects privacy. Students draft consent language in student voice. Teachers share policy templates and exemplars.',
       studentDirections: ['Draft consent language in student voice', 'Sketch opt-in UI wireframe', 'Define clear opt-out paths and reminders', 'List harms and mitigations with counselors', 'Submit for review and revisions'],
       teacherSetup: ['Share policy templates and exemplars', 'Review language with counselor', 'Coordinate admin approval'],
       evidence: ['Consent + UI draft'],
@@ -170,7 +170,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Pipeline + Mapping Plan',
-      summary: 'Choose a classifier and define motion/light mapping that stays ethical.',
+      summary: 'Choose a classifier and define motion/light mapping that stays ethical. Students pick classifier option and justify choice. Teachers provide classifier options and supports.',
       studentDirections: ['Pick classifier option and justify choice', 'Define outputs and thresholds with counselors', 'Set mapping rules for servo and LED patterns', 'List risks and mitigations in register', 'Cite sources for models and datasets'],
       teacherSetup: ['Provide classifier options and supports', 'Review mapping choices with counseling team', 'Check sources and licensing'],
       evidence: ['Pipeline plan', 'Risk register v1'],
@@ -184,7 +184,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Demo Prototype',
-      summary: 'Test sentiment pipeline and demonstrate motion/light response safely.',
+      summary: 'Test sentiment pipeline and demonstrate motion/light response safely. Students run demo data through pipeline safely. Teachers provide de-identified sample data.',
       studentDirections: ['Run demo data through pipeline safely', 'Record video showing outputs', 'Tune thresholds with counselor feedback', 'Note failure modes and privacy flags', 'Log next steps with timestamps'],
       teacherSetup: ['Provide de-identified sample data', 'Check wiring/PPE before demos', 'Coach tuning and documentation'],
       evidence: ['Demo video', 'Tuning notes'],
@@ -198,7 +198,7 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Enclosure + Signage',
-      summary: 'Assemble the display and finalize consent signage for trustworthy launch.',
+      summary: 'Assemble the display and finalize consent signage for trustworthy launch. Students assemble enclosure with cable management. Teachers review enclosure stability and safety.',
       studentDirections: ['Assemble enclosure with cable management', 'Test stability and access with admin', 'Post consent and opt-out signage visibly', 'Implement mounting and nightly storage plan', 'Confirm installation location with facilities'],
       teacherSetup: ['Review enclosure stability and safety', 'Approve signage language with counselors', 'Confirm location logistics and power'],
       evidence: ['Enclosure spec', 'Signage photos'],

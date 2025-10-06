@@ -23,7 +23,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Understand circular economy principles and cafeteria system flows to spotlight leverage points.',
+      focus: 'Understand circular economy principles and cafeteria system flows to spotlight leverage points. Teachers introduce circular economy case studies. Students map cafeteria resource streams visually.',
       teacher: [
         'Introduce circular economy case studies',
         'Lead back-of-house kitchen tour',
@@ -41,7 +41,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design waste audit and procurement research plan so data captures both costs and equity.',
+      focus: 'Design waste audit and procurement research plan so data captures both costs and equity. Teachers model waste audit protocols. Students schedule audits with food services.',
       teacher: [
         'Model waste audit protocols',
         'Share procurement data sources',
@@ -59,7 +59,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect waste, nutrition, and perception data to ground intervention choices in evidence.',
+      focus: 'Collect waste, nutrition, and perception data to ground intervention choices in evidence. Teachers monitor audits for food safety. Students measure waste streams by category.',
       teacher: [
         'Monitor audits for food safety',
         'Coach real-time data uploads',
@@ -78,7 +78,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Prototype closed-loop interventions and test viability with partners before scaling.',
+      focus: 'Prototype closed-loop interventions and test viability with partners before scaling. Teachers facilitate menu innovation lab. Students design intervention prototypes.',
       teacher: [
         'Facilitate menu innovation lab',
         'Connect teams with local composters',
@@ -96,7 +96,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host tasting lab and circular economy showcase to earn stakeholder buy-in.',
+      focus: 'Host tasting lab and circular economy showcase to earn stakeholder buy-in. Teachers coordinate tasting logistics with kitchen. Students stage tasting booths with storyboards.',
       teacher: [
         'Coordinate tasting logistics with kitchen',
         'Invite district leaders and families',
@@ -114,7 +114,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Launch pilots and monitor closed-loop metrics to prove durability after showcase.',
+      focus: 'Launch pilots and monitor closed-loop metrics to prove durability after showcase. Teachers coordinate scheduling of ongoing pilots. Students implement pilots with staff partners.',
       teacher: [
         'Coordinate scheduling of ongoing pilots',
         'Review data monitoring cadence',
@@ -155,7 +155,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Cafeteria Systems Portrait',
-      summary: 'Students capture how resources move through the cafeteria ecosystem to expose waste and opportunity.',
+      summary: 'Students capture how resources move through the cafeteria ecosystem to expose waste and opportunity. Students conduct kitchen tour observation. Teachers arrange kitchen tour schedule.',
       studentDirections: [
         'Conduct kitchen tour observation',
         'Interview staff about top challenges',
@@ -181,7 +181,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Waste and Procurement Audit',
-      summary: 'Teams design and execute a cafeteria waste and sourcing audit that blends quantitative and narrative data.',
+      summary: 'Teams design and execute a cafeteria waste and sourcing audit that blends quantitative and narrative data. Students coordinate audit schedule with staff partners. Teachers review safety procedures.',
       studentDirections: [
         'Coordinate audit schedule with staff partners',
         'Collect waste data by category using agreed methods',
@@ -207,7 +207,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Circular Prototype Lab',
-      summary: 'Students design and test closed-loop interventions in partnership with cafeteria teams.',
+      summary: 'Students design and test closed-loop interventions in partnership with cafeteria teams. Students ideate three circular solutions. Teachers provide prototyping materials.',
       studentDirections: [
         'Ideate three circular solutions',
         'Select concept with staff partner',
@@ -233,7 +233,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Closed-Loop Pitch + Launch',
-      summary: 'Teams pitch pilots and launch ongoing monitoring so the cafeteria can sustain circular gains.',
+      summary: 'Teams pitch pilots and launch ongoing monitoring so the cafeteria can sustain circular gains. Students build pitch deck with data stories. Teachers organize showcase logistics.',
       studentDirections: [
         'Build pitch deck with data stories',
         'Host tasting or demo experience',

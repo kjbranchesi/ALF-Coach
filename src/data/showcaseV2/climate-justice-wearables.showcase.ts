@@ -24,7 +24,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Ground students in climate justice metrics and community sensing ethics for fieldwork.',
+      focus: 'Ground students in climate justice metrics and community sensing ethics for fieldwork. Teachers share case studies showing climate burdens across neighborhoods. Students draft consent forms and scripts with partner feedback.',
       teacher: [
         'Share case studies showing climate burdens across neighborhoods',
         'Review consent protocols and safety expectations with partners',
@@ -42,7 +42,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Assemble wearable kits and finalize calibrated route plan for data collection.',
+      focus: 'Assemble wearable kits and finalize calibrated route plan for data collection. Teachers approve bill of materials and protective equipment usage. Students assemble sensor wearables using protective gear and checklists.',
       teacher: [
         'Approve bill of materials and protective equipment usage',
         'Supervise sensor assembly ensuring wiring safety standards',
@@ -60,7 +60,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect climate data ethically across routes and maintain rigorous uploads.',
+      focus: 'Collect climate data ethically across routes and maintain rigorous uploads. Teachers check safety compliance and hydration before departures. Students walk or ride assigned routes following consent agreements.',
       teacher: [
         'Check safety compliance and hydration before departures',
         'Review daily uploads for completeness and anomalies',
@@ -78,7 +78,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze data into dashboards and craft justice-focused policy memos.',
+      focus: 'Analyze data into dashboards and craft justice-focused policy memos. Teachers model accessible visualizations spotlighting inequity patterns. Students build dashboards comparing climate burdens across neighborhoods.',
       teacher: [
         'Model accessible visualizations spotlighting inequity patterns',
         'Share policy memo template connecting data to remedies',
@@ -95,7 +95,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host community forum presenting data stories and securing commitments.',
+      focus: 'Host community forum presenting data stories and securing commitments. Teachers invite community partners, officials, and press for forum. Students present dashboard story using accessible visuals and language.',
       teacher: [
         'Invite community partners, officials, and press for forum',
         'Time student talks and facilitate Q&A logistics',
@@ -113,7 +113,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Design pilot plan and monitoring framework to sustain climate justice action.',
+      focus: 'Design pilot plan and monitoring framework to sustain climate justice action. Teachers guide pilot scoping conversations with stakeholders. Students draft pilot implementation plan with milestones and owners.',
       teacher: [
         'Guide pilot scoping conversations with stakeholders',
         'Review safety plan and mitigation strategies for pilots',
@@ -145,7 +145,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Consent + Metrics',
-      summary: 'Teams co-create consent packets and justice metrics for wearable sensing.',
+      summary: 'Teams co-create consent packets and justice metrics for wearable sensing. Students interview partners about consent needs and community priorities. Teachers provide consent templates and risk management guidance.',
       studentDirections: [
         'Interview partners about consent needs and community priorities',
         'Draft consent forms and scripts with accessible language',
@@ -169,7 +169,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Build + Calibrate',
-      summary: 'Students assemble and calibrate wearable kits, finalizing route sampling plan.',
+      summary: 'Students assemble and calibrate wearable kits, finalizing route sampling plan. Students assemble wearable kits using PPE and wiring diagrams. Teachers approve bill of materials and protective equipment.',
       studentDirections: [
         'Assemble wearable kits using PPE and wiring diagrams',
         'Calibrate sensors against reference tools and record baselines',
@@ -193,7 +193,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Routes + Uploads',
-      summary: 'Teams collect climate data ethically, upload daily, and monitor consent logs.',
+      summary: 'Teams collect climate data ethically, upload daily, and monitor consent logs. Students walk or ride assigned routes following safety plan. Teachers check teams in and out with hydration and PPE checks.',
       studentDirections: [
         'Walk or ride assigned routes following safety plan',
         'Record observations and sensor context in field notes',
@@ -217,7 +217,7 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Dashboard + Memo',
-      summary: 'Students build dashboards and draft justice-centered policy memos for the forum.',
+      summary: 'Students build dashboards and draft justice-centered policy memos for the forum. Students construct dashboards showing inequities across neighborhoods clearly. Teachers model data storytelling with accessibility best practices.',
       studentDirections: [
         'Construct dashboards showing inequities across neighborhoods clearly',
         'Draft policy memo outlining remedies and community impact',
