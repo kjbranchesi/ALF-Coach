@@ -64,6 +64,7 @@ function hasMeaningfulContent(project: UnifiedProjectData): boolean {
   const deliverables = (project.deliverables as any) || {};
   const hasDeliverables = (Array.isArray(deliverables.milestones) && deliverables.milestones.length > 0)
     || (deliverables.rubric && Array.isArray(deliverables.rubric.criteria) && deliverables.rubric.criteria.length > 0);
+  const hasShowcase = !!project.showcase;
 
   return Boolean(
     hasTitle ||
@@ -72,7 +73,8 @@ function hasMeaningfulContent(project: UnifiedProjectData): boolean {
     hasCaptured ||
     hasIdeation ||
     hasJourney ||
-    hasDeliverables
+    hasDeliverables ||
+    hasShowcase
   );
 }
 
@@ -88,6 +90,7 @@ export const projectRepository = {
             id: p.id,
             title: p.title,
             description: (p as any).description || '', // Course description
+            tagline: (p as any).tagline || '',
             updatedAt: p.updatedAt.toISOString(),
             status: (p as any).status || 'draft',
             subject: (p as any).subject || 'General',

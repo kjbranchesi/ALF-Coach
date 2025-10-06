@@ -3,6 +3,8 @@
  * Created to resolve type safety issues identified in quality audit
  */
 
+import type { ProjectShowcaseV2 } from './showcaseV2';
+
 // Base interfaces for project data structures
 export interface WizardData {
   projectTopic: string;
@@ -169,6 +171,8 @@ export interface EnhancedBlueprintDoc {
     progressiveCompleteness: number;
     lastUpdated: Date;
   };
+  showcase?: ProjectShowcaseV2;
+  tagline?: string;
 }
 
 // Chat message interface (from useBlueprintDoc)

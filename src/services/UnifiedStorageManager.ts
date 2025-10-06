@@ -12,6 +12,7 @@ export interface UnifiedProjectData {
   // Core identity
   id: string;
   title: string;
+  tagline?: string;
   userId: string;
 
   // Timestamps
@@ -24,6 +25,7 @@ export interface UnifiedProjectData {
 
   // Project data (structured format)
   projectData?: Record<string, any>;
+  showcase?: Record<string, any>;
 
   // Chat captured data
   capturedData?: Record<string, any>;
@@ -113,11 +115,13 @@ export class UnifiedStorageManager {
         : {
             id,
             title: projectData.title || 'Untitled Project',
+            tagline: projectData.tagline,
             userId: projectData.userId || 'anonymous',
             createdAt: projectData.createdAt || new Date(),
             updatedAt: new Date(),
             wizardData: projectData.wizardData || {},
             projectData: projectData.projectData || {},
+            showcase: projectData.showcase,
             capturedData: projectData.capturedData || {},
             ideation: projectData.ideation || {},
             journey: projectData.journey || {},
@@ -138,6 +142,7 @@ export class UnifiedStorageManager {
         ...projectData,
         id,
         title: projectData.title || base.title || 'Untitled Project',
+        tagline: typeof projectData.tagline === 'string' ? projectData.tagline : base.tagline,
         userId: projectData.userId || base.userId || 'anonymous',
         createdAt: base.createdAt || new Date(),
         updatedAt: new Date(),
@@ -145,6 +150,7 @@ export class UnifiedStorageManager {
         syncStatus: projectData.syncStatus || base.syncStatus || 'local',
         wizardData: { ...(base.wizardData || {}), ...(projectData.wizardData || {}) },
         projectData: { ...(base.projectData || {}), ...(projectData.projectData || {}) },
+        showcase: projectData.showcase ? { ...projectData.showcase } : base.showcase,
         capturedData: { ...(base.capturedData || {}), ...(projectData.capturedData || {}) },
         ideation: { ...(base.ideation || {}), ...(projectData.ideation || {}) },
         journey: { ...(base.journey || {}), ...(projectData.journey || {}) },
@@ -242,6 +248,7 @@ export class UnifiedStorageManager {
     const deliverables = (data.deliverables as any) || {};
     const hasDeliverables = (Array.isArray(deliverables.milestones) && deliverables.milestones.length > 0)
       || (deliverables.rubric && Array.isArray(deliverables.rubric.criteria) && deliverables.rubric.criteria.length > 0);
+    const hasShowcase = typeof data.showcase === 'object' && data.showcase !== null && Object.keys(data.showcase as Record<string, unknown>).length > 0;
 
     return Boolean(
       hasTitle ||
@@ -250,7 +257,8 @@ export class UnifiedStorageManager {
       hasCaptured ||
       hasIdeation ||
       hasJourney ||
-      hasDeliverables
+      hasDeliverables ||
+      hasShowcase
     );
   }
 
@@ -272,6 +280,8 @@ export class UnifiedStorageManager {
 
     return {
       title: data.title,
+      description: data.description || '',
+      tagline: data.tagline || '',
       updatedAt: data.updatedAt,
       stage: data.stage,
       syncStatus: data.syncStatus,
@@ -329,10 +339,17 @@ export class UnifiedStorageManager {
   async listProjects(): Promise<Array<{
     id: string;
     title: string;
+    description?: string;
+    tagline?: string;
+    subject?: string;
+    gradeLevel?: string;
+    duration?: string;
+    projectTopic?: string;
     updatedAt: Date;
     stage?: string;
     syncStatus: string;
     status?: string;
+    provisional?: boolean;
     deletedAt?: Date | null;
   }>> {
     try {
@@ -683,6 +700,7 @@ export class UnifiedStorageManager {
       index[id] = {
         title: metadata.title,
         description: metadata.description || '',
+        tagline: metadata.tagline || '',
         updatedAt: metadata.updatedAt.toISOString(),
         stage: metadata.stage,
         syncStatus: metadata.syncStatus,

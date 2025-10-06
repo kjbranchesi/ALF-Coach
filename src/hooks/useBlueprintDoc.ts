@@ -46,7 +46,9 @@ function convertUnifiedToBlueprint(unified: UnifiedProjectData): BlueprintDoc {
     deliverables: unified.deliverables,
     journeyData: transformLegacyJourney(unified.journey || unified.capturedData),
     capturedData: unified.capturedData,
-    projectData: unified.projectData
+    projectData: unified.projectData,
+    showcase: unified.showcase,
+    tagline: unified.tagline
   };
 }
 
@@ -60,6 +62,8 @@ function convertBlueprintToUnified(blueprint: BlueprintDoc): UnifiedProjectData 
     wizardData: blueprint.wizardData,
     projectData: (blueprint as any).projectData,
     capturedData: (blueprint as any).capturedData,
+    tagline: (blueprint as any).tagline,
+    showcase: (blueprint as any).showcase,
     ideation: blueprint.ideation,
     journey: blueprint.journey,
     deliverables: blueprint.deliverables,

@@ -15,6 +15,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { UnifiedProjectData } from './UnifiedStorageManager';
+import type { ProjectShowcaseV2 } from '../types/showcaseV2';
 import type { HeroProjectData } from '../utils/hero/types';
 
 // Transformation quality levels
@@ -56,6 +57,7 @@ export interface ContentProvenance {
 
 // Enhanced hero data with transformation metadata
 export interface EnhancedHeroProjectData extends HeroProjectData {
+  showcase?: ProjectShowcaseV2;
   transformationMeta: {
     level: TransformationLevel;
     context: TransformationContext;
@@ -119,6 +121,8 @@ export class HeroProjectTransformer {
       // Add transformation metadata
       const enhancedData: EnhancedHeroProjectData = {
         ...heroData,
+        showcase: (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+          (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined),
         transformationMeta: {
           level: targetLevel,
           context,
@@ -323,11 +327,13 @@ export class HeroProjectTransformer {
   private createBaseHeroStructure(projectData: UnifiedProjectData): HeroProjectData {
     const wizardData = projectData.wizardData || {};
     const capturedData = projectData.capturedData || {};
+    const storedShowcase = (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+      (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined);
 
-    return {
+    const baseHero: HeroProjectData = {
       id: projectData.id,
       title: projectData.title,
-      tagline: wizardData.vision || 'Student-driven project-based learning experience',
+      tagline: projectData.tagline || wizardData.vision || 'Student-driven project-based learning experience',
       duration: wizardData.duration || '4-6 weeks',
       gradeLevel: wizardData.ageGroup || 'Middle School',
       subjects: [wizardData.subject || 'Interdisciplinary'],
@@ -523,6 +529,179 @@ export class HeroProjectTransformer {
         examples: []
       }
     };
+
+    return storedShowcase
+      ? this.applyShowcaseToHero(baseHero, storedShowcase, projectData)
+      : baseHero;
+  }
+
+  private applyShowcaseToHero(
+    hero: HeroProjectData,
+    showcase: ProjectShowcaseV2,
+    projectData: UnifiedProjectData
+  ): HeroProjectData {
+    const updated: HeroProjectData = {
+      ...hero,
+      subjects: showcase.hero?.subjects?.length ? showcase.hero.subjects : hero.subjects,
+      duration: showcase.hero?.timeframe || hero.duration,
+      gradeLevel: showcase.hero?.gradeBand || hero.gradeLevel,
+      title: showcase.hero?.title || projectData.title || hero.title,
+      tagline: projectData.tagline || showcase.hero?.tagline || hero.tagline
+    };
+
+    const overviewText = showcase.fullOverview || projectData.description || hero.courseAbstract.overview;
+    if (overviewText) {
+      updated.courseAbstract = {
+        ...updated.courseAbstract,
+        overview: overviewText,
+        expectedOutcomes: showcase.outcomes?.core?.length ? showcase.outcomes.core : updated.courseAbstract.expectedOutcomes
+      };
+      updated.hero.description = overviewText;
+      updated.overview.description = overviewText;
+    }
+
+    const microOverview = (showcase.microOverview || []).filter(Boolean);
+    if (microOverview.length) {
+      const iconPool = ['sparkles', 'target', 'rocket', 'compass'];
+      updated.hero.highlights = microOverview.slice(0, 3).map((entry, index) => ({
+        icon: iconPool[index % iconPool.length],
+        label: `Highlight ${index + 1}`,
+        value: entry
+      }));
+      updated.overview.keyFeatures = microOverview;
+    }
+
+    if (showcase.outcomes?.core?.length) {
+      updated.overview.outcomes = showcase.outcomes.core;
+    }
+
+    if (showcase.assignments?.length) {
+      updated.overview.deliverables = showcase.assignments.map(assignment => ({
+        name: assignment.title,
+        description: assignment.summary,
+        format: 'Assignment'
+      }));
+    }
+
+    const requiredResources = (showcase.materialsPrep?.coreKit || []).map(item => ({
+      name: item,
+      type: 'material' as const
+    }));
+
+    const optionalResources = (showcase.materialsPrep?.noTechFallback || []).map(item => ({
+      name: item,
+      type: 'material' as const
+    }));
+
+    updated.resources = {
+      ...updated.resources,
+      required: requiredResources,
+      optional: optionalResources,
+      professional: updated.resources.professional,
+      studentResources: updated.resources.studentResources,
+      communityConnections: updated.resources.communityConnections
+    };
+
+    if (showcase.outcomes?.audiences?.length) {
+      const audienceProfile = {
+        primary: showcase.outcomes.audiences,
+        secondary: [] as string[],
+        global: [] as string[],
+        engagement: updated.impact.audience.engagement || 'Authentic community review',
+        feedback: updated.impact.audience.feedback || 'Stakeholder commitments captured through showcase'
+      };
+
+      updated.impact = {
+        ...updated.impact,
+        audience: audienceProfile,
+        methods: updated.impact.methods,
+        metrics: updated.impact.metrics,
+        sustainability: updated.impact.sustainability,
+        scalability: updated.impact.scalability
+      };
+    }
+
+    if (showcase.runOfShow?.length) {
+      updated.journey.phases = showcase.runOfShow.map((week, index) => {
+        const phaseId = `phase-${index + 1}`;
+        const studentActivities = (week.students || []).map((activity, activityIdx) => ({
+          name: activity,
+          type: 'group' as const,
+          duration: 'class period',
+          description: activity,
+          materials: [],
+          instructions: [activity],
+          differentiation: { support: [], extension: [] },
+          assessment: ''
+        }));
+
+        const teacherActivities = (week.teacher || []).map((activity, activityIdx) => ({
+          name: activity,
+          type: 'class' as const,
+          duration: 'class period',
+          description: activity,
+          materials: [],
+          instructions: [activity],
+          differentiation: { support: [], extension: [] },
+          assessment: ''
+        }));
+
+        return {
+          id: phaseId,
+          name: week.weekLabel || `Week ${index + 1}`,
+          duration: week.kind ? `${week.kind}` : '1 week',
+          focus: week.focus || '',
+          description: week.focus || '',
+          objectives: (week.students || []).map((line, idx) => `Focus ${idx + 1}: ${line}`),
+          activities: [...studentActivities, ...teacherActivities],
+          deliverables: week.deliverables || [],
+          checkpoints: (week.checkpoint || []).map(checkpoint => ({
+            name: checkpoint,
+            criteria: [],
+            evidence: [],
+            support: ''
+          })),
+          resources: [],
+          teacherNotes: (week.teacher || []).join('; '),
+          studentTips: (week.students || []).join('; ')
+        };
+      });
+
+      updated.journey.milestones = showcase.runOfShow.flatMap((week, index) =>
+        (week.deliverables || []).map((deliverable, deliverableIdx) => ({
+          id: `milestone-${index + 1}-${deliverableIdx + 1}`,
+          phase: week.weekLabel || `Week ${index + 1}`,
+          week: index + 1,
+          title: deliverable,
+          description: deliverable,
+          evidence: [],
+          celebration: ''
+        }))
+      );
+
+      updated.journey.timeline = showcase.runOfShow.map((week, index) => ({
+        week: index + 1,
+        phase: week.weekLabel || `Week ${index + 1}`,
+        title: week.focus || week.kind || `Week ${index + 1}`,
+        activities: [...(week.students || []), ...(week.teacher || [])],
+        deliverable: week.deliverables?.[0],
+        assessment: week.checkpoint?.[0]
+      }));
+    }
+
+    if (showcase.polish?.microRubric?.length) {
+      const weight = Math.round(100 / showcase.polish.microRubric.length) || 25;
+      updated.assessment.rubric = showcase.polish.microRubric.map((criterion, idx) => ({
+        category: `Criterion ${idx + 1}`,
+        weight,
+        exemplary: { points: 4, description: criterion, evidence: [] },
+        proficient: { points: 3, description: criterion, evidence: [] },
+        developing: { points: 2, description: criterion, evidence: [] },
+        beginning: { points: 1, description: criterion, evidence: [] }
+      }));
+    }
+
+    return updated;
   }
 
   // Helper methods for data extraction and conversion
@@ -898,6 +1077,8 @@ export class HeroProjectTransformer {
 
     return {
       ...baseHero,
+      showcase: (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+        (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined),
       transformationMeta: {
         level: 'basic',
         context,

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { type WizardData, type JourneyData, getJourneyData } from '../../types/blueprint';
+import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
 import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { type EnhancedHeroProjectData } from '../../services/HeroProjectTransformer';
@@ -59,6 +60,92 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   target: string;
+}
+
+function convertShowcaseToJourneyData(showcase: ProjectShowcaseV2): JourneyData {
+  const phases = (showcase.runOfShow || []).map((week, index) => {
+    const name = week.weekLabel || week.kind || `Week ${index + 1}`;
+    const primaryDeliverable = week.deliverables?.[0] || '';
+    const primaryActivity = week.students?.[0] || week.teacher?.[0] || '';
+
+    return {
+      id: `phase-${index + 1}`,
+      name,
+      description: week.focus || '',
+      goal: week.focus || '',
+      activity: primaryActivity,
+      output: primaryDeliverable,
+      duration: week.repeatable ? 'Multi-week' : '1 week',
+      interdisciplinary: undefined
+    };
+  });
+
+  const activities = (showcase.runOfShow || []).flatMap((week, index) => {
+    const phaseId = `phase-${index + 1}`;
+    const studentActivities = (week.students || []).map((entry, activityIndex) => ({
+      id: `${phaseId}-student-${activityIndex + 1}`,
+      name: entry,
+      phaseId,
+      description: entry,
+      duration: ''
+    }));
+
+    const teacherActivities = (week.teacher || []).map((entry, activityIndex) => ({
+      id: `${phaseId}-teacher-${activityIndex + 1}`,
+      name: entry,
+      phaseId,
+      description: entry,
+      duration: ''
+    }));
+
+    return [...studentActivities, ...teacherActivities];
+  });
+
+  const resources = [
+    ...(showcase.materialsPrep?.coreKit || []).map(item => ({
+      name: item,
+      type: 'material',
+      description: 'Core kit material'
+    })),
+    ...(showcase.materialsPrep?.noTechFallback || []).map(item => ({
+      name: item,
+      type: 'material',
+      description: 'No-tech fallback'
+    }))
+  ];
+
+  const rubricCriteria = (showcase.polish?.microRubric || []).map((criterion, index) => ({
+    id: `criterion-${index + 1}`,
+    name: criterion,
+    description: criterion,
+    levels: []
+  }));
+
+  const milestones = (showcase.runOfShow || []).flatMap((week, index) =>
+    (week.deliverables || []).map((deliverable, deliverableIndex) => ({
+      id: `milestone-${index + 1}-${deliverableIndex + 1}`,
+      name: deliverable,
+      description: week.focus || '',
+      dueDate: ''
+    }))
+  );
+
+  return {
+    phases,
+    activities,
+    resources,
+    deliverables: {
+      milestones,
+      rubric: { criteria: rubricCriteria },
+      impact: {
+        audience: (showcase.outcomes?.audiences || []).join(', ') || 'Community stakeholders',
+        method: 'Authentic showcase',
+        timeline: showcase.schedule ? `${showcase.schedule.totalWeeks} weeks` : undefined,
+        measures: showcase.outcomes?.core
+      },
+      assessmentStrategy: 'Students exhibit learning through authentic milestone deliverables.'
+    }
+  };
 }
 
 function CollapsiblePanel({ 
@@ -327,6 +414,12 @@ export function ReviewScreen() {
 
   // Use enhanced hero data if available, otherwise fall back to blueprint
   const displayData = heroData || blueprint;
+  const persistedShowcase = useMemo(() => {
+    const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
+    const blueprintShowcase = (blueprint as unknown as { showcase?: ProjectShowcaseV2; projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.showcase;
+    const legacyShowcase = (blueprint as unknown as { projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.projectData?.showcase;
+    return heroShowcase || blueprintShowcase || legacyShowcase || null;
+  }, [heroData, blueprint]);
 
   if (loading) {
     return (
@@ -387,38 +480,50 @@ export function ReviewScreen() {
   // Extract data based on whether we have enhanced hero data or legacy blueprint
   const isEnhancedHero = heroData !== null;
 
-  // For enhanced hero projects, use the rich hero structure
-  // For legacy blueprints, extract from wizardData/journeyData
-  const projectTitle = isEnhancedHero
-    ? heroData.title
-    : `${displayData.wizardData?.subject  } Project` || 'Untitled Project';
+  const projectTitle = persistedShowcase?.hero?.title
+    || (isEnhancedHero ? heroData.title : (displayData?.wizardData?.projectTopic || `${displayData?.wizardData?.subject || ''} Project`))
+    || 'Untitled Project';
 
-  const projectDescription = isEnhancedHero
-    ? heroData.hero.description
-    : displayData.wizardData?.motivation || '';
+  const projectDescription = persistedShowcase?.fullOverview
+    || (isEnhancedHero ? heroData.hero.description : displayData?.wizardData?.motivation)
+    || '';
 
-  const projectScope = isEnhancedHero
-    ? heroData.context?.realWorld || heroData.overview?.description
-    : displayData.wizardData?.scope || '';
+  const projectScope = persistedShowcase?.microOverview?.[0]
+    || (isEnhancedHero ? (heroData.context?.realWorld || heroData.overview?.description) : displayData?.wizardData?.scope)
+    || '';
 
-  const projectLocation = isEnhancedHero
-    ? heroData.impact?.audience?.primary?.join(', ') || 'Global Impact'
-    : displayData.wizardData?.location || 'Global Impact';
+  const projectLocation = persistedShowcase?.outcomes?.audiences?.join(', ')
+    || (isEnhancedHero ? heroData.impact?.audience?.primary?.join(', ') : displayData?.wizardData?.location)
+    || 'Global Impact';
 
-  // For backward compatibility with existing display logic
+  const baseWizardData = (displayData?.wizardData || {}) as Partial<WizardData>;
   const wizardData = isEnhancedHero
     ? {
-        subject: heroData.subjects?.[0] || 'Interdisciplinary',
-        motivation: heroData.hero.description,
-        scope: heroData.context?.realWorld || heroData.overview?.description,
-        location: heroData.impact?.audience?.primary?.join(', ') || 'Global Impact',
-        ageGroup: heroData.gradeLevel,
-        duration: heroData.duration
+        ...baseWizardData,
+        subject: persistedShowcase?.hero?.subjects?.[0] || heroData.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
+        motivation: projectDescription || baseWizardData.motivation || '',
+        scope: projectScope || baseWizardData.scope || '',
+        location: projectLocation || baseWizardData.location || 'Global Impact',
+        ageGroup: persistedShowcase?.hero?.gradeBand || heroData.gradeLevel || baseWizardData.ageGroup,
+        duration: persistedShowcase?.hero?.timeframe || heroData.duration || baseWizardData.duration
       }
-    : displayData.wizardData || {};
+    : {
+        ...baseWizardData,
+        subject: persistedShowcase?.hero?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
+        motivation: projectDescription || baseWizardData.motivation || '',
+        scope: projectScope || baseWizardData.scope || '',
+        location: projectLocation || baseWizardData.location || 'Global Impact',
+        ageGroup: persistedShowcase?.hero?.gradeBand || baseWizardData.ageGroup,
+        duration: persistedShowcase?.hero?.timeframe || baseWizardData.duration
+      };
 
-  const journeyData = isEnhancedHero
-    ? {
+  const journeyData = useMemo(() => {
+    if (persistedShowcase) {
+      return convertShowcaseToJourneyData(persistedShowcase);
+    }
+
+    if (isEnhancedHero && heroData) {
+      return {
         phases: heroData.journey?.phases || [],
         activities: heroData.journey?.phases?.flatMap(p => p.activities) || [],
         resources: heroData.resources?.required?.map(r => ({
@@ -436,8 +541,11 @@ export function ReviewScreen() {
             method: heroData.impact?.methods?.[0]?.method || ''
           }
         }
-      }
-    : getJourneyData(displayData);
+      };
+    }
+
+    return getJourneyData(displayData);
+  }, [persistedShowcase, isEnhancedHero, heroData, displayData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20">
@@ -457,7 +565,7 @@ export function ReviewScreen() {
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-4">
-            {wizardData.subject} Project
+            {projectTitle}
           </h1>
           
           <motion.div
@@ -467,10 +575,10 @@ export function ReviewScreen() {
             className="max-w-3xl mx-auto"
           >
             <p className="text-xl text-gray-600 leading-relaxed mb-2">
-              {wizardData.motivation}
+              {projectDescription}
             </p>
             <p className="text-lg text-gray-500 font-medium">
-              {wizardData.scope} • {wizardData.location || 'Global Impact'}
+              {projectScope || 'Project Overview'} • {projectLocation}
             </p>
           </motion.div>
           

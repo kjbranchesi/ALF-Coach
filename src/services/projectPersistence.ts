@@ -26,6 +26,7 @@ export interface ProjectDraftSummary {
   id: string;
   title: string;
   description?: string; // Course description for display
+  tagline?: string;
   updatedAt: string;
   status?: string; // Project status (draft, ready, etc)
   subject?: string; // Subject area
