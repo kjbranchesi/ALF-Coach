@@ -63,7 +63,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host public demo with model cards and etiquette to educate without disturbing wildlife. Teachers invite partners and families. Students demo models highlighting model cards.',
+      focus: 'Host public demo with model cards and etiquette to educate without disturbing wildlife. Frame the demo with "What promise should every visitor make before they press play?" Teachers invite partners and families. Students demo models highlighting model cards.',
       teacher: ['Invite partners and families', 'Time demos and monitor volume', 'Collect visitor feedback securely'],
       students: ['Demo models highlighting model cards', 'Teach etiquette and wildlife-first practices', 'Log improvements and visitor questions'],
       deliverables: ['Model card set', 'Etiquette handout'],
@@ -73,7 +73,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Publish dataset documentation and outreach plan to extend stewardship beyond the exhibit. Teachers review dataset documentation for licensing. Students publish dataset documentation transparently.',
+      focus: 'Publish dataset documentation and outreach plan to extend stewardship beyond the exhibit. Ask, "Who keeps this stewardship alive when our class steps away?" Teachers review dataset documentation for licensing. Students publish dataset documentation transparently.',
       teacher: ['Review dataset documentation for licensing', 'Orchestrate outreach with park partners', 'Debrief ethics and future stewardship'],
       students: ['Publish dataset documentation transparently', 'Design outreach events or installations', 'Submit ethics reflection and commitments'],
       deliverables: ['Dataset docs', 'Outreach plan'],
@@ -97,7 +97,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Ethics Charter + Species List',
-      summary: 'Students define ethics and choose species focus so wildlife wellbeing leads every choice. Students draft wildlife-first ethics charter with partner input. Teachers share exemplar charters.',
+      summary: 'Start by naming the ethical boundaries before a single waveform is analyzed. Students co-write wildlife-first charters, choose focal species with conservation partners, and document risks plus safeguards. Teachers share exemplars, facilitate consent reviews, and ensure partners approve the charter before data acquisition.',
       studentDirections: [
         'Draft wildlife-first ethics charter with partner input',
         'Select focal species and justify conservation need',
@@ -117,7 +117,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Curation + Labeling',
-      summary: 'Teams curate and label datasets with provenance to respect permits and community agreements. Students acquire audio data with documented permissions. Teachers provide vetted data sources.',
+      summary: 'Curation week keeps provenance and licensing front and center. Students secure permitted datasets, label samples with double-check routines, and record every permission in a provenance log. Teachers provide vetted sources, coach labeling precision, and confirm documentation meets partner expectations.',
       studentDirections: [
         'Acquire audio data with documented permissions',
         'Label representative samples using shared rubric',
@@ -137,7 +137,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Model + Station UI',
-      summary: 'Students train models and design accessible stations that communicate uncertainty clearly. Students train classifiers and record performance metrics. Teachers model evaluation metric calculations.',
+      summary: 'Model and UI studio blends rigorous ML work with calm, accessible design. Students train classifiers, analyze errors, draft model cards, and prototype interfaces that communicate uncertainty without overstimulation. Teachers lead evaluation clinics, review prototypes for accessibility, and push teams to explain limitations plainly.',
       studentDirections: [
         'Train classifiers and record performance metrics',
         'Analyze errors and create improvement plan',
@@ -157,7 +157,7 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Demo + Etiquette',
-      summary: 'Teams demo stations and teach respectful interaction, updating etiquette with visitor insights. Students run public demo with volume monitoring. Teachers invite partners and manage environment.',
+      summary: 'The public demo invites community learning while protecting wildlife. Students run timed demos, teach etiquette scripts, gather questions, and update documentation on the spot. Teachers coordinate partners, monitor volume and pacing, and ensure the stewardship plan continues after the exhibit closes.',
       studentDirections: [
         'Run public demo with volume monitoring',
         'Share etiquette guidelines and reasoning',

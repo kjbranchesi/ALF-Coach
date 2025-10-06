@@ -24,7 +24,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch inquiry about whose stories shape community memory so students see the stakes. Teachers introduce driving question with storytelling montage. Students surface community storytellers they trust.',
+      focus: 'Launch inquiry about whose stories shape community memory so students see the stakes. Ask, "Whose story will disappear if we do nothing this semester?" Teachers introduce driving question with storytelling montage. Students surface community storytellers they trust.',
       teacher: [
         'Introduce driving question with storytelling montage',
         'Facilitate empathy interview norms circle',
@@ -42,7 +42,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan ethical fieldwork and secure storytellers to ensure every interview starts with trust. Teachers coach teams drafting outreach scripts. Students finalize respectful outreach messages.',
+      focus: 'Plan ethical fieldwork and secure storytellers to ensure every interview starts with trust. Prompt teams with "How will storytellers know we will honor their words completely?" Teachers coach teams drafting outreach scripts. Students finalize respectful outreach messages.',
       teacher: [
         'Coach teams drafting outreach scripts',
         'Coordinate guardian permission workflows',
@@ -60,7 +60,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Conduct interviews and capture primary source materials to build a living archive responsibly. Teachers monitor interviews for safety adherence. Students conduct interviews with consent artifacts.',
+      focus: 'Conduct interviews and capture primary source materials to build a living archive responsibly. Keep asking, "Did we capture this story the way our neighbor wanted it told?" Teachers monitor interviews for safety adherence. Students conduct interviews with consent artifacts.',
       teacher: [
         'Monitor interviews for safety adherence',
         'Provide feedback on questioning moves',
@@ -78,7 +78,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Transform interviews into polished story cuts that preserve voice and context. Teachers guide teams segmenting key story beats. Students select powerful interview excerpts.',
+      focus: 'Transform interviews into polished story cuts that preserve voice and context. Use prompts like "Can listeners hear the storyteller breathe in the way they intended?" Teachers guide teams segmenting key story beats. Students select powerful interview excerpts.',
       teacher: [
         'Guide teams segmenting key story beats',
         'Model audio cleanup workflow',
@@ -96,7 +96,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Design the living museum experience so visitors can navigate stories with ease and respect. Teachers model story card layout in CMS. Students design story tiles with audio embeds.',
+      focus: 'Design the living museum experience so visitors can navigate stories with ease and respect. Ask, "How will someone with two minutes understand this story without us standing beside them?" Teachers model story card layout in CMS. Students design story tiles with audio embeds.',
       teacher: [
         'Model story card layout in CMS',
         'Coach students on balancing media rights and releases',
@@ -113,7 +113,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host community preview and gather authentic feedback to refine curation with partners. Teachers coordinate exhibit event logistics. Students stage exhibit zones and signage.',
+      focus: 'Host community preview and gather authentic feedback to refine curation with partners. Challenge teams with "What do we want visitors to feel compelled to do after hearing this story?" Teachers coordinate exhibit event logistics. Students stage exhibit zones and signage.',
       teacher: [
         'Coordinate exhibit event logistics',
         'Coach students rehearsing story intros',
@@ -131,7 +131,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Publish archive online and plan next storytellers to keep the living history growing. Teachers coach students as they export files for web accessibility. Students upload stories with metadata tags.',
+      focus: 'Publish archive online and plan next storytellers to keep the living history growing. Ground the handoff in "Who will we invite next, and how do we honor these participants when we leave?" Teachers coach students as they export files for web accessibility. Students upload stories with metadata tags.',
       teacher: [
         'Coach students as they export files for web accessibility',
         'Connect teams with library partners',
@@ -173,7 +173,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Interview Foundations Lab',
-      summary: 'Students analyze expert interviews, co-create norms, and rehearse mindful listening to anchor community trust. Students annotate exemplar transcript for empathy moves. Teachers queue exemplar audio clip with transcript.',
+      summary: 'Launch the newsroom by practicing what excellent listeners do differently. Students annotate exemplar transcripts, role-play mindful interviews, and capture insights on reflection cards that become their ethical compass. Teachers curate model clips, provide sentence stems, and facilitate debriefs so every team internalizes the listening norms.',
       studentDirections: [
         'Annotate exemplar transcript for empathy moves',
         'List three open-ended follow-up prompts',
@@ -199,7 +199,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Community Interview Plan',
-      summary: 'Teams secure storytellers, permissions, and logistics so fieldwork begins with clear agreements. Students draft respectful outreach message as a team. Teachers provide outreach templates in multiple languages.',
+      summary: 'Planning week secures storytellers and the trust required to enter their homes. Students craft multilingual outreach, collect consent packets, and assign roles so interviews feel organized and respectful. Teachers provide templates, oversee communication logs, and confirm each storyteller approves before equipment leaves campus.',
       studentDirections: [
         'Draft respectful outreach message as a team',
         'Identify three storytellers spanning generations',
@@ -225,7 +225,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Story Cut Draft',
-      summary: 'Students craft three-minute story cuts featuring authentic voices and context. Students select clip highlighting driving insight. Teachers demonstrate audio editing workflow in class.',
+      summary: 'Editing week turns raw recordings into a story listeners can feel. Students select pivotal quotes, clean audio, script introductions, and pair artifacts that ground the memory. Teachers demonstrate editing workflows, run critique circles, and check that every cut keeps the storyteller\'s intent intact.',
       studentDirections: [
         'Select clip highlighting driving insight',
         'Mark supporting quotes in transcript',
@@ -242,7 +242,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
       ],
       evidence: ['Annotated transcript with selected quotes', 'Audio rough cut file', 'Intro script draft'],
       successCriteria: [
-        "I edit clips that center the storyteller's voice",
+        'I edit clips that center the storyteller\'s voice',
         'I record introductions that feel inviting and contextual',
         'I deliver audio with balanced, accessible levels',
         'I select artifacts that deepen understanding of the story'
@@ -257,7 +257,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Living Museum Launch',
-      summary: 'Teams stage a living museum and facilitate community dialogue. Students design exhibit zone with story theme. Teachers confirm venue, schedule, and accessibility needs.',
+      summary: 'The living museum launch gives the archive its heartbeat. Students build themed zones, rehearse concise pitches, facilitate visitor reflections, and record feedback for future storytellers. Teachers secure logistics, invite community responders, and ensure accessibility so every visitor can participate fully.',
       studentDirections: [
         'Design exhibit zone with story theme',
         'Rehearse two-minute story pitch',

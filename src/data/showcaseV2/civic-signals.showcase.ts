@@ -23,7 +23,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore civic tech ethics and define focus questions so community priorities lead the build. Teachers facilitate civic tech case studies. Students audit personal assumptions about AI.',
+      focus: 'Explore civic tech ethics and define focus questions so community priorities lead the build. Invite prompts like "Whose voices will benefit if this system succeeds—and who could be silenced if we fail?" Teachers facilitate civic tech case studies. Students audit personal assumptions about AI.',
       teacher: [
         'Facilitate civic tech case studies',
         'Introduce AI ethics frameworks',
@@ -41,7 +41,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design data pipeline and governance plan to guarantee privacy and accountability from the start. Teachers model data governance checklist. Students inventory data sources and permissions.',
+      focus: 'Design data pipeline and governance plan to guarantee privacy and accountability from the start. Ask, "What consent proof do we need before any row of data enters our system?" Teachers model data governance checklist. Students inventory data sources and permissions.',
       teacher: [
         'Model data governance checklist',
         'Introduce NLP toolkits',
@@ -59,7 +59,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect and preprocess civic feedback data so training sets reflect real voices responsibly. Teachers facilitate data cleaning studios. Students scrape or ingest approved data.',
+      focus: 'Collect and preprocess civic feedback data so training sets reflect real voices responsibly. Keep asking, "If this were my neighborhood story, would I feel honored by the way it is handled?" Teachers facilitate data cleaning studios. Students scrape or ingest approved data.',
       teacher: [
         'Facilitate data cleaning studios',
         'Monitor compliance with privacy rules',
@@ -78,7 +78,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Train and evaluate models with human oversight to keep fairness and accuracy in balance. Teachers model validation metrics interpretation. Students train classification or clustering models.',
+      focus: 'Train and evaluate models with human oversight to keep fairness and accuracy in balance. Pose the question, "What harm happens if the model misclassifies voices from the margins?" Teachers model validation metrics interpretation. Students train classification or clustering models.',
       teacher: [
         'Model validation metrics interpretation',
         'Provide ML debugging support',
@@ -96,7 +96,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Design dashboards and narrative outputs for civic partners to activate evidence-driven decisions. Teachers coach data storytelling techniques. Students prototype dashboards with clear filters.',
+      focus: 'Design dashboards and narrative outputs for civic partners to activate evidence-driven decisions. Prompt teams with "How will a busy agency leader act within 60 seconds of seeing this view?" Teachers coach data storytelling techniques. Students prototype dashboards with clear filters.',
       teacher: [
         'Coach data storytelling techniques',
         'Connect teams with agency analysts',
@@ -114,7 +114,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Present Civic Signals findings and gather feedback so partners shape the iteration roadmap. Teachers organize Civic Signals roundtable. Students demo dashboards live.',
+      focus: 'Present Civic Signals findings and gather feedback so partners shape the iteration roadmap. Center discussion on "What commitment do we need from each partner before we close the room?" Teachers organize Civic Signals roundtable. Students demo dashboards live.',
       teacher: [
         'Organize Civic Signals roundtable',
         'Facilitate translation services',
@@ -132,7 +132,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Deploy toolkits and formalize civic tech partnerships to sustain the listening practice over time. Teachers review implementation documentation. Students publish open governance playbook.',
+      focus: 'Deploy toolkits and formalize civic tech partnerships to sustain the listening practice over time. Ask, "Who owns maintenance and audit duties when the next dataset arrives?" Teachers review implementation documentation. Students publish open governance playbook.',
       teacher: [
         'Review implementation documentation',
         'Facilitate training for agency staff',
@@ -173,7 +173,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Civic Signals Ethics Primer',
-      summary: 'Students interrogate AI use in civic contexts and articulate guardrails. Students analyze civic tech case study. Teachers provide case study materials.',
+      summary: 'Launch the Civic Signals studio by interrogating what ethical AI looks like in public service. Students analyze partner case studies, debate risks, and co-author guardrails that they publish for community review. Teachers provide exemplars, moderate tough conversations, and secure partner endorsement before any data work begins.',
       studentDirections: [
         'Analyze civic tech case study',
         'Debate benefits and harms',
@@ -199,7 +199,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Pipeline Architecture Plan',
-      summary: 'Teams document data sources, permissions, and preprocessing steps. Students inventory all approved data sources. Teachers share sample architecture diagrams.',
+      summary: 'Pipeline planning turns ethics into technical decisions everyone can follow. Students document datasets, draw architecture diagrams, and assign permissions so privacy and accountability stay visible. Teachers share governance checklists, critique diagrams, and ensure approvals are locked before scripts run.',
       studentDirections: [
         'Inventory all approved data sources',
         'Draw pipeline architecture diagram',
@@ -225,7 +225,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Model + Bias Audit Lab',
-      summary: 'Students train models and document fairness interventions. Students train baseline model. Teachers provide evaluation rubrics.',
+      summary: 'Model lab week is where evidence meets accountability. Students train baseline models, measure accuracy alongside fairness metrics, and document bias mitigations with human oversight checkpoints. Teachers facilitate evaluation rubrics, stress-test decisions, and confirm no model advances without a defensible audit trail.',
       studentDirections: [
         'Train baseline model',
         'Evaluate accuracy and fairness',
@@ -251,7 +251,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Civic Signals Briefing',
-      summary: 'Teams present dashboards, protocols, and policy recommendations. Students finalize accessible dashboard. Teachers invite agency stakeholders.',
+      summary: 'The Civic Signals briefing hands agency partners a roadmap they can act on tomorrow. Students finalize accessible dashboards, craft policy summaries, and rehearse how to answer ethics questions with confidence. Teachers coordinate stakeholders, translation, and agendas so commitments and next steps are captured on record.',
       studentDirections: [
         'Finalize accessible dashboard',
         'Write policy summary with evidence',

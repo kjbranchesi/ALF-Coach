@@ -24,7 +24,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Examine trust, secrecy, and ethics of public cryptography to ground studio norms. Teachers share cryptography stories showing trust and civic responsibility. Students debate speech ethics and document shared consent guardrails.',
+      focus: 'Examine trust, secrecy, and ethics of public cryptography to ground studio norms. Ask, "Who are we asking to trust us with encoded art, and what happens if they do not?" Teachers share cryptography stories showing trust and civic responsibility. Students debate speech ethics and document shared consent guardrails.',
       teacher: [
         'Share cryptography stories showing trust and civic responsibility',
         'Define legal boundaries and consent for public expression',
@@ -42,7 +42,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design key exchange rituals and secure permissions for legal installations. Teachers demonstrate key exchange protocols and secrecy principles. Students design decode ritual describing keys and access rules.',
+      focus: 'Design key exchange rituals and secure permissions for legal installations. Prompt teams with "What proof will property owners need before saying yes?" Teachers demonstrate key exchange protocols and secrecy principles. Students design decode ritual describing keys and access rules.',
       teacher: [
         'Demonstrate key exchange protocols and secrecy principles',
         'Coordinate site permissions with property owners and agencies',
@@ -60,7 +60,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Prototype visual language and decode flows to ensure readability before launch. Teachers critique visual language for readability and contrast. Students stencil and paste-up prototypes using removable materials.',
+      focus: 'Prototype visual language and decode flows to ensure readability before launch. Keep asking, "Can someone decode this quickly without us whispering hints?" Teachers critique visual language for readability and contrast. Students stencil and paste-up prototypes using removable materials.',
       teacher: [
         'Critique visual language for readability and contrast',
         'Coach teams on accessible color, icon, and typography choices',
@@ -78,7 +78,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Audit security and accessibility to certify public readiness of installations. Teachers facilitate timed trials simulating community decode experience. Students measure decode times and adjust difficulty accordingly.',
+      focus: 'Audit security and accessibility to certify public readiness of installations. Ask, "Who might be excluded or overwhelmed by this ritual, and how do we change that?" Teachers facilitate timed trials simulating community decode experience. Students measure decode times and adjust difficulty accordingly.',
       teacher: [
         'Facilitate timed trials simulating community decode experience',
         'Review contrast thresholds and lighting conditions with teams',
@@ -96,7 +96,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Produce consented installations using removable materials and documented safety roles. Teachers stage installation window with permits and neighbor notifications. Students install artwork with spotters managing pedestrian safety.',
+      focus: 'Produce consented installations using removable materials and documented safety roles. Frame install day with "What hiccup do we hope to discover now instead of during the public walk?" Teachers stage installation window with permits and neighbor notifications. Students install artwork with spotters managing pedestrian safety.',
       teacher: [
         'Stage installation window with permits and neighbor notifications',
         'Supervise PPE usage and spotter communication protocols',
@@ -113,7 +113,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host Decode Walk teaching crypto literacy and collecting community insights. Teachers invite community members, press, and partners to walk. Students guide decode teams through installations kindly and clearly.',
+      focus: 'Host Decode Walk teaching crypto literacy and collecting community insights. Challenge teams with "What evidence will prove to the city that coded art can build trust?" Teachers invite community members, press, and partners to walk. Students guide decode teams through installations kindly and clearly.',
       teacher: [
         'Invite community members, press, and partners to walk',
         'Manage route pacing, accessibility, and crowd safety',
@@ -130,7 +130,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Complete cleanup, legal debrief, and publish toolkit for future partners. Teachers verify cleanup proof and closure with property owners. Students submit cleanup documentation and signed confirmation forms.',
+      focus: 'Complete cleanup, legal debrief, and publish toolkit for future partners. Anchor the closure in "Who will reuse this toolkit and how do we help them avoid our mistakes?" Teachers verify cleanup proof and closure with property owners. Students submit cleanup documentation and signed confirmation forms.',
       teacher: [
         'Verify cleanup proof and closure with property owners',
         'Host legal debrief reviewing compliance and improvements',
@@ -170,7 +170,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Crypto 101 + Ethics Brief',
-      summary: 'Students learn foundational ciphers and define ethical, legal constraints for installations. Students crack three cipher types and explain key mechanics. Teachers curate cipher practice set with varied difficulty.',
+      summary: 'Start by pairing cryptography curiosity with civic responsibility. Students crack multiple cipher types, draft a shared ethics charter, and log potential harms with mitigation plans. Teachers curate practice sets, lead legal briefings, and ensure every learner signs the policy before designing anything public.',
       studentDirections: [
         'Crack three cipher types and explain key mechanics',
         'Investigate trust and speech cases for discussion circle',
@@ -190,7 +190,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Key Exchange + Site Plan',
-      summary: 'Teams design key exchange ritual and secure permissions for safe Decode Walk. Students map route and document stakeholders requiring permission. Teachers provide permission templates and outreach checklist.',
+      summary: 'Permission week keeps the work lawful and trusted. Students map routes, create consent scripts, design key exchange rituals, and assemble packets for partner sign-off. Teachers supply templates, schedule walkthroughs, and verify risk mitigations before approving installations.',
       studentDirections: [
         'Map route and document stakeholders requiring permission',
         'Draft consent letters and communication scripts for partners',
@@ -210,7 +210,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Visual Language Usability Test',
-      summary: 'Students prototype visual language and test cipher usability with peers. Students create removable stencils and paste-ups for cipher set. Teachers provide contrast and accessibility reference guides.',
+      summary: 'Usability testing ensures the code unlocks for everyone we intend. Students produce removable prototypes, run timed decode tests, and adjust contrast, scale, and instructions based on evidence. Teachers provide accessibility guides, structure test scripts, and check PPE readiness for install days.',
       studentDirections: [
         'Create removable stencils and paste-ups for cipher set',
         'Run user tests timing decode accuracy and clarity',
@@ -232,7 +232,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Decode Walk + Toolkit',
-      summary: 'Teams host the Decode Walk, teach crypto basics, and publish toolkit. Students guide visitors along route using consented access plan. Teachers invite press, partners, and community leaders to event.',
+      summary: 'The Decode Walk turns the city into a cryptography classroom. Students guide visitors through installations, teach key concepts, collect feedback, and release a toolkit others can adopt. Teachers coordinate logistics, ensure safety coverage, and document commitments for future collaborations.',
       studentDirections: [
         'Guide visitors along route using consented access plan',
         'Teach cryptography basics through plain-language storytelling',
@@ -254,7 +254,7 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A5',
       title: 'Impact + Legal Debrief',
-      summary: 'Students document impact, finalize legal closure, and plan next steps. Students collect partner quotes documenting impact and trust. Teachers provide debrief template and reflection prompts.',
+      summary: 'Close out by honoring impact and accountability. Students gather partner quotes, document compliance, file cleanup proof, and reflect on how crypto intersects with civic life. Teachers host debriefs, confirm all permissions are closed, and review toolkits before publishing.',
       studentDirections: [
         'Collect partner quotes documenting impact and trust',
         'Write legal debrief summarizing compliance and lessons',

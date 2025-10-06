@@ -24,7 +24,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Investigate local hazards and assets to ground resilient evacuation design. Teachers host partner briefing sharing hazard realities and data gaps. Students catalog hazards and assets using partner stories and datasets.',
+      focus: 'Investigate local hazards and assets to ground resilient evacuation design. Ask partners, "Which blocks become impassable first and who is still there when that happens?" Teachers host partner briefing sharing hazard realities and data gaps. Students catalog hazards and assets using partner stories and datasets.',
       teacher: [
         'Host partner briefing sharing hazard realities and data gaps',
         'Model annotating base maps with hazard and asset layers',
@@ -42,7 +42,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Co-design AR storyboards and evacuation routes that prioritize equity and accessibility. Teachers model storyboard sequencing using accessibility heuristics. Students draft AR overlays that spotlight high-risk blocks.',
+      focus: 'Co-design AR storyboards and evacuation routes that prioritize equity and accessibility. Pose prompts such as "What must someone pushing a stroller understand within five seconds?" Teachers model storyboard sequencing using accessibility heuristics. Students draft AR overlays that spotlight high-risk blocks.',
       teacher: [
         'Model storyboard sequencing using accessibility heuristics',
         'Review ADA iconography with assistive tech partners',
@@ -60,7 +60,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Prototype AR overlays and validate readability with diverse users. Teachers provide contrast guidelines tailored to outdoor environments. Students build AR overlay prototypes with layered hazard data.',
+      focus: 'Prototype AR overlays and validate readability with diverse users. Keep asking, "How would a grandparent interpret this overlay in the dark with a flashlight?" Teachers provide contrast guidelines tailored to outdoor environments. Students build AR overlay prototypes with layered hazard data.',
       teacher: [
         'Provide contrast guidelines tailored to outdoor environments',
         'Coach icon refinement using user feedback heuristics',
@@ -78,7 +78,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Conduct full route rehearsals and prioritize fixes from field feedback. Teachers verify permissions and safety plans before rehearsals. Students walk evacuation routes while piloting AR overlays live.',
+      focus: 'Conduct full route rehearsals and prioritize fixes from field feedback. Surface questions like "Where might panic spike and how do we coach calm choices?" Teachers verify permissions and safety plans before rehearsals. Students walk evacuation routes while piloting AR overlays live.',
       teacher: [
         'Verify permissions and safety plans before rehearsals',
         'Assign safety marshals monitoring hydration and mobility needs',
@@ -96,7 +96,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Host Resilience Walk showcasing AR guidance and activating family preparedness. Teachers invite families, emergency teams, and translators to event. Students guide visitors through routes highlighting safety choices.',
+      focus: 'Host Resilience Walk showcasing AR guidance and activating family preparedness. Encourage teams to imagine "What does success feel like for a caregiver who attends and heads home ready?" Teachers invite families, emergency teams, and translators to event. Students guide visitors through routes highlighting safety choices.',
       teacher: [
         'Invite families, emergency teams, and translators to event',
         'Brief student safety marshals on incident protocols',
@@ -114,7 +114,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Publish multilingual guides and formalize long-term partner handoff. Teachers review language access and translation accuracy before release. Students publish family guide with clear safety instructions.',
+      focus: 'Publish multilingual guides and formalize long-term partner handoff. Ground planning in "Who will own updates when hurricane season shifts in two years?" Teachers review language access and translation accuracy before release. Students publish family guide with clear safety instructions.',
       teacher: [
         'Review language access and translation accuracy before release',
         'Arrange follow-up calibration meetings with emergency partners',
@@ -146,7 +146,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Hazard/Asset Map + Privacy Pledge',
-      summary: 'Teams map hazards and assets with partners to build privacy-ready evacuation groundwork. Students collect hazard and asset data from partners and public sources. Teachers provide layered base maps and vetted data sources.',
+      summary: 'Kick off with partner-led mapping so every overlay decision reflects real risk. Students gather verified hazard and asset data, annotate base maps with citations, and co-write privacy pledges that honor community agreements. Teachers supply vetted datasets and facilitate critique so gaps surface before storyboarding begins.',
       studentDirections: [
         'Collect hazard and asset data from partners and public sources',
         'Annotate base maps with accuracy notes and citations',
@@ -170,7 +170,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'AR Storyboard + Equity Check',
-      summary: 'Teams design equity-centered AR storyboards and validate accessibility choices with partners. Students sketch AR screen flow that mirrors evacuation sequence. Teachers share storyboard templates and evacuation exemplars.',
+      summary: 'Translate the hazard analysis into inclusive AR storyboards families can trust. Students draft screen flows, pressure test icons and translations with partners, and revise overlays until they meet accessibility and equity checkpoints. Teachers share heuristics, exemplars, and co-review time so approval comes with confidence rather than guesswork.',
       studentDirections: [
         'Sketch AR screen flow that mirrors evacuation sequence',
         'Add icons and text meeting ADA readability standards',
@@ -194,7 +194,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Route Mock + Fix List',
-      summary: 'Students rehearse evacuation routes, document friction, and prioritize fixes for overlays. Students walk assigned routes while piloting overlays with families. Teachers assign safety marshals and observers to each rehearsal team.',
+      summary: 'Route rehearsals turn prototypes into lived experience and uncover the friction families feel. Students guide pilots, capture evidence of barriers, and prioritize fixes that boost safety and calm before the public event. Teachers coordinate marshals, testing scripts, and partner observers to keep rehearsals safe and insight-rich.',
       studentDirections: [
         'Walk assigned routes while piloting overlays with families',
         'Capture timing, access barriers, and comfort observations',
@@ -218,7 +218,7 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Resilience Walk + Guide Draft',
-      summary: 'Teams run the Resilience Walk, synthesize feedback, and complete the family guide. Students guide families along evacuation routes using AR overlays. Teachers invite partners and manage safety briefing logistics.',
+      summary: 'The Resilience Walk becomes the public moment where preparedness moves from plan to practice. Students lead families through routes, narrate safety choices with data and stories, and translate feedback into the next guide revision on the spot. Teachers curate the guest list, logistics, and debrief structures so every insight feeds the final handoff.',
       studentDirections: [
         'Guide families along evacuation routes using AR overlays',
         'Collect surveys or voice notes with consent reminders',

@@ -23,7 +23,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Ground the team in disability justice and media accessibility standards so every workflow begins with respect. Teachers invite disabled creators for panel. Students reflect on personal media habits.',
+      focus: 'Ground the team in disability justice and media accessibility standards so every workflow begins with respect. Invite prompts such as "Where does our own media still shut people out and why?" Teachers invite disabled creators for panel. Students reflect on personal media habits.',
       teacher: [
         'Invite disabled creators for panel',
         'Introduce Web Content Accessibility Guidelines (WCAG)',
@@ -41,7 +41,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design AI-assisted accessibility pipeline and editorial safeguards that keep human editors in control of voice. Teachers demo captioning and alt-text tools. Students select media assets for pilots.',
+      focus: 'Design AI-assisted accessibility pipeline and editorial safeguards that keep human editors in control of voice. Co-create scenario questions like "What happens if the AI rewrites a student\'s dialect?" so safeguards feel real. Teachers demo captioning and alt-text tools. Students select media assets for pilots.',
       teacher: [
         'Demo captioning and alt-text tools',
         'Guide bias and error brainstorming',
@@ -59,7 +59,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Generate AI drafts and refine them with human editors to prove the workflow protects dignity. Teachers provide tool training sessions. Students generate captions and alt-text drafts.',
+      focus: 'Generate AI drafts and refine them with human editors to prove the workflow protects dignity. Keep asking, "Would the featured storyteller feel seen in this version?" during review huddles. Teachers provide tool training sessions. Students generate captions and alt-text drafts.',
       teacher: [
         'Provide tool training sessions',
         'Monitor for accuracy and respect',
@@ -78,7 +78,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Package final assets and design simplified reading supports that invite broad community use. Teachers model plain-language rewriting strategies. Students finalize captions and alt-text sets.',
+      focus: 'Package final assets and design simplified reading supports that invite broad community use. Use lens questions like "How will a family access this on a phone with auto-translate?" to shape decisions. Teachers model plain-language rewriting strategies. Students finalize captions and alt-text sets.',
       teacher: [
         'Model plain-language rewriting strategies',
         'Facilitate tone and ownership check-ins',
@@ -96,7 +96,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Launch accessibility kits and train content creators so adoption feels practical and inviting. Teachers organize training workshops. Students deliver training to media teams.',
+      focus: 'Launch accessibility kits and train content creators so adoption feels practical and inviting. Prompt teams to plan for moments such as "What if editors have only ten minutes to publish?" so workflows stay nimble. Teachers organize training workshops. Students deliver training to media teams.',
       teacher: [
         'Organize training workshops',
         'Coordinate resource distribution',
@@ -114,7 +114,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Document governance and plan long-term stewardship so accessibility stays active after launch. Teachers review governance template. Students publish governance handbook.',
+      focus: 'Document governance and plan long-term stewardship so accessibility stays active after launch. Frame the week with questions like "Who will audit our captions six months from now?" to define the handoff. Teachers review governance template. Students publish governance handbook.',
       teacher: [
         'Review governance template',
         'Assist with help desk plan',
@@ -155,7 +155,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Accessibility Listening Log',
-      summary: 'Students learn from disabled creators and identify accessibility gaps. Students attend storyteller panel respectfully. Teachers invite panelists and moderators.',
+      summary: 'Open with lived expertise so accessibility work starts from accountability, not assumptions. Students listen to disabled storytellers, map where sample media falls short, and capture insights that will guide their gap analysis deliverables. Teachers curate the panel, listening structures, and debrief so commitments are co-authored with the speakers.',
       studentDirections: [
         'Attend storyteller panel respectfully',
         'Take notes on access needs shared',
@@ -181,7 +181,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Workflow Blueprint',
-      summary: 'Teams design AI plus human accessibility pipelines. Students select pilot media assets. Teachers provide blueprint rubric.',
+      summary: 'Teams architect human-guided AI pipelines that protect tone, ownership, and accuracy. Students inventory pilot media, storyboard every AI and human checkpoint, and align deliverables like the QA checklist with partner expectations. Teachers supply exemplars and rubric feedback so plans balance ambition with realistic staffing.',
       studentDirections: [
         'Select pilot media assets',
         'Map AI and human steps',
@@ -207,7 +207,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Accessibility Sprint Log',
-      summary: 'Students generate AI drafts and refine them with human editors. Students run AI caption and alt-text drafts. Teachers provide sprint log template.',
+      summary: 'Sprint cycles convert rough AI drafts into assets the community can actually publish. Students generate captions, alt-text, and plain-language summaries, then document every human revision and consultant insight in their sprint logs. Teachers orchestrate tool training and review cadences to keep quality, respect, and turnaround times aligned.',
       studentDirections: [
         'Run AI caption and alt-text drafts',
         'Review drafts with consultant feedback',
@@ -233,7 +233,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Accessibility Launch Studio',
-      summary: 'Teams launch training, governance, and support systems. Students create training session agenda. Teachers schedule workshops.',
+      summary: 'The final push turns workflows into an adoption campaign people will sustain. Students design workshops, publish governance handbooks, and collect commitments that prove the new systems will stick after the showcase. Teachers manage logistics and partner invitations so each launch moment reaches the teams who need it most.',
       studentDirections: [
         'Create training session agenda',
         'Deliver workshop to media teams',

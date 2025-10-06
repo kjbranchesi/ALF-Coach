@@ -24,7 +24,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Study Martian ISRU fundamentals and mission water needs to ground every later decision. Teachers show Mars DEM/ice maps. Students compare sites.',
+      focus: 'Study Martian ISRU fundamentals and mission water needs to ground every later decision. Ask, "Where would we stake our habitat if our crew had to land tomorrow morning?" Teachers show Mars DEM/ice maps. Students compare sites.',
       teacher: ['Show Mars DEM/ice maps', 'Model mission water math', 'Define safety in design'],
       students: ['Compare sites', 'Compute daily water needs', 'List environmental constraints'],
       deliverables: ['Candidate site list', 'Water needs worksheet'],
@@ -34,7 +34,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Select a site and draft capture approach with explicit assumptions for review. Teachers provide data sheets. Students choose one site.',
+      focus: 'Select a site and draft capture approach with explicit assumptions for review. Prompt teams with "What assumption will the mission director challenge first?" Teachers provide data sheets. Students choose one site.',
       teacher: ['Provide data sheets', 'Review assumptions', 'Coach trade‑off framing'],
       students: ['Choose one site', 'Draft capture concept', 'List assumptions + risks'],
       deliverables: ['Site selection memo', 'Concept scamp'],
@@ -44,7 +44,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Create 3D site models and system schematics to communicate ideas clearly to reviewers. Teachers share modeling options. Students build terrain mockup.',
+      focus: 'Create 3D site models and system schematics to communicate ideas clearly to reviewers. Keep asking, "Can someone reading this diagram route water without us in the room?" Teachers share modeling options. Students build terrain mockup.',
       teacher: ['Share modeling options', 'Coach clear labeling', 'Review energy budgets'],
       students: ['Build terrain mockup', 'Draft schematics', 'Annotate energy inputs'],
       deliverables: ['3D site model', 'System schematic v1'],
@@ -54,7 +54,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Run trade-offs between yield, energy, and risk so the design can withstand scrutiny. Teachers provide trade‑off template. Students compare alternatives.',
+      focus: 'Run trade-offs between yield, energy, and risk so the design can withstand scrutiny. Frame analysis with "What keeps the crew alive if our top option fails on sol 12?" Teachers provide trade-off template. Students compare alternatives.',
       teacher: ['Provide trade‑off template', 'Facilitate design critique', 'Check math units'],
       students: ['Compare alternatives', 'Revise plan', 'Note EVA hazards'],
       deliverables: ['Trade‑off table', 'Revised schematic'],
@@ -63,7 +63,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Host mission review panel with EVA flow and risk mitigation to earn a go/no-go. Teachers invite panel. Students present mission brief.',
+      focus: 'Host mission review panel with EVA flow and risk mitigation to earn a go/no-go. Challenge teams with "What data do we need ready when the panel says prove it?" Teachers invite panel. Students present mission brief.',
       teacher: ['Invite panel', 'Time presentations', 'Record Q&A notes'],
       students: ['Present mission brief', 'Defend trade‑offs', 'Log risks + mitigations'],
       deliverables: ['Mission brief deck', 'Risk register'],
@@ -73,7 +73,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Create deployment storyboard and cross-team synthesis to document how the mission launches. Teachers model storyboard format. Students storyboard deployment.',
+      focus: 'Create deployment storyboard and cross-team synthesis to document how the mission launches. Ask, "Who does what on sol 0, and how do we show that visually?" Teachers model storyboard format. Students storyboard deployment.',
       teacher: ['Model storyboard format', 'Arrange gallery walk', 'Facilitate synthesis'],
       students: ['Storyboard deployment', 'Peer review', 'Publish data pack'],
       deliverables: ['Deployment storyboard', 'Data pack v1'],
@@ -109,7 +109,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Mars Site Recon & Needs Math',
-      summary: 'Students scout candidate sites and compute daily water needs to size the mission challenge. Students compare three sites using DEM and ice data. Teachers provide datasets and calculators.',
+      summary: 'Start as reconnaissance engineers who need to brief a crew fast. Students compare candidate sites using real DEM and ice data, run water demand math, and document constraints so their shortlist carries weight. Teachers surface vetted datasets, model calculations, and audit citations before teams move forward.',
       studentDirections: ['Compare three sites using DEM and ice data', 'Compute daily water needs for crew scenario', 'List environmental constraints and hazards', 'Cite NASA/ESA sources for data and assumptions', 'Pick top two candidate sites with rationale'],
       teacherSetup: ['Provide datasets and calculators', 'Model mission water math', 'Review citations and assumptions'],
       evidence: ['Site table', 'Needs worksheet'],
@@ -123,7 +123,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Site Selection Memo',
-      summary: 'Teams choose a site and defend assumptions, preparing for critical trade-off debates. Students state choice. Teachers share memo template.',
+      summary: 'The site selection memo crystalizes the bet the team is making. Students defend their chosen location, list assumptions and risks, and frame initial capture concepts for reviewers. Teachers provide memo templates, coach assumption language, and ensure every claim connects back to data.',
       studentDirections: ['State choice', 'List assumptions', 'Note risks', 'Share rationale', 'Submit memo'],
       teacherSetup: ['Share memo template', 'Coach assumptions', 'Review risk framing'],
       evidence: ['Selection memo'],
@@ -133,7 +133,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Site Model + Schematic v1',
-      summary: 'Students build terrain models and draft capture schematics that make energy flows legible. Students build model. Teachers provide examples.',
+      summary: 'Model week translates analysis into something a mission director can hold. Students build terrain mockups, draft schematics with labeled energy flows, and photograph progress for their data packs. Teachers supply exemplars, check units, and push for clarity so a reviewer could execute the plan without guesswork.',
       studentDirections: ['Build model', 'Draft schematic', 'Label energy', 'Check units', 'Photo log'],
       teacherSetup: ['Provide examples', 'Check units', 'Review labels'],
       evidence: ['Model photos', 'Schematic v1'],
@@ -143,7 +143,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mission Brief + EVA Risk',
-      summary: 'Teams present designs and defend trade-offs and risks, updating mission materials live. Students present mission brief to review panel. Teachers invite panel and schedule review.',
+      summary: 'The mission brief is the go/no-go moment. Students present their designs, defend trade-offs with evidence, log Q&A decisions, and refine risk registers in real time. Teachers run the panel, capture decisions, and confirm all updates are published in the mission data pack.',
       studentDirections: ['Present mission brief to review panel', 'Defend trade-offs with data and assumptions', 'Log Q&A decisions and action items', 'Revise risk register and mitigations', 'Publish mission deck and data pack'],
       teacherSetup: ['Invite panel and schedule review', 'Time presentations and Q&A', 'Record decisions and commitments'],
       evidence: ['Brief deck', 'Risk register'],

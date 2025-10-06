@@ -23,7 +23,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Understand harbor ecology, threats, and community priorities to align the mission with lived realities. Teachers invite marine scientists for kickoff. Students map harbor stakeholders and concerns.',
+      focus: 'Understand harbor ecology, threats, and community priorities to align the mission with lived realities. Ask, "Who depends on this harbor tomorrow morning, and what do they need us to protect?" Teachers invite marine scientists for kickoff. Students map harbor stakeholders and concerns.',
       teacher: [
         'Invite marine scientists for kickoff',
         'Model watershed systems thinking',
@@ -41,7 +41,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design sampling plans and station prototypes so monitoring stays rigorous and feasible. Teachers demonstrate sampling protocols. Students select monitoring locations strategically.',
+      focus: 'Design sampling plans and station prototypes so monitoring stays rigorous and feasible. Prompt teams with "What data will earn trust from both fishermen and regulators?" Teachers demonstrate sampling protocols. Students select monitoring locations strategically.',
       teacher: [
         'Demonstrate sampling protocols',
         'Coach teams on sensor selection',
@@ -59,7 +59,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect water and biodiversity data while iterating stations to keep evidence trustworthy. Teachers supervise field excursions. Students gather water samples and metadata.',
+      focus: 'Collect water and biodiversity data while iterating stations to keep evidence trustworthy. Keep asking, "Would I stand behind these numbers if an environmental lawyer challenged them?" Teachers supervise field excursions. Students gather water samples and metadata.',
       teacher: [
         'Supervise field excursions',
         'Ensure chain-of-custody compliance',
@@ -78,7 +78,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and engineer communication tools that make trends legible to neighbors. Teachers model data dashboard construction. Students visualize trends in dashboards.',
+      focus: 'Analyze findings and engineer communication tools that make trends legible to neighbors. Use prompts like "What should a fourth-grader learn from this dashboard in 30 seconds?" Teachers model data dashboard construction. Students visualize trends in dashboards.',
       teacher: [
         'Model data dashboard construction',
         'Guide comparative analysis with standards',
@@ -96,7 +96,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Co-create policy recommendations and stewardship activities to turn data into local action. Teachers facilitate policy scenario workshops. Students draft policy briefs with evidence.',
+      focus: 'Co-create policy recommendations and stewardship activities to turn data into local action. Ask, "Who must sign off before this policy becomes real?" to guide outreach. Teachers facilitate policy scenario workshops. Students draft policy briefs with evidence.',
       teacher: [
         'Facilitate policy scenario workshops',
         'Invite local officials for consultation',
@@ -114,7 +114,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host Harbor Health summit and publish data so partners can act on shared insights. Teachers coordinate venue logistics. Students present dashboards and stories.',
+      focus: 'Host Harbor Health summit and publish data so partners can act on shared insights. Challenge teams with "What commitment do we need each guest to leave with?" Teachers coordinate venue logistics. Students present dashboards and stories.',
       teacher: [
         'Coordinate venue logistics',
         'Coordinate digital publication setup',
@@ -132,7 +132,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Deploy stations long-term and formalize partnerships to sustain stewardship beyond class. Teachers facilitate maintenance training sessions. Students install stations at final sites.',
+      focus: 'Deploy stations long-term and formalize partnerships to sustain stewardship beyond class. Center planning on "Who maintains the sensors when the tide changes and class is over?" Teachers facilitate maintenance training sessions. Students install stations at final sites.',
       teacher: [
         'Facilitate maintenance training sessions',
         'Draft MOUs with partner groups',
@@ -173,7 +173,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Stewardship Storyboard',
-      summary: 'Students ground the project in stakeholder stories and ecological history. Students interview two harbor stakeholders. Teachers invite stakeholder panel.',
+      summary: 'Ground the mission in lived experience before collecting a single data point. Students interview stakeholders, document ecological history, and build storyboards that keep community priorities front and center. Teachers recruit panelists, model respectful listening, and guide feedback so the storyboard steering the project feels accountable.',
       studentDirections: [
         'Interview two harbor stakeholders',
         'Identify key ecological concerns',
@@ -199,7 +199,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Monitoring Blueprint',
-      summary: 'Teams plan sampling logistics and station engineering. Students select priority monitoring sites. Teachers provide blueprint rubric.',
+      summary: 'Blueprint week transforms empathy into engineering. Students choose monitoring sites, define indicators, and design stations alongside safety and maintenance plans that partners can actually run. Teachers provide rubrics, safety briefings, and permitting support so the blueprint is both ambitious and feasible.',
       studentDirections: [
         'Select priority monitoring sites',
         'Define indicators and frequency',
@@ -225,7 +225,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Data + Engineering Lab',
-      summary: 'Students collect data and refine monitoring stations. Students conduct sampling using protocols. Teachers supervise sampling trips.',
+      summary: 'Data and engineering lab sessions prove that stewardship is disciplined work. Students follow protocols, calibrate sensors, iterate stations, and log every decision in their engineering journals. Teachers supervise excursions, provide lab analysis windows, and coach troubleshooting to keep datasets trustworthy.',
       studentDirections: [
         'Conduct sampling using protocols',
         'Calibrate sensors before deployment',
@@ -251,7 +251,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Harbor Health Summit',
-      summary: 'Teams publish findings, pitch policy, and transition stewardship. Students finalize dashboard and brief. Teachers organize summit logistics.',
+      summary: 'The Harbor Health summit turns evidence into commitments. Students finalize dashboards, rehearse pitches, facilitate stewardship demos, and capture partner promises plus follow-up plans. Teachers orchestrate logistics, invite decision makers, and ensure the portal and handoff assets are live before the crowd leaves.',
       studentDirections: [
         'Finalize dashboard and brief',
         'Rehearse policy pitch with partners',

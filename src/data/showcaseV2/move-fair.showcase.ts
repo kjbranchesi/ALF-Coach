@@ -23,7 +23,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Build shared context on mobility justice and neighborhood history to anchor empathy work. Teachers facilitate transit history case studies. Students create mobility story timelines.',
+      focus: 'Build shared context on mobility justice and neighborhood history to anchor empathy work. Ask, "Whose commute costs more time or money simply because of where they live?" Teachers facilitate transit history case studies. Students create mobility story timelines.',
       teacher: [
         'Facilitate transit history case studies',
         'Map inequality through storytelling',
@@ -41,7 +41,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design research plans covering data, observation, and community listening so evidence feels complete. Teachers model mixed-methods research design. Students select routes and hotspots to study.',
+      focus: 'Design research plans covering data, observation, and community listening so evidence feels complete. Prompt teams with "What will convince skeptical planners and riders at the same time?" Teachers model mixed-methods research design. Students select routes and hotspots to study.',
       teacher: [
         'Model mixed-methods research design',
         'Broker meetings with planning staff',
@@ -59,7 +59,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect mobility data and community narratives to capture both numbers and lived experiences. Teachers shadow walk audits for safety. Students log travel times and obstacles.',
+      focus: 'Collect mobility data and community narratives to capture both numbers and lived experiences. Keep asking, "Does every story we record still feel like the storyteller owns it?" Teachers shadow walk audits for safety. Students log travel times and obstacles.',
       teacher: [
         'Shadow walk audits for safety',
         'Coordinate translation support',
@@ -78,7 +78,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and frame opportunity areas that reveal leverage for equity. Teachers model equity scoring frameworks. Students build composite equity index.',
+      focus: 'Analyze findings and frame opportunity areas that reveal leverage for equity. Frame insight sessions with "Which levers would change life fastest for our priority riders?" Teachers model equity scoring frameworks. Students build composite equity index.',
       teacher: [
         'Model equity scoring frameworks',
         'Facilitate systems mapping workshop',
@@ -96,7 +96,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype interventions and test feasibility alongside community partners. Teachers source materials for tactical pilots. Students design pilot interventions.',
+      focus: 'Prototype interventions and test feasibility alongside community partners. Ask, "Who must we invite to keep this pilot running after the pop-up ends?" Teachers source materials for tactical pilots. Students design pilot interventions.',
       teacher: [
         'Source materials for tactical pilots',
         'Facilitate policy scenario labs',
@@ -114,7 +114,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host Move Fair summit with stakeholders to secure commitments in public. Teachers organize summit logistics. Students curate booths with pilots and data.',
+      focus: 'Host Move Fair summit with stakeholders to secure commitments in public. Challenge teams with "What pledge do we need recorded before the mic turns off?" Teachers organize summit logistics. Students curate booths with pilots and data.',
       teacher: [
         'Organize summit logistics',
         'Coach persuasive storytelling',
@@ -132,7 +132,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Publish action playbook and transition ownership so improvements continue after the project. Teachers review playbook structure. Students write action steps with timelines.',
+      focus: 'Publish action playbook and transition ownership so improvements continue after the project. Anchor the handoff in "Who keeps accountability when the class moves on?" Teachers review playbook structure. Students write action steps with timelines.',
       teacher: [
         'Review playbook structure',
         'Connect teams with city staff',
@@ -173,7 +173,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Mobility Story Collage',
-      summary: 'Students foreground community mobility narratives and define justice commitments. Students collect three commute stories. Teachers invite advisory board mentors.',
+      summary: 'Launch Move Fair by centering the voices who ride, walk, and wait every day. Students collect commute stories, extract quotes that reveal barriers, and co-author justice commitments with their team. Teachers convene advisory mentors, provide consent supports, and facilitate reflective dialogue so commitments feel lived, not performative.',
       studentDirections: [
         'Collect three commute stories',
         'Extract quotes highlighting barriers',
@@ -199,7 +199,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Mobility Research Toolkit',
-      summary: 'Teams design rigorous mixed-methods research plans. Students select routes for data collection. Teachers share research exemplars.',
+      summary: 'Research toolkit week sets up evidence that planners will respect. Students choose routes, design surveys and walk audits, and assign roles that cover safety, translation, and data entry. Teachers share exemplars, review question bias, and sign off on logistics before fieldwork begins.',
       studentDirections: [
         'Select routes for data collection',
         'Draft survey and interview questions',
@@ -225,7 +225,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Equity Insight Lab',
-      summary: 'Students synthesize findings into equity insights and pilots. Students analyze quantitative mobility data. Teachers provide scoring rubrics.',
+      summary: 'The equity insight lab turns raw numbers and narratives into leverage points. Students build composite indices, map root causes, and design small pilots that can prove change quickly. Teachers supply scoring rubrics, facilitate systems mapping, and organize community feedback so interventions stay grounded.',
       studentDirections: [
         'Analyze quantitative mobility data',
         'Story-map qualitative evidence',
@@ -251,7 +251,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Move Fair Action Playbook',
-      summary: 'Teams publish action plans and secure stakeholder commitments. Students draft action steps with owners. Teachers coordinate summit logistics.',
+      summary: 'The action playbook hands the baton to the community. Students craft step-by-step plans with named owners, deliver summit presentations, capture pledges, and launch storytelling campaigns to keep pressure on. Teachers coordinate logistics, invite decision makers, and verify the playbook and pledge tracker reach every stakeholder.',
       studentDirections: [
         'Draft action steps with owners',
         'Develop summit presentation deck with visuals',

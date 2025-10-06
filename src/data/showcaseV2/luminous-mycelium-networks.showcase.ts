@@ -24,7 +24,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore fungi basics, biosafety, and luminescence phenomena to set a safe creative foundation. Teachers teach BSL‑1 rules. Students list safety rules.',
+      focus: 'Explore fungi basics, biosafety, and luminescence phenomena to set a safe creative foundation. Ask, "How do we let the fungi shine without putting anyone at risk?" Teachers teach BSL-1 rules. Students list safety rules.',
       teacher: ['Teach BSL‑1 rules', 'Demo glow kits', 'Model growth logs'],
       students: ['List safety rules', 'Observe starter kits', 'Set lab roles'],
       deliverables: ['Safety agreement', 'Observation sketch'],
@@ -34,7 +34,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design breathable enclosures and measurement plans so prototypes nurture healthy glow. Teachers share scaffold library. Students sketch enclosure.',
+      focus: 'Design breathable enclosures and measurement plans so prototypes nurture healthy glow. Prompt teams with "What will this habitat feel like for the organism inside?" Teachers share scaffold library. Students sketch enclosure.',
       teacher: ['Share scaffold library', 'Review diffusion tests', 'Approve designs'],
       students: ['Sketch enclosure', 'Choose materials', 'Draft test schedule'],
       deliverables: ['Enclosure sketch', 'Test plan'],
@@ -44,7 +44,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Assemble enclosures and measure growth plus glow safely to capture reliable data. Teachers supervise PPE use. Students build enclosures.',
+      focus: 'Assemble enclosures and measure growth plus glow safely to capture reliable data. Keep asking, "Does our data prove the glow is changing or just our camera angle?" Teachers supervise PPE use. Students build enclosures.',
       teacher: ['Supervise PPE use', 'Check logs daily', 'Calibrate photo capture'],
       students: ['Build enclosures', 'Record growth/glow', 'Adjust moisture/airflow'],
       deliverables: ['Growth log set', 'Photo time‑series'],
@@ -54,7 +54,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Curate Night Garden exhibit with ethical reflection to help visitors respect living design. Teachers invite partners. Students curate best builds.',
+      focus: 'Curate Night Garden exhibit with ethical reflection to help visitors respect living design. Challenge teams with "What promise should each visitor make before they leave the garden?" Teachers invite partners. Students curate best builds.',
       teacher: ['Invite partners', 'Light‑safe staging', 'Collect visitor input'],
       students: ['Curate best builds', 'Explain ethics', 'Design care and retire plan'],
       deliverables: ['Exhibit labels', 'Care/retire plan'],
@@ -64,7 +64,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Compare substrates and conditions while publishing a protocol zine for future teams. Teachers coach data synthesis. Students analyze trends.',
+      focus: 'Compare substrates and conditions while publishing a protocol zine for future teams. Ask, "What would next year\'s team need to repeat our glow safely?" Teachers coach data synthesis. Students analyze trends.',
       teacher: ['Coach data synthesis', 'Review disposal protocol', 'Coach zine layout'],
       students: ['Analyze trends', 'Draft protocol zine', 'Engineer safe kit retirement workflow'],
       deliverables: ['Protocol zine v1', 'Disposal log'],
@@ -97,7 +97,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Glow Lab + Safety Passport',
-      summary: 'Students observe luminescence and pass safety basics to earn their Glow Lab passport. Students list safety rules. Teachers prepare safety quiz.',
+      summary: 'Kick off by earning the Glow Lab passport through observation and safety mastery. Students notice luminescent patterns, document conditions, and commit to lab rules that keep organisms and people safe. Teachers demo kit handling, administer safety checks, and confirm every passport is signed before builds begin.',
       studentDirections: ['List safety rules', 'Sketch glow pattern', 'Note conditions', 'Sign passport', 'Share one question'],
       teacherSetup: ['Prepare safety quiz', 'Demo kit handling', 'Post lab rules'],
       evidence: ['Signed passport', 'Observation sketch'],
@@ -107,7 +107,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Enclosure Design Plan',
-      summary: 'Teams plan breathable, light-shaping habitats that balance airflow, humidity, and care. Students sketch design. Teachers share scaffold parts.',
+      summary: 'Planning week turns curiosity into a feasible habitat plan. Students sketch enclosures, choose materials, and map measurement routines with care schedules that keep kits healthy. Teachers provide scaffold libraries, review bills of materials, and sign off once airflow, safety, and testing plans align.',
       studentDirections: ['Sketch design', 'Select materials', 'Define airflow', 'Define measurement plan', 'Request approval', 'Add care schedule'],
       teacherSetup: ['Share scaffold parts', 'Approve BOM', 'Check feasibility', 'Review care schedule'],
       evidence: ['Sketch and BOM', 'Test plan'],
@@ -117,7 +117,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Growth + Glow Log',
-      summary: 'Students assemble enclosures and track change over time, tuning glow with evidence. Students build safely. Teachers supervise PPE.',
+      summary: 'Build cycles require disciplined logging. Students assemble enclosures with PPE, capture daily growth and glow data, and make evidence-based adjustments to moisture and airflow. Teachers monitor logs, calibrate photo stations, and coach troubleshooting so datasets stay trustworthy.',
       studentDirections: ['Build safely', 'Log daily notes', 'Capture photos', 'Adjust humidity', 'Compare glow', 'Flag anomalies'],
       teacherSetup: ['Supervise PPE', 'Set photo station', 'Check logs', 'Advise anomalies'],
       evidence: ['Growth logs', 'Photo time‑series'],
@@ -127,7 +127,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Night Garden Exhibit',
-      summary: 'Teams share prototypes and living-artifact ethics, guiding visitors through safe care. Students curate builds. Teachers invite partners.',
+      summary: 'The Night Garden exhibit invites visitors into living design with responsibility. Students curate their strongest builds, write labels that teach ethics, and design retirement plans for after the lights go out. Teachers coordinate guests, stage the space safely, and ensure post-event care plans are in motion.',
       studentDirections: ['Curate builds', 'Write label', 'Explain ethics', 'Collect feedback', 'Design retirement plan', 'Photograph exhibit'],
       teacherSetup: ['Invite partners', 'Stage safely', 'Provide label templates', 'Confirm power needs'],
       evidence: ['Exhibit label set', 'Care/retire plan'],
@@ -137,7 +137,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     {
       id: 'A5',
       title: 'Protocol Zine + Ethics Reflection',
-      summary: 'Students synthesize methods and reflect on living design ethics inside a protocol zine. Students draft protocol page. Teachers provide layout template.',
+      summary: 'Close the arc by publishing what was learned for future teams. Students analyze trend data, draft protocol pages with safety notes, and write ethics reflections that capture their stance on living artifacts. Teachers review citations, provide layout templates, and validate disposal logs before the zine goes live.',
       studentDirections: ['Draft protocol page', 'Add safety notes', 'Cite data trends', 'Write ethics reflection', 'Publish zine'],
       teacherSetup: ['Provide layout template', 'Review safety callouts', 'Approve citations'],
       evidence: ['Zine page', 'Reflection paragraph'],

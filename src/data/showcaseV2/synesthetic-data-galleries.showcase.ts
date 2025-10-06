@@ -24,7 +24,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore community data stories and plan sensory mappings for inclusive storytelling. Teachers showcase synesthetic data examples from community galleries. Students choose community dataset with family consent and partner input.',
+      focus: 'Explore community data stories and plan sensory mappings for inclusive storytelling. Ask, "Whose data story will feel different—maybe kinder—when people can touch or hear it?" Teachers showcase synesthetic data examples from community galleries. Students choose community dataset with family consent and partner input.',
       teacher: [
         'Showcase synesthetic data examples from community galleries',
         'Model mapping numbers to colors, sounds, and textures',
@@ -42,7 +42,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Build',
-      focus: 'Prototype tactile, visual, and sound modules that stay safe for all visitors. Teachers approve materials and adhesives for student concepts. Students build sensory modules highlighting color, sound, and texture.',
+      focus: 'Prototype tactile, visual, and sound modules that stay safe for all visitors. Prompt teams with "How will someone with eyes closed experience this?" Teachers approve materials and adhesives for student concepts. Students build sensory modules highlighting color, sound, and texture.',
       teacher: [
         'Approve materials and adhesives for student concepts',
         'Coach safe construction techniques for tactile modules',
@@ -60,7 +60,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Assemble gallery flow and rehearse storytelling to prepare families for data art. Teachers stage layout emphasizing access routes and traffic flow. Students assemble installation pieces with secure fasteners.',
+      focus: 'Assemble gallery flow and rehearse storytelling to prepare families for data art. Ask, "What path will visitors take if they use a wheelchair or stroller?" Teachers stage layout emphasizing access routes and traffic flow. Students assemble installation pieces with secure fasteners.',
       teacher: [
         'Stage layout emphasizing access routes and traffic flow',
         'Review caption language for clarity and reading levels',
@@ -77,7 +77,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Exhibit',
-      focus: 'Host the Synesthetic Gallery, gather feedback, and share DIY zine resources. Teachers host event logistics while monitoring safety and access. Students guide visitors through sensory stations kindly.',
+      focus: 'Host the Synesthetic Gallery, gather feedback, and share DIY zine resources. Challenge teams with "What do we hope families will try when they get home?" Teachers host event logistics while monitoring safety and access. Students guide visitors through sensory stations kindly.',
       teacher: [
         'Host event logistics while monitoring safety and access',
         'Collect visitor feedback forms and consent confirmations',
@@ -95,7 +95,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Extension',
-      focus: 'Document modules and plan hallway exhibit to extend access for families. Teachers review documentation drafts for clarity and safety. Students photograph modules with captions describing materials.',
+      focus: 'Document modules and plan hallway exhibit to extend access for families. Frame planning with "How do we keep this gentle on the hallway and easy to reset?" Teachers review documentation drafts for clarity and safety. Students photograph modules with captions describing materials.',
       teacher: [
         'Review documentation drafts for clarity and safety',
         'Coordinate hallway exhibit logistics with facilities',
@@ -127,7 +127,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Mapping Plan + Consent',
-      summary: 'Students choose a community dataset and map senses to tell inclusive stories. Students brainstorm community data topics with class and families. Teachers provide synesthetic exemplars and mapping templates.',
+      summary: 'Launch by choosing respectful data and planning a sensory mapping together. Students brainstorm topics with families, secure consent, test small samples, and draft mapping charts that connect numbers to touch, sound, and color. Teachers provide exemplars, manage consent logs, and review plans for safety and inclusivity.',
       studentDirections: [
         'Brainstorm community data topics with class and families',
         'Select dataset after confirming consent and privacy',
@@ -151,7 +151,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prototype Module',
-      summary: 'Teams build sensory modules safely and refine them through peer testing. Students build sensory module using approved safe materials. Teachers approve materials, adhesives, and sound levels.',
+      summary: 'Prototype week brings senses to life in a safe way. Students build multi-sensory modules with approved materials, add clear icons, and test with classmates to gather accessibility feedback. Teachers supervise assembly, provide reference guides, and coach revisions until every station meets safety and inclusion goals.',
       studentDirections: [
         'Build sensory module using approved safe materials',
         'Label modules with icons and plain-language captions',
@@ -175,7 +175,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Gallery + Zine',
-      summary: 'Students host the gallery, collect feedback, and share DIY zine with families. Students welcome visitors using sensory station tour scripts. Teachers coordinate gallery schedule, volunteers, and access supports.',
+      summary: 'The gallery invites families to feel the data together. Students welcome visitors with rehearsed scripts, capture observations and reflections, and share zine steps so play continues at home. Teachers coordinate schedules, monitor access, and ensure feedback and consent forms are collected.',
       studentDirections: [
         'Welcome visitors using sensory station tour scripts',
         'Collect feedback with prompts and observation notes',
@@ -199,7 +199,7 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Documentation + Hallway Plan',
-      summary: 'Teams document modules and plan hallway exhibit for ongoing community access. Students photograph modules and label materials with captions. Teachers review documentation drafts for clarity and tone.',
+      summary: 'Close by making the work reusable. Students photograph modules, write family-friendly instructions, and plan hallway layouts that stay safe for traffic. Teachers review documentation for clarity, coordinate with facilities, and confirm cleaning protocols before the exhibit remains on display.',
       studentDirections: [
         'Photograph modules and label materials with captions',
         'Write how-to steps in family-friendly language',

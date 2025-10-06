@@ -24,7 +24,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Surface community FAQs and ethics frameworks to define safe AI advisory scope. Teachers host agency listening session about resident questions and pain points. Students gather resident FAQs from partners and public datasets.',
+      focus: 'Surface community FAQs and ethics frameworks to define safe AI advisory scope. Ask, "Whose questions are we prioritizing first and who will we harm if we guess wrong?" Teachers host agency listening session about resident questions and pain points. Students gather resident FAQs from partners and public datasets.',
       teacher: [
         'Host agency listening session about resident questions and pain points',
         'Model translating policy jargon into plain-language summaries',
@@ -42,7 +42,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design transparent advisor prompts with citations and escalation protecting residents. Teachers coach prompt pattern building with rationales and guardrails. Students draft advisor prompts that state role, limits, and tone.',
+      focus: 'Design transparent advisor prompts with citations and escalation protecting residents. Use prompts such as "What must every answer say so residents know this is not a lawyer?" Teachers coach prompt pattern building with rationales and guardrails. Students draft advisor prompts that state role, limits, and tone.',
       teacher: [
         'Coach prompt pattern building with rationales and guardrails',
         'Review citation formatting using compliance templates',
@@ -60,7 +60,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Prototype advisors and run usability tests to ensure clarity and fairness. Teachers provide structured testing scripts for diverse community testers. Students build advisor prototype with transparent prompt documentation.',
+      focus: 'Prototype advisors and run usability tests to ensure clarity and fairness. Keep asking, "Would we trust this answer if our own family relied on it?" Teachers provide structured testing scripts for diverse community testers. Students build advisor prototype with transparent prompt documentation.',
       teacher: [
         'Provide structured testing scripts for diverse community testers',
         'Audit advisor logs for accuracy, tone, and bias issues',
@@ -78,7 +78,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Stage pop-up booth with accessibility supports and volunteer readiness. Teachers coordinate accessible venue setup with signage approvals. Students design booth layout with privacy and accessibility zones.',
+      focus: 'Stage pop-up booth with accessibility supports and volunteer readiness. Center planning on "How will residents feel safe asking sensitive questions in this space?" Teachers coordinate accessible venue setup with signage approvals. Students design booth layout with privacy and accessibility zones.',
       teacher: [
         'Coordinate accessible venue setup with signage approvals',
         'Review booth scripts covering consent and escalation steps',
@@ -95,7 +95,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Run the Ombuds booth, support residents, and capture improvement data. Teachers oversee safety compliance and on-site data handling. Students assist residents with AI advisor using consent scripts.',
+      focus: 'Run the Ombuds booth, support residents, and capture improvement data. Remind teams, "What should every resident leave knowing—even if we cannot solve their issue?" Teachers oversee safety compliance and on-site data handling. Students assist residents with AI advisor using consent scripts.',
       teacher: [
         'Oversee safety compliance and on-site data handling',
         'Monitor escalation cases and human follow-up logs',
@@ -113,7 +113,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Publish transparent methods and deliver partner handoff for sustained support. Teachers review methods document for accuracy and accessible tone. Students publish methods and limitations page with citations.',
+      focus: 'Publish transparent methods and deliver partner handoff for sustained support. Ask, "Who maintains accountability for this advisor after we graduate?" to frame the handoff. Teachers review methods document for accuracy and accessible tone. Students publish methods and limitations page with citations.',
       teacher: [
         'Review methods document for accuracy and accessible tone',
         'Confirm privacy safeguards and data deletion steps',
@@ -145,7 +145,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'FAQ + Ethics Scope',
-      summary: 'Teams gather resident FAQs and co-create ethics scope for the advisor. Students interview partners and residents about recurring policy questions. Teachers invite agency partners to validate FAQ priorities.',
+      summary: 'Start the ombuds build by listening deeply and defining guardrails together. Students interview partners, translate FAQs into plain language, and draft consent plus disclaimer language that residents can trust. Teachers convene agency reviewers and legal advisors so the scope is approved before any AI is built.',
       studentDirections: [
         'Interview partners and residents about recurring policy questions',
         'Consolidate FAQs with citations and context notes',
@@ -169,7 +169,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prompt + Citations',
-      summary: 'Teams craft transparent prompts with citations and escalation safeguards for advisors. Students draft advisor prompts that state role and limits. Teachers coach prompt documentation and rationale annotation.',
+      summary: 'Prompt studio week turns research into transparent, citation-ready responses. Students script advisor voices that name limits, attach verifiable sources, and map clear escalation paths for human officials. Teachers coach documentation habits and compliance checks so every answer stays honest and accountable.',
       studentDirections: [
         'Draft advisor prompts that state role and limits',
         'Attach citations and URL references to each answer',
@@ -193,7 +193,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Usability + Bias Test',
-      summary: 'Students run usability and bias tests to keep advisors accurate and fair. Students conduct usability sessions with diverse community testers. Teachers provide testing scripts and consent tracking sheets.',
+      summary: 'Testing week treats residents as co-designers who stress-test the advisor. Students facilitate usability and bias sessions, analyze transcripts for harm, and iterate quickly on prompt fixes. Teachers supply consent protocols, audit mitigation plans, and ensure improvements truly resolve the issues uncovered.',
       studentDirections: [
         'Conduct usability sessions with diverse community testers',
         'Measure clarity, accuracy, and trust using rubrics',
@@ -217,7 +217,7 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Booth + Handoff',
-      summary: 'Teams host the Ombuds booth, document requests, and deliver partner handoff. Students operate ombuds booth using consent and privacy scripts. Teachers oversee safety, privacy, and de-escalation protocols.',
+      summary: 'The final sprint moves from lab to live service. Students operate the pop-up booth with consent scripts, log issues without storing personal data, and compile method pages plus improvement roadmaps for partners. Teachers oversee safety, manage escalation, and confirm the handoff kit positions agencies to maintain the advisor responsibly.',
       studentDirections: [
         'Operate ombuds booth using consent and privacy scripts',
         'Log issues without personal data and tag themes',

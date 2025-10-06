@@ -17,13 +17,13 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     'They launch campaigns that pilot greener practices, publish results, and secure stakeholder commitments.'
   ],
   fullOverview:
-    'Learners step into the role of sustainability consultants charged with shrinking the school’s environmental footprint. They investigate how resources move across campus, interview operational experts, and crunch real usage data. With mentorship from facilities, they prototype interventions, test the return on investment, and pitch a roadmap that pairs climate responsibility with fiscal stewardship.',
+    'Learners step into the role of sustainability consultants charged with shrinking the school\'s environmental footprint. They investigate how resources move across campus, interview operational experts, and crunch real usage data. With mentorship from facilities, they prototype interventions, test the return on investment, and pitch a roadmap that pairs climate responsibility with fiscal stewardship.',
   schedule: { totalWeeks: 9, lessonsPerWeek: 3, lessonLengthMin: 55 },
   runOfShow: [
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch the sustainability challenge and map current systems to reveal hidden waste. Teachers launch challenge with campus footprint data. Students capture baseline photos of resource hotspots.',
+      focus: 'Launch the sustainability challenge and map current systems to reveal hidden waste. Ask, "What footprint story would surprise families if we shared it tomorrow?" Teachers launch challenge with campus footprint data. Students capture baseline photos of resource hotspots.',
       teacher: [
         'Launch challenge with campus footprint data',
         'Model systems thinking map of campus flows',
@@ -41,7 +41,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design the audit plan and coordinate data access so evidence collection runs smoothly. Teachers introduce audit tools and data templates. Students select focus zones for auditing.',
+      focus: 'Design the audit plan and coordinate data access so evidence collection runs smoothly. Pose prompts such as "What evidence will leaders need before they say yes to change?" Teachers introduce audit tools and data templates. Students select focus zones for auditing.',
       teacher: [
         'Introduce audit tools and data templates',
         'Broker time with facilities mentors',
@@ -59,7 +59,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Conduct audits and gather quantitative plus qualitative evidence to build a full picture. Teachers shadow audits to ensure safe practices. Students collect meter readings and waste tallies.',
+      focus: 'Conduct audits and gather quantitative plus qualitative evidence to build a full picture. Keep asking, "What story emerges when meter readings meet hallway voices?" Teachers shadow audits to ensure safe practices. Students collect meter readings and waste tallies.',
       teacher: [
         'Shadow audits to ensure safe practices',
         'Run daily data quality huddles',
@@ -78,7 +78,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and identify highest-leverage interventions that balance impact and feasibility. Teachers model ROI calculations using spreadsheets. Students visualize baseline versus projected savings.',
+      focus: 'Analyze findings and identify highest-leverage interventions that balance impact and feasibility. Center questions like "Which intervention delivers the biggest gain for the lowest lift?" Teachers model ROI calculations using spreadsheets. Students visualize baseline versus projected savings.',
       teacher: [
         'Model ROI calculations using spreadsheets',
         'Facilitate root cause analysis workshops',
@@ -96,7 +96,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype campaigns and pilot micro-interventions to test ideas before scaling. Teachers source materials for small pilots. Students design campaign collateral drafts with clear calls to action.',
+      focus: 'Prototype campaigns and pilot micro-interventions to test ideas before scaling. Frame pilots with "How will we know this campaign works before we print it everywhere?" Teachers source materials for small pilots. Students design campaign collateral drafts with clear calls to action.',
       teacher: [
         'Source materials for small pilots',
         'Guide messaging storyboard sessions',
@@ -114,7 +114,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Pitch the sustainability roadmap to decision makers with data-backed storytelling. Teachers run rehearsal panels with alumni. Students finalize persuasive slide decks.',
+      focus: 'Pitch the sustainability roadmap to decision makers with data-backed storytelling. Ask presenters, "What commitment do we need from each leader before we leave the room?" Teachers run rehearsal panels with alumni. Students finalize persuasive slide decks.',
       teacher: [
         'Run rehearsal panels with alumni',
         'Coach data storytelling techniques',
@@ -132,7 +132,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Launch campaigns and establish accountability structures so momentum persists. Teachers coordinate communications with district PR. Students deploy campaigns across campus touchpoints.',
+      focus: 'Launch campaigns and establish accountability structures so momentum persists. Plan with "Who will maintain momentum once the campaign buzz fades?" Teachers coordinate communications with district PR. Students deploy campaigns across campus touchpoints.',
       teacher: [
         'Coordinate communications with district PR',
         'Coordinate grant or funding requests',
@@ -177,7 +177,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Systems Snapshot Walkthrough',
-      summary: 'Students document campus resource flows and surface early leverage points for change. Students photograph three waste or energy hotspots. Teachers secure walkthrough permissions in advance.',
+      summary: 'Kick off with systems walks that make the invisible waste visible. Students photograph hotspots, interview insiders, and translate what they see into early leverage statements that anchor their systems maps. Teachers handle permissions, modeling, and prompts so discovery time feels purposeful, not voyeuristic.',
       studentDirections: [
         'Photograph three waste or energy hotspots',
         'Interview one staff member respectfully',
@@ -203,7 +203,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Audit Plan and Data Kit',
-      summary: 'Teams build rigorous audit plans and prepare data collection tools that win partner confidence. Students define audit scope and metrics. Teachers share sample audit plans.',
+      summary: 'The audit plan turns curiosity into a professional-grade investigation. Students define scope, assign roles, script respectful interviews, and calibrate tools so they can gather trustworthy data on day one. Teachers supply exemplars, calibration labs, and mentor feedback to ensure the plan earns partner confidence.',
       studentDirections: [
         'Define audit scope and metrics',
         'Assign roles for site visits',
@@ -229,7 +229,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Impact Modeling Studio',
-      summary: 'Teams analyze audit data and model projected savings. Students clean data for accuracy. Teachers provide spreadsheet calculators.',
+      summary: 'Impact modeling studio transforms raw audits into persuasive evidence. Students clean messy numbers, build dashboards that compare baseline to projections, and craft data-backed headlines ready for pitches. Teachers provide calculators, storytelling stems, and critique structures so insights remain accurate and compelling.',
       studentDirections: [
         'Clean data for accuracy',
         'Visualize baseline and projected usage',
@@ -255,7 +255,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Sustainability Pitch + Launch Plan',
-      summary: 'Students deliver stakeholder pitches and launch their campaigns campus-wide. Students finalize deck with visuals and metrics. Teachers schedule pitch forum with decision makers.',
+      summary: 'The pitch and launch plan move the work from classroom to campus. Students finalize visual decks, design executive summaries, choreograph their asks, and map rollout steps that extend beyond presentation day. Teachers coordinate forums, rehearsal feedback, and launch logistics so commitments get captured and acted on.',
       studentDirections: [
         'Finalize deck with visuals and metrics',
         'Rehearse timed pitch with roles',
