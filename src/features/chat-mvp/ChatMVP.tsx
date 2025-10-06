@@ -1465,7 +1465,7 @@ Your project structure is ready!`,
           {/* Minimal header with stage indicator and consolidated status */}
           <div className="mb-2 space-y-1.5">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              <div className="text-[11px] font-medium text-gray-700 dark:text-gray-300">
                 Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
               </div>
               <div className="flex items-center gap-2">

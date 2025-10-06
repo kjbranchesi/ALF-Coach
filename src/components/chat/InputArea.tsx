@@ -84,7 +84,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
             onKeyDown={handleKeyDown}
             placeholder="Message ALF Coach..."
             rows={1}
-            className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300 text-base leading-6"
+            className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300 text-[13px] leading-relaxed"
             style={{ height: '20px', minHeight: '20px', maxHeight: '60px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             aria-label="Chat message input"
           />

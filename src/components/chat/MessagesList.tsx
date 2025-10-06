@@ -17,7 +17,7 @@ class MessagesErrorBoundary extends React.Component<{ children: React.ReactNode 
   componentDidCatch(error: any) { console.error('[MessagesList] render error', error); }
   render() {
     if (this.state.hasError) {
-      return <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2">We had trouble showing some messages. You can continue typing.</div>;
+      return <div className="text-[13px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2">We had trouble showing some messages. You can continue typing.</div>;
     }
     return this.props.children;
   }

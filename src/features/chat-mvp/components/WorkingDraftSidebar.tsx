@@ -112,11 +112,11 @@ export function WorkingDraftSidebar({
     <div className="h-full flex flex-col bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur border-r border-gray-200/60 dark:border-gray-700/60">
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-200/60 dark:border-gray-700/60">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+        <h3 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Working Draft
         </h3>
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+          <div className="flex items-center justify-between text-[11px] text-gray-600 dark:text-gray-400">
             <span>{completedCount} of {items.length} complete</span>
             <span className="font-medium">{progressPercent}%</span>
           </div>
@@ -169,7 +169,7 @@ export function WorkingDraftSidebar({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h4 className={`
-                      text-xs font-semibold
+                      text-[11px] font-semibold
                       ${isCurrent
                         ? 'text-primary-700 dark:text-primary-300'
                         : item.status === 'complete'
