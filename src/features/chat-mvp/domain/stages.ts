@@ -8,12 +8,12 @@ export interface CapturedData {
     challenge?: string;
   };
   journey: {
-    phases: { name: string; activities: string[] }[];
+    phases: { id?: string; name: string; focus?: string; activities: string[]; checkpoint?: string }[];
     resources: string[];
   };
   deliverables: {
-    milestones: { name: string }[];
-    artifacts: { name: string }[];
+    milestones: { id?: string; name: string; phaseId?: string }[];
+    artifacts: { id?: string; name: string; phaseId?: string }[];
     rubric: { criteria: string[] };
   };
 }
@@ -107,26 +107,26 @@ function extractActivitiesFromText(text: string): string[] {
   return cleaned ? [cleaned] : [];
 }
 
-export function extractPhasesFromText(value: string): { name: string; activities: string[] }[] {
+export function extractPhasesFromText(value: string): { id?: string; name: string; focus?: string; activities: string[]; checkpoint?: string }[] {
   const entries = splitPhaseEntries(value);
   return entries.map((entry, index) => {
     const normalized = entry.trim();
     if (!normalized) {
-      return { name: `Phase ${index + 1}`, activities: [] };
+      return { id: `p${index + 1}`, name: `Phase ${index + 1}`, activities: [] };
     }
 
     const colonMatch = normalized.match(/^([^:–—-]+)[:–—-]\s*(.+)$/);
     if (colonMatch) {
       const name = titleize(colonMatch[1]);
       const activities = extractActivitiesFromText(colonMatch[2]);
-      return { name: name || `Phase ${index + 1}`, activities };
+      return { id: `p${index + 1}`, name: name || `Phase ${index + 1}`, focus: colonMatch[2], activities };
     }
 
     const phaseMatch = normalized.match(/^(?:phase|step|stage)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)?[:.\-]?\s*(.*)$/i);
     if (phaseMatch) {
       const name = titleize(phaseMatch[2]) || `Phase ${index + 1}`;
       const activities = extractActivitiesFromText(phaseMatch[2]);
-      return { name, activities };
+      return { id: `p${index + 1}`, name, focus: phaseMatch[2], activities };
     }
 
     const connectorMatch = normalized.match(/^(first|second|third|fourth|next|then|after that|afterwards|later|finally|last|lastly|begin with|start with|start by|to start|kick off)\b[,:-]?\s*(.*)$/i);
@@ -134,12 +134,12 @@ export function extractPhasesFromText(value: string): { name: string; activities
       const activitiesSource = connectorMatch[2] || normalized;
       const name = derivePhaseNameFromText(activitiesSource, index);
       const activities = extractActivitiesFromText(activitiesSource);
-      return { name, activities };
+      return { id: `p${index + 1}`, name, focus: activitiesSource, activities };
     }
 
     const name = derivePhaseNameFromText(normalized, index);
     const activities = extractActivitiesFromText(normalized);
-    return { name, activities };
+    return { id: `p${index + 1}`, name, focus: normalized, activities };
   });
 }
 
@@ -347,7 +347,14 @@ export function validate(stage: Stage, captured: CapturedData): { ok: boolean; r
     }
     case 'JOURNEY': {
       const phases = captured.journey.phases || [];
-      return phases.length >= 3 ? { ok: true } : { ok: false, reason: 'Add at least 3 phases with names.' };
+      if (phases.length < 3) {
+        return { ok: false, reason: 'Add at least 3 phases with names.' };
+      }
+      // Soft validation on details; don’t hard‑block until Zoom‑In UI exists
+      const incomplete = phases.some(p => (p.activities?.length || 0) < 1);
+      return incomplete
+        ? { ok: true }
+        : { ok: true };
     }
     case 'DELIVERABLES': {
       const ms = captured.deliverables.milestones?.length || 0;
@@ -669,7 +676,7 @@ export function captureStageInput(previous: CapturedData, stage: Stage, content:
       break;
     case 'JOURNEY': {
       // Check if content is JSON (from accept_all micro-flow) or plain text
-      let phases: Array<{ name: string; activities: string[] }> = [];
+      let phases: Array<{ id?: string; name: string; focus?: string; activities: string[]; checkpoint?: string }> = [];
       try {
         const parsed = JSON.parse(content);
         if (Array.isArray(parsed)) {
@@ -707,7 +714,10 @@ export function serializeCaptured(captured: CapturedData): Record<string, any> {
 
   captured.journey.phases.forEach((phase, index) => {
     const idx = index + 1;
+    if (phase.id) {record[`journey.phase.${idx}.id`] = phase.id;}
     record[`journey.phase.${idx}.name`] = phase.name;
+    if (phase.focus) {record[`journey.phase.${idx}.focus`] = phase.focus;}
+    if (phase.checkpoint) {record[`journey.phase.${idx}.checkpoint`] = phase.checkpoint;}
     if (phase.activities.length) {
       record[`journey.phase.${idx}.activities`] = phase.activities.join('; ');
     }
@@ -717,10 +727,16 @@ export function serializeCaptured(captured: CapturedData): Record<string, any> {
   }
 
   captured.deliverables.milestones.forEach((milestone, index) => {
-    record[`deliverables.milestone.${index + 1}`] = milestone.name;
+    const idx = index + 1;
+    record[`deliverables.milestone.${idx}.name`] = milestone.name;
+    if (milestone.id) {record[`deliverables.milestone.${idx}.id`] = milestone.id;}
+    if (milestone.phaseId) {record[`deliverables.milestone.${idx}.phaseId`] = milestone.phaseId;}
   });
   captured.deliverables.artifacts.forEach((artifact, index) => {
-    record[`deliverables.artifact.${index + 1}`] = artifact.name;
+    const idx = index + 1;
+    record[`deliverables.artifact.${idx}.name`] = artifact.name;
+    if (artifact.id) {record[`deliverables.artifact.${idx}.id`] = artifact.id;}
+    if (artifact.phaseId) {record[`deliverables.artifact.${idx}.phaseId`] = artifact.phaseId;}
   });
   if (captured.deliverables.rubric.criteria.length) {
     record['deliverables.rubric.criteria'] = captured.deliverables.rubric.criteria.join('; ');
@@ -744,8 +760,11 @@ export function hydrateCaptured(record: Record<string, any> | null | undefined):
   if (maybeJourney && typeof maybeJourney === 'object') {
     if (Array.isArray(maybeJourney.phases)) {
       base.journey.phases = maybeJourney.phases.map((phase: any, index: number) => ({
+        id: phase?.id ? String(phase.id) : `p${index + 1}`,
         name: String(phase?.name || `Phase ${index + 1}`),
-        activities: Array.isArray(phase?.activities) ? phase.activities.map((a: any) => String(a)) : []
+        focus: phase?.focus ? String(phase.focus) : undefined,
+        activities: Array.isArray(phase?.activities) ? phase.activities.map((a: any) => String(a)) : [],
+        checkpoint: phase?.checkpoint ? String(phase.checkpoint) : undefined
       }));
     }
     if (Array.isArray(maybeJourney.resources)) {
@@ -773,15 +792,21 @@ export function hydrateCaptured(record: Record<string, any> | null | undefined):
     if (key === 'ideation.essentialQuestion') {base.ideation.essentialQuestion = value;}
     if (key === 'ideation.challenge') {base.ideation.challenge = value;}
 
-    const phaseMatch = key.match(/^journey\.phase\.(\d+)\.(name|activities)$/);
+    const phaseMatch = key.match(/^journey\.phase\.(\d+)\.(id|name|focus|activities|checkpoint)$/);
     if (phaseMatch) {
       const index = Number(phaseMatch[1]) - 1;
-      const prop = phaseMatch[2] as 'name' | 'activities';
+      const prop = phaseMatch[2] as 'id' | 'name' | 'focus' | 'activities' | 'checkpoint';
       if (!base.journey.phases[index]) {
-        base.journey.phases[index] = { name: '', activities: [] };
+        base.journey.phases[index] = { id: `p${index + 1}`, name: '', activities: [] };
       }
-      if (prop === 'name') {
+      if (prop === 'id') {
+        base.journey.phases[index].id = value;
+      } else if (prop === 'name') {
         base.journey.phases[index].name = value;
+      } else if (prop === 'focus') {
+        base.journey.phases[index].focus = value;
+      } else if (prop === 'checkpoint') {
+        base.journey.phases[index].checkpoint = value;
       } else {
         base.journey.phases[index].activities = value.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
       }
@@ -793,15 +818,25 @@ export function hydrateCaptured(record: Record<string, any> | null | undefined):
       return;
     }
 
-    const milestoneMatch = key.match(/^deliverables\.milestone\.(\d+)$/);
+    const milestoneMatch = key.match(/^deliverables\.milestone\.(\d+)\.(id|name|phaseId)$/);
     if (milestoneMatch) {
-      base.deliverables.milestones[Number(milestoneMatch[1]) - 1] = { name: value };
+      const idx = Number(milestoneMatch[1]) - 1;
+      base.deliverables.milestones[idx] = base.deliverables.milestones[idx] || { name: '' };
+      const prop = milestoneMatch[2];
+      if (prop === 'id') {base.deliverables.milestones[idx].id = value;}
+      if (prop === 'name') {base.deliverables.milestones[idx].name = value;}
+      if (prop === 'phaseId') {base.deliverables.milestones[idx].phaseId = value;}
       return;
     }
 
-    const artifactMatch = key.match(/^deliverables\.artifact\.(\d+)$/);
+    const artifactMatch = key.match(/^deliverables\.artifact\.(\d+)\.(id|name|phaseId)$/);
     if (artifactMatch) {
-      base.deliverables.artifacts[Number(artifactMatch[1]) - 1] = { name: value };
+      const idx = Number(artifactMatch[1]) - 1;
+      base.deliverables.artifacts[idx] = base.deliverables.artifacts[idx] || { name: '' };
+      const prop = artifactMatch[2];
+      if (prop === 'id') {base.deliverables.artifacts[idx].id = value;}
+      if (prop === 'name') {base.deliverables.artifacts[idx].name = value;}
+      if (prop === 'phaseId') {base.deliverables.artifacts[idx].phaseId = value;}
       return;
     }
 
