@@ -24,7 +24,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Why seed saving? Simple renewable power and stewardship.',
+      focus: 'Explore why seed saving matters and how renewable power supports community stewardship.',
       teacher: ['Show seed diversity stories from community', 'Demo safe solar kit wiring with adult helper', 'Introduce care agreement expectations'],
       students: ['List local crops and climates', 'Sketch seed box ideas with compartments', 'Create labels in multiple languages'],
       deliverables: ['Crop list', 'Box sketch'],
@@ -34,7 +34,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Build',
-      focus: 'Build the box and wire a safe solar light.',
+      focus: 'Build the box and wire a safe solar light so the vault thrives off-grid.',
       teacher: ['Approve materials and tool plan', 'Supervise safe wiring step by step', 'Model durable labeling standards'],
       students: ['Assemble seed box structure carefully', 'Wire solar light with adult supervision', 'Design weather-ready labels and icons'],
       deliverables: ['Seed box', 'Solar light'],
@@ -44,7 +44,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Exhibit',
-      focus: 'Host a pop‑up exchange and teach seed handling.',
+      focus: 'Host a pop-up exchange and teach seed handling to launch community participation.',
       teacher: ['Invite families and garden partners', 'Stage exchange with sign-in and signage', 'Print care agreement forms and translations'],
       students: ['Guide families through exchange process', 'Label donations clearly with origin', 'Explain storage and climate tips kindly'],
       deliverables: ['Exchange plan', 'Care signup sheet'],
@@ -54,7 +54,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Publish the care guide and plan seasonal swaps.',
+      focus: 'Publish the care guide and plan seasonal swaps to keep the seed vault sustainable.',
       teacher: ['Review care guide for clarity', 'Set swap dates with partners', 'Coordinate signage and placements'],
       students: ['Publish illustrated care guide', 'Post seasonal swap schedule visibly', 'Assign stewards and share responsibilities'],
       deliverables: ['Care guide', 'Swap calendar'],
@@ -63,7 +63,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Community mini‑launch with seed safety and labels.',
+      focus: 'Host community mini-launch with seed safety and labels to celebrate stewardship.',
       teacher: ['Invite families and local gardeners', 'Stage launch with accessible flow', 'Capture feedback and photos consentingly'],
       students: ['Host launch and explain labels', 'Share care agreements and sign-ups', 'Collect community feedback for improvements'],
       deliverables: ['Launch plan', 'Feedback notes'],
@@ -88,7 +88,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Local Crops + Box Sketch',
-      summary: 'Choose seeds and sketch a welcoming box.',
+      summary: 'Students choose seeds and sketch a welcoming box to reflect local climate and culture.',
       studentDirections: ['List local crops and climate needs', 'Draw box with climate-safe materials', 'Pick label icons in multiple languages', 'Share ideas for community welcome', 'Vote on favorite design respectfully'],
       teacherSetup: ['Provide seed diversity examples', 'Model icon creation and translation', 'Facilitate design vote'],
       evidence: ['Crop list', 'Sketch'],
@@ -102,7 +102,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Build + Solar Light',
-      summary: 'Assemble the box and wire a safe light.',
+      summary: 'Teams assemble the box and wire a safe light, proving the vault can run anywhere.',
       studentDirections: ['Assemble seed box panels safely', 'Wire solar light with adult helper', 'Add waterproof labels and instructions', 'Test switch and charging outdoors', 'Fix issues using troubleshooting log'],
       teacherSetup: ['Approve tools and safety gear', 'Supervise solar wiring steps', 'Check labels for durability'],
       evidence: ['Box', 'Lighted photo'],
@@ -116,7 +116,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Exchange + Care Signups',
-      summary: 'Host the exchange and secure caretakers.',
+      summary: 'Students host the exchange and secure caretakers so the vault has real owners.',
       studentDirections: ['Guide visitors through exchange steps kindly', 'Label donations with origin and planting tips', 'Explain care agreement expectations', 'Collect steward signups and contact info', 'Thank families with follow-up note'],
       teacherSetup: ['Invite families and community gardeners', 'Print care forms and translations', 'Stage exchange with clear flow'],
       evidence: ['Signup sheet', 'Exchange photo'],
@@ -130,7 +130,7 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mini‑Launch + Feedback',
-      summary: 'Run a small launch and capture improvements.',
+      summary: 'Teams run a mini-launch and capture improvements to strengthen the ongoing program.',
       studentDirections: ['Host launch event with assigned roles', 'Explain label system and solar care', 'Collect family feedback respectfully', 'List improvements and next steps', 'Share plan with stewards and teachers'],
       teacherSetup: ['Invite partners and manage schedule', 'Stage space and signage', 'Collect feedback forms and photos with consent'],
       evidence: ['Feedback notes', 'Improvement list'],
@@ -142,10 +142,4 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: ['Safe build & wiring', 'Clear labels', 'Active care plan', 'Community engagement'],
-    checkpoints: ['Parts approved', 'Safety check', 'Caretakers signed'],
-    tags: ['eng', 'energy', 'ag']
-  },
-  planningNotes: 'Submit kit lists to facilities early to confirm compliance. Invite caretakers before Week 2 to plan weatherproofing or indoor backups and coordinate with custodial and grounds teams on safe installs.'
 };

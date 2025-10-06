@@ -23,7 +23,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Understand harbor ecology, threats, and community priorities.',
+      focus: 'Understand harbor ecology, threats, and community priorities to align the mission with lived realities.',
       teacher: [
         'Invite marine scientists for kickoff',
         'Model watershed systems thinking',
@@ -41,7 +41,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design sampling plan and station prototypes.',
+      focus: 'Design sampling plans and station prototypes so monitoring stays rigorous and feasible.',
       teacher: [
         'Demonstrate sampling protocols',
         'Coach teams on sensor selection',
@@ -59,7 +59,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect water and biodiversity data, iterate stations.',
+      focus: 'Collect water and biodiversity data while iterating stations to keep evidence trustworthy.',
       teacher: [
         'Supervise field excursions',
         'Ensure chain-of-custody compliance',
@@ -78,7 +78,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and engineer communication tools.',
+      focus: 'Analyze findings and engineer communication tools that make trends legible to neighbors.',
       teacher: [
         'Model data dashboard construction',
         'Guide comparative analysis with standards',
@@ -96,7 +96,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Co-create policy recommendations and stewardship activities.',
+      focus: 'Co-create policy recommendations and stewardship activities to turn data into local action.',
       teacher: [
         'Facilitate policy scenario workshops',
         'Invite local officials for consultation',
@@ -114,7 +114,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host Harbor Health summit and publish data.',
+      focus: 'Host Harbor Health summit and publish data so partners can act on shared insights.',
       teacher: [
         'Coordinate venue logistics',
         'Coordinate digital publication setup',
@@ -132,7 +132,7 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Deploy stations long-term and formalize partnerships.',
+      focus: 'Deploy stations long-term and formalize partnerships to sustain stewardship beyond class.',
       teacher: [
         'Facilitate maintenance training sessions',
         'Draft MOUs with partner groups',
@@ -221,7 +221,6 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
         critique: 'Verify dimensions fit site',
         noAIAlt: 'Use paper scale drawing'
       },
-      safety: ['Wear life vests near water']
     },
     {
       id: 'A3',
@@ -276,19 +275,4 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Data meets scientific quality standards',
-      'Stations are durable and maintainable',
-      'Policy recommendations feel actionable',
-      'Community partners feel ownership'
-    ],
-    checkpoints: [
-      'Blueprint approved before sampling',
-      'Data validated before publication',
-      'Partnership agreements finalized post-summit'
-    ],
-    tags: ['STEM', 'CIVIC', 'ENV']
-  },
-  planningNotes: 'Coordinate with harbor partners 4 weeks ahead for permits, tide windows, and dock access. Arrange transport, safety gear, and backups before Week 2, then share roles and data agreements with crews.'
 };

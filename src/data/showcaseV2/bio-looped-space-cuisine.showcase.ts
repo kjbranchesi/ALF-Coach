@@ -24,7 +24,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Closed loops, energy limits, and food safety basics.',
+      focus: 'Explore closed loops, energy limits, and food safety basics to frame the mission challenge.',
       teacher: ['Facilitate loop systems mini-lesson', 'Lead safety certification lab', 'Model mission journal entry'],
       students: ['Sketch loop concept maps', 'Commit to mission goals', 'Launch journal with safety reflection'],
       deliverables: ['Loop sketch', 'Journal v1'],
@@ -34,7 +34,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Build plan and resource budget.',
+      focus: 'Build plan and resource budget so the loop stays within mission constraints from day one.',
       teacher: ['Approve materials against constraints', 'Share energy budget scenarios', 'Review nutrition targets with examples'],
       students: ['Draft detailed materials BOM', 'Storyboard component layout', 'Budget daily energy and water allowances'],
       deliverables: ['BOM', 'Budget plan'],
@@ -44,7 +44,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Assemble mini loop; track growth and resource use.',
+      focus: 'Assemble the mini loop and track growth plus resource use to ground iteration in evidence.',
       teacher: ['Supervise build stations for safety', 'Audit mission logs daily', 'Coach tuning adjustments with data'],
       students: ['Assemble loop hardware safely', 'Log growth and resource metrics daily', 'Tune inputs based on evidence'],
       deliverables: ['Loop photos', 'Growth/resource logs'],
@@ -54,7 +54,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Failure scenarios and reliability improvements.',
+      focus: 'Run failure scenarios and reliability improvements to pressure-test the loop under stress.',
       teacher: ['Demonstrate controlled failure tests', 'Guide safe contingency drills', 'Audit mission journal updates'],
       students: ['Run failure simulations carefully', 'Log outcomes with timestamps', 'Add redundancy or backup plans'],
       deliverables: ['Failure report', 'Revised plan'],
@@ -63,7 +63,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Mission board: loop schematic and meal plan.',
+      focus: 'Produce mission board showcasing loop schematic and meal plan for reviewer endorsement.',
       teacher: ['Invite NASA-style reviewers', 'Coach nutrition math run-throughs', 'Time final briefings'],
       students: ['Present loop schematic clearly', 'Defend meal plan with data', 'Share trade-offs and next actions'],
       deliverables: ['Mission board', 'Journal excerpts'],
@@ -88,7 +88,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Loop Sketch + Safety',
-      summary: 'Sketch your loop and pass safety basics.',
+      summary: 'Students sketch their loop concept and complete safety certification for mission readiness.',
       studentDirections: [
         'Sketch loop subsystems with labeled flows',
         'List components and mission purpose',
@@ -108,7 +108,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Plan + Budget',
-      summary: 'Budget energy/water and plan materials.',
+      summary: 'Teams budget energy and water while planning materials so every component earns its place.',
       studentDirections: [
         'Draft detailed BOM with sourcing notes',
         'Calculate daily energy budget scenarios',
@@ -128,7 +128,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Build + Log',
-      summary: 'Assemble loop and log performance.',
+      summary: 'Students assemble the loop and log performance trends to steer evidence-based tuning.',
       studentDirections: [
         'Assemble loop safely following SOP',
         'Log daily growth and resource metrics clearly',
@@ -148,7 +148,7 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mission Board',
-      summary: 'Present your loop with meal plan and trade‑offs.',
+      summary: 'Teams present the loop with meal plan and trade-offs, inviting mission-style critique.',
       studentDirections: [
         'Design mission board with labeled schematic',
         'Draft nutrition-balanced mission meal plan',
@@ -166,10 +166,4 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: ['Safe operations', 'Evidence‑based tuning', 'Clear trade‑offs', 'Mission feasibility'],
-    checkpoints: ['Safety rules passed', 'Mid‑build audit', 'Reviewers debrief'],
-    tags: ['bio', 'systems']
-  },
-  planningNotes: 'Order grow lights and nutrient kits 4 weeks ahead so shipping stays on track. Post hygiene and no-ingestion rules with admin before Week 2, then bring in a hydroponics mentor for mid-build feedback.'
 };

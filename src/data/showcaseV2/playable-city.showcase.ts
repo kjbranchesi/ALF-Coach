@@ -23,7 +23,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore the science of play and observe local public spaces.',
+      focus: 'Explore the science of play and observe local public spaces to find joyful gaps.',
       teacher: [
         'Share global playable city examples',
         'Lead observational walk audits',
@@ -41,7 +41,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Define design principles and prototype strategy.',
+      focus: 'Define design principles and prototype strategy so testing stays intentional.',
       teacher: [
         'Model rapid game mechanic ideation',
         'Introduce accessibility design toolkit',
@@ -59,7 +59,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype, playtest, and iterate interventions in public space.',
+      focus: 'Prototype, playtest, and iterate interventions in public space to see what sparks connection.',
       teacher: [
         'Coordinate material sourcing and transport',
         'Ensure permits and safety protocols',
@@ -78,7 +78,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Fabricate high-fidelity installations and design festival experience.',
+      focus: 'Fabricate high-fidelity installations and design the festival experience for real-world durability.',
       teacher: [
         'Coach fabrication and finishing techniques',
         'Coordinate multisensory accessibility features',
@@ -96,7 +96,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host the playable city festival and capture impact.',
+      focus: 'Host the playable city festival and capture impact to show joy as infrastructure.',
       teacher: [
         'Manage event logistics with city partners',
         'Coordinate volunteer training',
@@ -114,7 +114,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Pitch permanent installations and hand off assets.',
+      focus: 'Pitch permanent installations and hand off assets so the city keeps playing.',
       teacher: [
         'Facilitate proposal writing workshops',
         'Connect students with urban planners',
@@ -155,7 +155,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Play Observation Field Notes',
-      summary: 'Students analyze existing public space play behaviors and gaps.',
+      summary: 'Students analyze public space play behaviors and gaps to ground opportunity mapping.',
       studentDirections: [
         'Observe public space behavior patterns',
         'Sketch how people interact',
@@ -181,7 +181,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Playable Concept Blueprint',
-      summary: 'Teams articulate design principles and prototype plans.',
+      summary: 'Teams articulate design principles and prototype plans that give playtests a clear purpose.',
       studentDirections: [
         'Write three design principles',
         'Storyboard interactive experience',
@@ -207,7 +207,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Playtest Sprint Log',
-      summary: 'Students run iterative playtests and document improvements.',
+      summary: 'Students run iterative playtests and document improvements with real community feedback.',
       studentDirections: [
         'Run playtest with community',
         'Record engagement metrics',
@@ -257,19 +257,4 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Design invites multigenerational play',
-      'Safety and accessibility are evident',
-      'Data proves joyful impact',
-      'Pitch outlines sustainable maintenance'
-    ],
-    checkpoints: [
-      'Blueprint approved before prototyping',
-      'Safety inspection passed pre-festival',
-      'Proposals delivered within one week'
-    ],
-    tags: ['PLAY', 'CIVIC', 'DESIGN']
-  },
-  planningNotes: 'Submit permits and insurance 6 weeks ahead to lock routes early. Confirm custodial, AV, and security shifts before Week 3 with clear load-in/out timelines and prep neighborhood outreach.'
 };

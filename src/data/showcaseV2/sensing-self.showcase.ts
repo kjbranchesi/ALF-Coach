@@ -23,7 +23,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore bio-sensing fundamentals and define wellness questions.',
+      focus: 'Explore bio-sensing fundamentals and define wellness questions to anchor the project.',
       teacher: [
         'Demonstrate commercial wearable dashboards',
         'Guide consent and data ethics discussion',
@@ -41,7 +41,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan sensing approach and data architecture.',
+      focus: 'Plan sensing approach and data architecture so prototypes respect privacy.',
       teacher: [
         'Introduce sensor options and libraries',
         'Model low-voltage circuit planning',
@@ -59,7 +59,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype wearable hardware and collect pilot data.',
+      focus: 'Prototype wearable hardware and collect pilot data to translate insights into form.',
       teacher: [
         'Facilitate soldering and fabrication labs',
         'Run code review office hours',
@@ -78,7 +78,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Visualize data and design behavior nudges.',
+      focus: 'Visualize data and design behavior nudges that motivate meaningful wellness choices.',
       teacher: [
         'Model dashboard prototyping in notebooks',
         'Facilitate behavior science mini-lessons',
@@ -96,7 +96,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Showcase wearables and co-present wellness plans.',
+      focus: 'Showcase wearables and co-present wellness plans with the users who inspired them.',
       teacher: [
         'Set up hands-on demo stations',
         'Invite health professionals for feedback',
@@ -114,7 +114,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Publish documentation and handoff support routines.',
+      focus: 'Publish documentation and handoff support routines so support continues beyond class.',
       teacher: [
         'Review maintenance documentation expectations',
         'Connect teams with school wellness staff',
@@ -155,7 +155,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Wellness Insight Map',
-      summary: 'Students define user needs and articulate ethical data boundaries.',
+      summary: 'Students define user needs and articulate ethical data boundaries to guide every design choice.',
       studentDirections: [
         'Interview user about wellness goals',
         'Map current habits and supports',
@@ -181,7 +181,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Sensing Blueprint',
-      summary: 'Teams outline sensing strategy, data flow, and safety plans.',
+      summary: 'Teams outline sensing strategy, data flow, and safety plans to safeguard users and data.',
       studentDirections: [
         'Select primary sensors and libraries',
         'Design circuit and enclosure sketch',
@@ -203,12 +203,11 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
         critique: 'Verify labels match hardware',
         noAIAlt: 'Use color-coded annotation legend'
       },
-      safety: ['Never attach sensors near open wounds']
     },
     {
       id: 'A3',
       title: 'Data Story Sprint',
-      summary: 'Students clean pilot data and craft actionable insights.',
+      summary: 'Students clean pilot data and craft actionable insights that inform wellness nudges.',
       studentDirections: [
         'Import data into notebook',
         'Remove anomalies responsibly',
@@ -258,19 +257,4 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Wearable collects reliable, meaningful data',
-      'User feels respected and empowered',
-      'Insights translate into actionable nudges',
-      'Documentation supports independent use'
-    ],
-    checkpoints: [
-      'Blueprint approved before build',
-      'Pilot data reviewed before showcase',
-      'Maintenance plan shared with user'
-    ],
-    tags: ['WELL', 'DATA', 'HCD']
-  },
-  planningNotes: 'Meet wellness and privacy teams to clarify biometric signals and escalation steps. Align counselor communications and opt-ins before Week 2. Set device checkout and cleaning routines with the nurse.'
 };

@@ -76,9 +76,10 @@ function main() {
     const weakDirectionIssues = weakDirections(project.assignments);
     const weakWeekIssues = weakWeekBullets(project.runOfShow);
     const studentVoiceIssues = successCriteriaNotStudentVoice(project.assignments);
-    const planningNotesRaw = project.planningNotes?.trim() ?? '';
-    const planningNotesLength = planningNotesRaw.length;
-    const shortPlanningNotes = planningNotesLength < 120;
+    const planningNotesRaw = project.planningNotes?.trim();
+    const planningNotesLength = planningNotesRaw?.length ?? 0;
+    const planningNotesProvided = typeof planningNotesRaw === 'string' && planningNotesRaw.length > 0;
+    const shortPlanningNotes = planningNotesProvided && planningNotesLength < 120;
     const microRubricCount = project.polish?.microRubric?.length ?? 0;
     const noTechFallbackCount = project.materialsPrep.noTechFallback.length;
     const knownAssignmentIds = uniqueAssignmentIds(project.assignments);
@@ -120,7 +121,7 @@ function main() {
   console.log('='.repeat(80));
   console.log('id,batch,aiPercent,checkpointPercent,weakDirections,weakWeekBullets,studentVoiceGaps,microRubric,noTechFallback,planningNotesStatus,planningNotesChars,unknownAssignmentRefs');
   rows.forEach(row => {
-    const planningStatus = row.shortPlanningNotes ? 'short' : 'ok';
+    const planningStatus = row.shortPlanningNotes ? 'short' : row.planningNotesLength > 0 ? 'ok' : 'optional';
     console.log([
       row.id,
       row.batch,
@@ -150,8 +151,11 @@ function main() {
   const totalWeakDirections = rows.reduce((sum, row) => sum + row.weakDirections, 0);
   const totalWeakWeekBullets = rows.reduce((sum, row) => sum + row.weakWeekBullets, 0);
   const totalStudentVoice = rows.reduce((sum, row) => sum + row.studentVoiceGaps, 0);
-  const shortPlanningCount = rows.filter(row => row.shortPlanningNotes).length;
-  const avgPlanningChars = Math.round(rows.reduce((sum, row) => sum + row.planningNotesLength, 0) / rows.length);
+  const notesWithContent = rows.filter(row => row.planningNotesLength > 0);
+  const shortPlanningCount = notesWithContent.filter(row => row.shortPlanningNotes).length;
+  const avgPlanningChars = notesWithContent.length
+    ? Math.round(notesWithContent.reduce((sum, row) => sum + row.planningNotesLength, 0) / notesWithContent.length)
+    : 0;
 
   console.log('\nBatch Assignments');
   console.log('------------------');

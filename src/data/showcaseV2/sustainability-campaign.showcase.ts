@@ -23,7 +23,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch the sustainability challenge and map current systems.',
+      focus: 'Launch the sustainability challenge and map current systems to reveal hidden waste.',
       teacher: [
         'Launch challenge with campus footprint data',
         'Model systems thinking map of campus flows',
@@ -41,7 +41,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design the audit plan and coordinate data access.',
+      focus: 'Design the audit plan and coordinate data access so evidence collection runs smoothly.',
       teacher: [
         'Introduce audit tools and data templates',
         'Broker time with facilities mentors',
@@ -59,7 +59,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Conduct audits and gather quantitative and qualitative evidence.',
+      focus: 'Conduct audits and gather quantitative plus qualitative evidence to build a full picture.',
       teacher: [
         'Shadow audits to ensure safe practices',
         'Run daily data quality huddles',
@@ -78,7 +78,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and identify highest-leverage interventions.',
+      focus: 'Analyze findings and identify highest-leverage interventions that balance impact and feasibility.',
       teacher: [
         'Model ROI calculations using spreadsheets',
         'Facilitate root cause analysis workshops',
@@ -96,7 +96,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype campaigns and pilot micro-interventions.',
+      focus: 'Prototype campaigns and pilot micro-interventions to test ideas before scaling.',
       teacher: [
         'Source materials for small pilots',
         'Guide messaging storyboard sessions',
@@ -114,7 +114,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Pitch the sustainability roadmap to decision makers.',
+      focus: 'Pitch the sustainability roadmap to decision makers with data-backed storytelling.',
       teacher: [
         'Run rehearsal panels with alumni',
         'Coach data storytelling techniques',
@@ -132,7 +132,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Launch campaigns and establish accountability structures.',
+      focus: 'Launch campaigns and establish accountability structures so momentum persists.',
       teacher: [
         'Coordinate communications with district PR',
         'Coordinate grant or funding requests',
@@ -177,7 +177,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Systems Snapshot Walkthrough',
-      summary: 'Students document campus resource flows and surface early leverage points.',
+      summary: 'Students document campus resource flows and surface early leverage points for change.',
       studentDirections: [
         'Photograph three waste or energy hotspots',
         'Interview one staff member respectfully',
@@ -203,7 +203,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Audit Plan and Data Kit',
-      summary: 'Teams build rigorous audit plans and prepare data collection tools.',
+      summary: 'Teams build rigorous audit plans and prepare data collection tools that win partner confidence.',
       studentDirections: [
         'Define audit scope and metrics',
         'Assign roles for site visits',
@@ -225,7 +225,6 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
         critique: 'Remove biased or leading wording',
         noAIAlt: 'Use peer critique protocol'
       },
-      safety: ['Follow campus access rules during audits']
     },
     {
       id: 'A3',
@@ -280,19 +279,4 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Evidence connects to measurable impact claims',
-      'Stakeholder voices appear respectfully and accurately',
-      'Campaign assets feel on-brand for school',
-      'Roadmap balances ambition with feasibility'
-    ],
-    checkpoints: [
-      'Audit plan approved before fieldwork',
-      'Dashboards peer-reviewed before pitch',
-      'Campaign handoff documented after launch'
-    ],
-    tags: ['SUST', 'DATA', 'COMM']
-  },
-  planningNotes: 'Meet facilities and energy managers to secure meter access and escorts. Align with communications before Week 3 so campaign artifacts publish quickly. Submit utility login requests during Week 0.'
 };

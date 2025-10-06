@@ -24,50 +24,90 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'What is data? How can it feel and sound?',
-      teacher: ['Show synesthetic data examples', 'Model mapping numbers to senses', 'Set consent and privacy norms'],
-      students: ['Pick community topic with consent', 'Draft sensory mappings collaboratively', 'Collect sample data safely'],
-      deliverables: ['Mapping draft', 'Sample dataset'],
-      checkpoint: ['Consent confirmed'],
+      focus: 'Explore community data stories and plan sensory mappings for inclusive storytelling.',
+      teacher: [
+        'Showcase synesthetic data examples from community galleries',
+        'Model mapping numbers to colors, sounds, and textures',
+        'Facilitate consent conversation about collecting community data'
+      ],
+      students: [
+        'Choose community dataset with family consent and partner input',
+        'Draft sensory mapping ideas connecting data to senses',
+        'Collect sample data safely using class protocol'
+      ],
+      deliverables: ['Sensory mapping draft', 'Sample dataset'],
+      checkpoint: ['Consent confirmed and logged'],
       assignments: ['A1']
     },
     {
       weekLabel: 'Week 2',
       kind: 'Build',
-      focus: 'Prototype modules for color, sound, and touch.',
-      teacher: ['Approve materials and adhesives', 'Coach safe module construction', 'Test modules for durability'],
-      students: ['Build sensory module carefully', 'Label components clearly and accessibly', 'Test with peers and note feedback'],
-      deliverables: ['Module v1', 'Label set'],
-      checkpoint: ['Safety check passed'],
+      focus: 'Prototype tactile, visual, and sound modules that stay safe for all visitors.',
+      teacher: [
+        'Approve materials and adhesives for student concepts',
+        'Coach safe construction techniques for tactile modules',
+        'Test prototypes for durability and sensory accessibility'
+      ],
+      students: [
+        'Build sensory modules highlighting color, sound, and texture',
+        'Label components clearly with icons and plain language',
+        'Test modules with classmates and record feedback notes'
+      ],
+      deliverables: ['Module prototype v1', 'Label set and testing log'],
+      checkpoint: ['Safety check passed with adjustments shared'],
       assignments: ['A2']
     },
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Assemble installations and rehearse gallery flow.',
-      teacher: ['Stage layout with flow and accessibility', 'Review caption language for clarity', 'Invite families and translation supports'],
-      students: ['Assemble installation pieces carefully', 'Rehearse demos and storytelling', 'Refine captions and signage for visitors'],
-      deliverables: ['Installation v1', 'Caption cards'],
-      checkpoint: ['Teacher approves layout']
+      focus: 'Assemble gallery flow and rehearse storytelling to prepare families for data art.',
+      teacher: [
+        'Stage layout emphasizing access routes and traffic flow',
+        'Review caption language for clarity and reading levels',
+        'Invite families and translation support for showcase'
+      ],
+      students: [
+        'Assemble installation pieces with secure fasteners',
+        'Rehearse gallery tours highlighting data stories',
+        'Revise captions and signage after peer rehearsal'
+      ],
+      deliverables: ['Installation v1', 'Updated caption cards'],
+      checkpoint: ['Teacher approves layout and captions'],
     },
     {
       weekLabel: 'Week 4',
       kind: 'Exhibit',
-      focus: 'Host the Synesthetic Gallery and share a zine.',
-      teacher: ['Host event and monitor safety', 'Collect visitor feedback and consent', 'Distribute zines and resources'],
-      students: ['Guide visitors through sensory stations', 'Gather feedback kindly', 'Share zine and explain DIY steps'],
-      deliverables: ['Feedback log', 'Zine v1'],
-      checkpoint: ['Event debrief done'],
+      focus: 'Host the Synesthetic Gallery, gather feedback, and share DIY zine resources.',
+      teacher: [
+        'Host event logistics while monitoring safety and access',
+        'Collect visitor feedback forms and consent confirmations',
+        'Distribute zines and follow-up resources to families'
+      ],
+      students: [
+        'Guide visitors through sensory stations kindly',
+        'Gather feedback using prompts and observation notes',
+        'Share zine steps so families recreate data art'
+      ],
+      deliverables: ['Visitor feedback log', 'Gallery zine v1'],
+      checkpoint: ['Event debrief completed with next steps'],
       assignments: ['A3']
     },
     {
       weekLabel: 'Week 5',
       kind: 'Extension',
-      focus: 'Document modules and plan a hallway exhibit.',
-      teacher: ['Review documentation for clarity', 'Coordinate hallway exhibit logistics', 'Confirm safety and nightly storage'],
-      students: ['Photo modules and describe materials', 'Write family-friendly how-to steps', 'Design hallway layout and signage'],
-      deliverables: ['Module docs', 'Exhibit plan'],
-      checkpoint: ['Safety sign‑off']
+      focus: 'Document modules and plan hallway exhibit to extend access for families.',
+      teacher: [
+        'Review documentation drafts for clarity and safety',
+        'Coordinate hallway exhibit logistics with facilities',
+        'Confirm nightly storage and cleaning protocols'
+      ],
+      students: [
+        'Photograph modules with captions describing materials',
+        'Write family-friendly how-to instructions and safety notes',
+        'Design hallway layout with flow arrows and signage'
+      ],
+      deliverables: ['Module documentation packet', 'Hallway exhibit plan'],
+      checkpoint: ['Safety sign-off recorded with facilities team']
     }
   ],
   outcomes: {
@@ -87,10 +127,20 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Mapping Plan + Consent',
-      summary: 'Decide data and design the sensory mapping.',
-      studentDirections: ['Pick community topic with adult consent', 'Draft data-to-senses mapping chart', 'Check consent and privacy requirements', 'Collect sample dataset safely', 'Share mapping plan with teacher and family'],
-      teacherSetup: ['Provide synesthetic examples and templates', 'Send consent forms home', 'Review mapping plans for safety'],
-      evidence: ['Mapping plan', 'Sample data'],
+      summary: 'Students choose a community dataset and map senses to tell inclusive stories.',
+      studentDirections: [
+        'Brainstorm community data topics with class and families',
+        'Select dataset after confirming consent and privacy',
+        'Draft mapping chart linking numbers to senses',
+        'Collect small sample data using shared protocol',
+        'Share mapping plan with teacher and caregivers'
+      ],
+      teacherSetup: [
+        'Provide synesthetic exemplars and mapping templates',
+        'Send consent forms home and log responses',
+        'Review mapping plans for safety and sensitivity'
+      ],
+      evidence: ['Sensory mapping plan', 'Sample dataset'],
       successCriteria: ['I choose data that is safe and respectful', 'I map numbers to senses so visitors understand', 'I secure consent before collecting'],
       aiOptional: {
         toolUse: 'Suggest color palettes that match categories',
@@ -101,10 +151,20 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prototype Module',
-      summary: 'Build one sensory module safely.',
-      studentDirections: ['Build sensory module using safe materials', 'Add labels and legends visitors can read', 'Test module safely with classmates', 'Fix issues documented in log', 'Photo log progress for documentation'],
-      teacherSetup: ['Approve materials and adhesives', 'Check module safety often', 'Guide testing and adjustments'],
-      evidence: ['Module v1', 'Test notes'],
+      summary: 'Teams build sensory modules safely and refine them through peer testing.',
+      studentDirections: [
+        'Build sensory module using approved safe materials',
+        'Label modules with icons and plain-language captions',
+        'Test module with classmates noting accessibility feedback',
+        'Log fixes in prototype journal with teacher guidance',
+        'Photograph build steps for documentation packet'
+      ],
+      teacherSetup: [
+        'Approve materials, adhesives, and sound levels',
+        'Coach safe assembly techniques and tool use',
+        'Guide peer testing and accessibility adjustments'
+      ],
+      evidence: ['Module prototype v1', 'Testing feedback log'],
       successCriteria: ['I build sensory modules that stay safe and sturdy', 'I label components clearly for all abilities', 'I improve the module based on testing notes'],
       aiOptional: {
         toolUse: 'Generate sound sample ideas for categories',
@@ -115,10 +175,20 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Gallery + Zine',
-      summary: 'Host the gallery and share how‑to.',
-      studentDirections: ['Host visitors kindly through stations', 'Collect feedback using prompts', 'Explain mapping choices in plain language', 'Share zine and teach DIY steps', 'Pack stations safely for storage'],
-      teacherSetup: ['Host event logistics and timing', 'Collect feedback and consent notes', 'Confirm teardown and storage plan'],
-      evidence: ['Feedback log', 'Zine v1'],
+      summary: 'Students host the gallery, collect feedback, and share DIY zine with families.',
+      studentDirections: [
+        'Welcome visitors using sensory station tour scripts',
+        'Collect feedback with prompts and observation notes',
+        'Explain mapping choices in friendly, plain language',
+        'Share zine steps so families build at home',
+        'Pack stations safely and store materials carefully'
+      ],
+      teacherSetup: [
+        'Coordinate gallery schedule, volunteers, and access supports',
+        'Collect feedback forms and consent documentation',
+        'Confirm teardown and storage meet safety plan'
+      ],
+      evidence: ['Visitor feedback log', 'Gallery zine v1'],
       successCriteria: ['I host visitors kindly and confidently', 'I explain our mapping so families understand', 'I clean up safely and store materials'],
       aiOptional: {
         toolUse: 'Summarize visitor feedback into thank-you note',
@@ -129,10 +199,20 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Documentation + Hallway Plan',
-      summary: 'Document modules and plan hallway exhibit.',
-      studentDirections: ['Photo modules with captions', 'Write how-to steps for families', 'Check safety for hallway display', 'Propose layout with flow arrows', 'Share plan with principal and custodian'],
-      teacherSetup: ['Review documentation drafts', 'Check hallway safety requirements', 'Approve layout with facilities'],
-      evidence: ['Module docs', 'Layout sketch'],
+      summary: 'Teams document modules and plan hallway exhibit for ongoing community access.',
+      studentDirections: [
+        'Photograph modules and label materials with captions',
+        'Write how-to steps in family-friendly language',
+        'Check hallway safety needs with facilities checklist',
+        'Design exhibit layout map with flow arrows',
+        'Share plan with principal, custodian, and PTA'
+      ],
+      teacherSetup: [
+        'Review documentation drafts for clarity and tone',
+        'Approve hallway layout with facilities partners',
+        'Confirm nightly storage and cleaning logistics'
+      ],
+      evidence: ['Module documentation packet', 'Hallway exhibit layout'],
       successCriteria: ['I document modules clearly so others can reuse them', 'I ensure hallway exhibit keeps everyone safe', 'I plan layout that guides visitors smoothly'],
       aiOptional: {
         toolUse: 'Create hallway map from layout notes',
@@ -141,10 +221,4 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: ['Safe build', 'Clear mapping', 'Inclusive access', 'Family engagement'],
-    checkpoints: ['Consent confirmed', 'Safety check', 'Debrief done'],
-    tags: ['arts', 'data', 'community']
-  },
-  planningNotes: 'Schedule install and teardown windows with gallery partners 3 weeks ahead to lock power and safety walkthroughs. Pre-screen datasets before Week 2 and line up translation or tactile supports.'
 };

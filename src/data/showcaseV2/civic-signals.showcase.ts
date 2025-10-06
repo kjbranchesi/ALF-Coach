@@ -23,7 +23,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore civic tech ethics and define focus questions.',
+      focus: 'Explore civic tech ethics and define focus questions so community priorities lead the build.',
       teacher: [
         'Facilitate civic tech case studies',
         'Introduce AI ethics frameworks',
@@ -41,7 +41,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design data pipeline and governance plan.',
+      focus: 'Design data pipeline and governance plan to guarantee privacy and accountability from the start.',
       teacher: [
         'Model data governance checklist',
         'Introduce NLP toolkits',
@@ -59,7 +59,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect and preprocess civic feedback data.',
+      focus: 'Collect and preprocess civic feedback data so training sets reflect real voices responsibly.',
       teacher: [
         'Facilitate data cleaning studios',
         'Monitor compliance with privacy rules',
@@ -78,7 +78,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Train and evaluate models with human oversight.',
+      focus: 'Train and evaluate models with human oversight to keep fairness and accuracy in balance.',
       teacher: [
         'Model validation metrics interpretation',
         'Provide ML debugging support',
@@ -96,7 +96,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Design dashboards and narrative outputs for civic partners.',
+      focus: 'Design dashboards and narrative outputs for civic partners to activate evidence-driven decisions.',
       teacher: [
         'Coach data storytelling techniques',
         'Connect teams with agency analysts',
@@ -114,7 +114,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Present Civic Signals findings and gather feedback.',
+      focus: 'Present Civic Signals findings and gather feedback so partners shape the iteration roadmap.',
       teacher: [
         'Organize Civic Signals roundtable',
         'Facilitate translation services',
@@ -132,7 +132,7 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Deploy toolkits and formalize civic tech partnerships.',
+      focus: 'Deploy toolkits and formalize civic tech partnerships to sustain the listening practice over time.',
       teacher: [
         'Review implementation documentation',
         'Facilitate training for agency staff',
@@ -221,7 +221,6 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
         critique: 'Check diagram for accuracy',
         noAIAlt: 'Use sticky-note storyboard'
       },
-      safety: ['Remove personal identifiers immediately']
     },
     {
       id: 'A3',
@@ -276,19 +275,4 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Pipeline protects privacy and transparency',
-      'Models meet fairness and accuracy thresholds',
-      'Insights connect to policy levers',
-      'Partners trust ongoing stewardship'
-    ],
-    checkpoints: [
-      'Governance plan approved before coding',
-      'Bias audit completed before briefing',
-      'Roadmap delivered within one week'
-    ],
-    tags: ['CIVIC', 'AI', 'ETH']
-  },
-  planningNotes: 'Secure data-sharing agreements, privacy reviews, and translation partners before Week 2 to keep pipelines on schedule. Align with IT on API access and storage at kickoff and share governance cadence.'
 };

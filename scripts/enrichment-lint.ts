@@ -20,9 +20,6 @@ const MAX_STUDENT_DIRECTIONS = 7;
 const MIN_AI_RATIO = 0.6;
 const MIN_CHECKPOINT_RATIO = 0.6;
 const MIN_NO_TECH = 2;
-const MIN_MICRO_RUBRIC = 4;
-const MAX_MICRO_RUBRIC = 6;
-const MIN_PROJECT_CHECKPOINTS = 2;
 const MIN_PLANNING_NOTES_CHARS = 120;
 
 function main() {
@@ -95,8 +92,8 @@ function main() {
       });
     });
 
-    const planningNotesText = project.planningNotes?.trim() ?? '';
-    if (planningNotesText.length < MIN_PLANNING_NOTES_CHARS) {
+    const planningNotesText = project.planningNotes?.trim();
+    if (planningNotesText && planningNotesText.length < MIN_PLANNING_NOTES_CHARS) {
       errors.push(`${header} planningNotes under ${MIN_PLANNING_NOTES_CHARS} chars (${planningNotesText.length}) (${path})`);
     }
 
@@ -104,14 +101,21 @@ function main() {
       errors.push(`${header} noTechFallback has ${project.materialsPrep.noTechFallback.length} entries (need ${MIN_NO_TECH}+) (${path})`);
     }
 
-    const microRubricLength = project.polish?.microRubric?.length ?? 0;
-    if (microRubricLength < MIN_MICRO_RUBRIC || microRubricLength > MAX_MICRO_RUBRIC) {
-      errors.push(`${header} microRubric has ${microRubricLength} criteria (expected ${MIN_MICRO_RUBRIC}-${MAX_MICRO_RUBRIC}) (${path})`);
+    const microRubricLength = project.polish?.microRubric?.length ?? null;
+    if (microRubricLength !== null) {
+      const MIN_MICRO_RUBRIC = 4;
+      const MAX_MICRO_RUBRIC = 6;
+      if (microRubricLength < MIN_MICRO_RUBRIC || microRubricLength > MAX_MICRO_RUBRIC) {
+        errors.push(`${header} microRubric has ${microRubricLength} criteria (expected ${MIN_MICRO_RUBRIC}-${MAX_MICRO_RUBRIC}) (${path})`);
+      }
     }
 
-    const polishCheckpoints = project.polish?.checkpoints?.length ?? 0;
-    if (polishCheckpoints < MIN_PROJECT_CHECKPOINTS) {
-      errors.push(`${header} polish.checkpoints has ${polishCheckpoints} entries (need ${MIN_PROJECT_CHECKPOINTS}+) (${path})`);
+    const polishCheckpointsLength = project.polish?.checkpoints?.length ?? null;
+    if (polishCheckpointsLength !== null) {
+      const MIN_PROJECT_CHECKPOINTS = 2;
+      if (polishCheckpointsLength < MIN_PROJECT_CHECKPOINTS) {
+        errors.push(`${header} polish.checkpoints has ${polishCheckpointsLength} entries (need ${MIN_PROJECT_CHECKPOINTS}+) (${path})`);
+      }
     }
 
     const knownIds = uniqueAssignmentIds(project.assignments);

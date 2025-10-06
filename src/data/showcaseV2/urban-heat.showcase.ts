@@ -24,7 +24,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch urgent question about neighborhood heat inequities.',
+      focus: 'Launch urgent questions about neighborhood heat inequities to rally shared purpose.',
       teacher: [
         'Showcase heat map data from local news',
         'Facilitate empathy interviews with heat-vulnerable neighbors',
@@ -42,7 +42,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan data collection routes and partnership protocols.',
+      focus: 'Plan data collection routes and partnership protocols so fieldwork earns community trust.',
       teacher: [
         'Co-design fieldwork routes with GIS layers',
         'Review safety expectations with partners',
@@ -60,7 +60,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Capture temperature, interviews, and observational data in the field.',
+      focus: 'Capture temperature, interviews, and observations in the field to reveal lived heat realities.',
       teacher: [
         'Shadow teams to ensure data integrity',
         'Coordinate backup cooling stations',
@@ -78,7 +78,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and storyboard community heat narratives.',
+      focus: 'Analyze findings and storyboard community heat narratives that connect data to people.',
       teacher: [
         'Model data cleaning in spreadsheets',
         'Coach teams synthesizing equity indicators',
@@ -96,7 +96,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype and test cooling interventions.',
+      focus: 'Prototype and test cooling interventions to show impact before the summit.',
       teacher: [
         'Facilitate material sourcing and budget tracking',
         'Coordinate pilot testing locations',
@@ -114,7 +114,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host HeatSafe summit sharing action plans with stakeholders.',
+      focus: 'Host the HeatSafe summit sharing action plans with stakeholders to secure commitments.',
       teacher: [
         'Invite city, health, and youth partners',
         'Coach students rehearsing solution pitches',
@@ -204,7 +204,6 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         critique: 'Verify AI checklist matches local realities',
         noAIAlt: 'Use partner checklist template instead'
       },
-      safety: ['Pause fieldwork if heat index exceeds threshold']
     },
     {
       id: 'A3',
@@ -257,22 +256,6 @@ export const urban_heatV2: ProjectShowcaseV2 = {
         critique: 'Confirm AI outline matches community priorities',
         noAIAlt: 'Use peer storyboard coaching instead'
       },
-      safety: ['Confirm shade and hydration for all demos']
     }
   ],
-  polish: {
-    microRubric: [
-      'Dashboard stories center data and people equally',
-      'Prototypes withstand real-world testing conditions',
-      'Summit pitch makes actionable ask',
-      'Follow-up plan names accountable partners'
-    ],
-    checkpoints: [
-      'Data validated before publication',
-      'Cooling prototype tested in authentic context',
-      'Stakeholder commitments documented post-summit'
-    ],
-    tags: ['CLIM', 'CIVIC', 'ENG']
-  },
-  planningNotes: 'Meet nurse and facilities before kickoff to lock hydration, shade, and indoor backups. File street and utility permits 3 weeks out. Prep family alerts so schedule shifts happen fast.'
 };

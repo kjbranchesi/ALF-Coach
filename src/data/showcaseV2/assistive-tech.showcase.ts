@@ -23,7 +23,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Explore disability justice and human-centered engineering norms.',
+      focus: 'Explore disability justice and human-centered engineering norms to anchor co-design partnerships.',
       teacher: [
         'Share disability justice framework',
         'Model asset-based interview techniques',
@@ -41,7 +41,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Co-create design briefs with partner stakeholders.',
+      focus: 'Co-create design briefs with partner stakeholders so specs mirror lived experience.',
       teacher: [
         'Facilitate co-design kickoff meetings',
         'Model translating interviews into needs',
@@ -59,7 +59,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Prototype, test, and iterate assistive concepts with partners.',
+      focus: 'Prototype, test, and iterate assistive concepts with partners to capture authentic feedback.',
       teacher: [
         'Coach fabrication tool safety',
         'Run daily stand-ups for blockers',
@@ -78,7 +78,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Engineer high-fidelity devices and validate performance.',
+      focus: 'Engineer high-fidelity devices and validate performance to prove everyday reliability.',
       teacher: [
         'Coach teams through advanced fabrication techniques',
         'Model tolerance testing routines',
@@ -96,7 +96,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host inclusive product launch and training sessions.',
+      focus: 'Host inclusive product launch and training sessions that empower partners to use devices confidently.',
       teacher: [
         'Coordinate accessible showcase logistics',
         'Coach storytelling with partners',
@@ -114,7 +114,7 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Plan long-term support and open-source documentation.',
+      focus: 'Plan long-term support and open-source documentation so solutions stay maintainable after showcase.',
       teacher: [
         'Facilitate sustainability planning workshop',
         'Review IP and sharing considerations',
@@ -203,7 +203,6 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         critique: 'Ensure voice stays authentic',
         noAIAlt: 'Use team storytelling workshop'
       },
-      safety: ['Honor confidentiality requests in documentation']
     },
     {
       id: 'A3',
@@ -230,7 +229,6 @@ export const assistive_techV2: ProjectShowcaseV2 = {
         critique: 'Verify AI grouping matches partner priorities',
         noAIAlt: 'Use color-coded sticky clustering'
       },
-      safety: ['Stop testing if discomfort emerges']
     },
     {
       id: 'A4',
@@ -259,19 +257,4 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Device operates safely and reliably',
-      'Partner voice leads the story',
-      'Documentation uses plain, inclusive language',
-      'Support plan names accountable owners'
-    ],
-    checkpoints: [
-      'Partner brief approved before prototyping',
-      'Safety checklist signed before showcase',
-      'Support plan delivered after launch'
-    ],
-    tags: ['HCD', 'STEM', 'CARE']
-  },
-  planningNotes: 'Meet the OT team 4 weeks ahead to confirm boundaries, equipment loans, and emergency contacts. Reserve maker tools and storage before Week 2 and align parent messages for consent and follow-up care.'
 };

@@ -24,68 +24,124 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Trust, secrecy, and ethics of public expression.',
-      teacher: ['Launch crypto stories', 'Set legal boundaries', 'Model analog ciphers', 'Facilitate harm scenario analysis'],
-      students: ['Debate speech ethics', 'Crack simple codes', 'Draft “consent” norms', 'Propose misuse mitigations'],
-      deliverables: ['Crypto ethics charter', 'Cipher notebook', 'Harm mitigation list'],
-      checkpoint: ['All sign legal/safety policies'],
+      focus: 'Examine trust, secrecy, and ethics of public cryptography to ground studio norms.',
+      teacher: [
+        'Share cryptography stories showing trust and civic responsibility',
+        'Define legal boundaries and consent for public expression',
+        'Model analog cipher techniques with hands-on decoding stations'
+      ],
+      students: [
+        'Debate speech ethics and document shared consent guardrails',
+        'Crack sample ciphers to understand keys and entropy',
+        'Draft misuse mitigation plans with partner feedback'
+      ],
+      deliverables: ['Crypto ethics charter', 'Cipher practice notebook', 'Misuse mitigation list'],
+      checkpoint: ['All sign legal and safety policies'],
       assignments: ['A1']
     },
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Keys, exchange, and site permission workflow.',
-      teacher: ['Demonstrate key exchange', 'Secure wall permissions', 'Review safety gear', 'Draft cleanup plan'],
-      students: ['Design key ritual', 'Scout legal sites', 'Draft install SOP', 'List cleanup steps'],
+      focus: 'Design key exchange rituals and secure permissions for legal installations.',
+      teacher: [
+        'Demonstrate key exchange protocols and secrecy principles',
+        'Coordinate site permissions with property owners and agencies',
+        'Review safety gear requirements and cleanup obligations'
+      ],
+      students: [
+        'Design decode ritual describing keys and access rules',
+        'Scout approved installation sites documenting risks and assets',
+        'Draft installation SOP and cleanup checklist for partners'
+      ],
       deliverables: ['Site permission packet', 'Key exchange plan', 'Cleanup checklist'],
-      checkpoint: ['Admin/partner sign‑off complete'],
+      checkpoint: ['Admin and partner sign-off complete'],
       assignments: ['A2']
     },
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Prototype visual language and decode flows in studio.',
-      teacher: ['Critique readability', 'Coach color contrast', 'Set test scripts', 'Check PPE readiness'],
-      students: ['Stencil/paste‑up tests', 'Run peer decode tests', 'Revise cipher rules', 'Create signage'],
-      deliverables: ['Design system sheet', 'Decode test notes', 'Signage draft'],
-      checkpoint: ['First decode test passes'],
+      focus: 'Prototype visual language and decode flows to ensure readability before launch.',
+      teacher: [
+        'Critique visual language for readability and contrast',
+        'Coach teams on accessible color, icon, and typography choices',
+        'Set structured peer decode test scripts with timers'
+      ],
+      students: [
+        'Stencil and paste-up prototypes using removable materials',
+        'Run peer decode tests capturing time and accuracy',
+        'Revise cipher rules and signage based on test notes'
+      ],
+      deliverables: ['Design system sheet', 'Decode test log', 'Signage draft'],
+      checkpoint: ['First decode test passes accessibility benchmark'],
       assignments: ['A3']
     },
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Security & accessibility audit for public readability.',
-      teacher: ['Facilitate timed trials', 'Review contrast thresholds', 'Validate wayfinding', 'Confirm emergency plan'],
-      students: ['Measure decode time', 'Improve contrast', 'Add wayfinding cues', 'Review emergency protocol'],
-      deliverables: ['Audit report', 'Updated design system'],
-      checkpoint: ['Readability threshold met'],
+      focus: 'Audit security and accessibility to certify public readiness of installations.',
+      teacher: [
+        'Facilitate timed trials simulating community decode experience',
+        'Review contrast thresholds and lighting conditions with teams',
+        'Confirm emergency plans and wayfinding signage coverage'
+      ],
+      students: [
+        'Measure decode times and adjust difficulty accordingly',
+        'Improve contrast, scale, and tactile guides for inclusivity',
+        'Add wayfinding cues and emergency info to signage'
+      ],
+      deliverables: ['Security and accessibility audit report', 'Updated design system'],
+      checkpoint: ['Readability and safety threshold met'],
       assignments: ['A3']
     },
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Produce final, removable installations with consent.',
-      teacher: ['Stage install window', 'Supervise PPE use', 'Log permits with authorities', 'Coordinate spotters'],
-      students: ['Install with spotters', 'Photograph artifacts', 'Record GPS + label', 'File cleanup schedule'],
-      deliverables: ['Install log', 'Geo‑labeled photos', 'Cleanup schedule'],
-      checkpoint: ['Post‑install safety sweep']
+      focus: 'Produce consented installations using removable materials and documented safety roles.',
+      teacher: [
+        'Stage installation window with permits and neighbor notifications',
+        'Supervise PPE usage and spotter communication protocols',
+        'Log permits, GPS coordinates, and cleanup obligations'
+      ],
+      students: [
+        'Install artwork with spotters managing pedestrian safety',
+        'Photograph artifacts and record coordinates for documentation',
+        'Submit cleanup schedule and maintenance commitments'
+      ],
+      deliverables: ['Installation log', 'Geo-labeled photo set', 'Cleanup schedule'],
+      checkpoint: ['Post-install safety sweep completed'],
     },
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host Decode Walk and collect community learning data.',
-      teacher: ['Invite community', 'Manage routes', 'Collect feedback forms', 'Capture learning metrics'],
-      students: ['Guide decode teams', 'Teach crypto basics', 'Share toolkit link', 'Survey visitors'],
+      focus: 'Host Decode Walk teaching crypto literacy and collecting community insights.',
+      teacher: [
+        'Invite community members, press, and partners to walk',
+        'Manage route pacing, accessibility, and crowd safety',
+        'Collect feedback surveys and learning metrics throughout'
+      ],
+      students: [
+        'Guide decode teams through installations kindly and clearly',
+        'Teach cryptography basics using plain-language storytelling',
+        'Survey visitors and share toolkit link for continued learning'
+      ],
       deliverables: ['Decode Walk map', 'Survey dataset'],
-      checkpoint: ['Partner commitments to reuse']
+      checkpoint: ['Partner commitments to reuse documented'],
     },
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Cleanup, legal debrief, and toolkit publication.',
-      teacher: ['Verify cleanup proof', 'Host legal debrief', 'Review final toolkit'],
-      students: ['Submit cleanup proof', 'Write debrief', 'Publish toolkit v1', 'Propose next steps'],
-      deliverables: ['Cleanup record', 'Legal debrief doc', 'Toolkit link'],
+      focus: 'Complete cleanup, legal debrief, and publish toolkit for future partners.',
+      teacher: [
+        'Verify cleanup proof and closure with property owners',
+        'Host legal debrief reviewing compliance and improvements',
+        'Review final toolkit drafts for accuracy and access'
+      ],
+      students: [
+        'Submit cleanup documentation and signed confirmation forms',
+        'Write legal debrief summarizing impact and lessons learned',
+        'Publish toolkit with instructions, safety forms, and next steps'
+      ],
+      deliverables: ['Cleanup record', 'Legal debrief document', 'Toolkit link'],
       checkpoint: ['All permissions closed out'],
       assignments: ['A5']
     }
@@ -114,62 +170,105 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Crypto 101 + Ethics Brief',
-      summary: 'Learn ciphers and define legal, ethical constraints.',
-      studentDirections: ['Crack three ciphers', 'Explain a key', 'Draft ethics rule', 'Sign policy', 'Reflect on trust'],
-      teacherSetup: ['Curate cipher set', 'Share case studies', 'Provide policy forms'],
+      summary: 'Students learn foundational ciphers and define ethical, legal constraints for installations.',
+      studentDirections: [
+        'Crack three cipher types and explain key mechanics',
+        'Investigate trust and speech cases for discussion circle',
+        'Draft shared ethics charter covering consent and safety',
+        'Sign legal policy acknowledging boundaries and expectations',
+        'Reflect on potential harms and mitigation strategies'
+      ],
+      teacherSetup: [
+        'Curate cipher practice set with varied difficulty',
+        'Share case studies on speech, trust, and graffiti',
+        'Provide legal policy forms and review session'
+      ],
       evidence: ['Cipher notebook', 'Signed policy'],
-      successCriteria: ['I explain keys', 'I follow policy', 'I cite harms'],
+      successCriteria: ['I explain keys clearly', 'I honour legal policy', 'I identify harms to prevent'],
       checkpoint: 'Policy signed before any build'
     },
     {
       id: 'A2',
       title: 'Key Exchange + Site Plan',
-      summary: 'Design decode ritual and secure permissions.',
-      studentDirections: ['Map route', 'List stakeholders', 'Draft consent letter', 'Define key ritual', 'Assign safety roles'],
-      teacherSetup: ['Provide templates', 'Pre‑contact sites', 'Review legal notes'],
-      evidence: ['Permission packet', 'Key plan'],
-      successCriteria: ['I get consent', 'I design for safety', 'I document plan'],
+      summary: 'Teams design key exchange ritual and secure permissions for safe Decode Walk.',
+      studentDirections: [
+        'Map route and document stakeholders requiring permission',
+        'Draft consent letters and communication scripts for partners',
+        'Design key exchange ritual explaining unlock process',
+        'Assign installation safety roles and backup contacts',
+        'Compile permission packet for teacher and partner sign-off'
+      ],
+      teacherSetup: [
+        'Provide permission templates and outreach checklist',
+        'Pre-contact site owners and schedule walkthroughs',
+        'Review legal notes and risk mitigations with admin'
+      ],
+      evidence: ['Permission packet', 'Key exchange plan'],
+      successCriteria: ['I secure consent respectfully', 'I design safety roles clearly', 'I document plans partners trust'],
       aiOptional: { toolUse: 'Summarize permit steps', critique: 'Flag missing consent', noAIAlt: 'Peer legal review' }
     },
     {
       id: 'A3',
       title: 'Visual Language Usability Test',
-      summary: 'Prototype and test cipher readability.',
-      studentDirections: ['Create stencils', 'Run user test', 'Measure decode time', 'Revise contrast', 'Record insights', 'Improve wayfinding'],
-      teacherSetup: ['Provide contrast guide', 'Set test scripts', 'Coach revisions', 'Check accessibility'],
+      summary: 'Students prototype visual language and test cipher usability with peers.',
+      studentDirections: [
+        'Create removable stencils and paste-ups for cipher set',
+        'Run user tests timing decode accuracy and clarity',
+        'Measure decode time against accessibility benchmark',
+        'Revise contrast, scale, and instructions from feedback',
+        'Synthesize findings and update wayfinding signage plan',
+        'Assemble PPE checklists for upcoming installations'
+      ],
+      teacherSetup: [
+        'Provide contrast and accessibility reference guides',
+        'Set usability test scripts with timers and roles',
+        'Coach revision cycles using data and peer critique',
+        'Check PPE readiness for future installation days'
+      ],
       evidence: ['Design system sheet', 'Usability notes'],
-      successCriteria: ['I meet legibility', 'I improve speed', 'I justify changes'],
+      successCriteria: ['I meet legibility targets', 'I reduce decode time', 'I justify revisions with data'],
       aiOptional: { toolUse: 'Suggest contrast palettes', critique: 'Flag low readability', noAIAlt: 'Blind decode test' }
     },
     {
       id: 'A4',
       title: 'Decode Walk + Toolkit',
-      summary: 'Host public walk and publish how‑to.',
-      studentDirections: ['Guide visitors', 'Teach basics', 'Collect feedback', 'Publish toolkit', 'Thank partners', 'Capture metrics'],
-      teacherSetup: ['Invite press', 'Arrange routes', 'Print guides', 'Review crowd safety'],
-      evidence: ['Decode map', 'Toolkit link'],
-      successCriteria: ['I teach clearly', 'I ensure safety', 'I share resources'],
+      summary: 'Teams host the Decode Walk, teach crypto basics, and publish toolkit.',
+      studentDirections: [
+        'Guide visitors along route using consented access plan',
+        'Teach cryptography basics through plain-language storytelling',
+        'Collect surveys and quotes capturing learning impact',
+        'Publish toolkit with instructions, safety forms, and keys',
+        'Thank partners publicly and document commitments',
+        'Capture metrics and photos for final report'
+      ],
+      teacherSetup: [
+        'Invite press, partners, and community leaders to event',
+        'Arrange route supervision, accessibility, and crowd safety',
+        'Print guides and ensure emergency contacts posted',
+        'Review crowd safety and de-escalation plan beforehand'
+      ],
+      evidence: ['Decode Walk map', 'Toolkit link'],
+      successCriteria: ['I guide visitors confidently', 'I teach crypto responsibly', 'I share resources teams can reuse'],
       aiOptional: { toolUse: 'Summarize survey results', critique: 'Detect sampling bias', noAIAlt: 'Manual tally board' }
     },
     {
       id: 'A5',
       title: 'Impact + Legal Debrief',
-      summary: 'Reflect on impact and finalize consent and cleanup records.',
-      studentDirections: ['Collect partner quotes', 'Write debrief', 'Submit cleanup proof', 'Propose next steps', 'Share reflection'],
-      teacherSetup: ['Provide debrief template', 'Collect records', 'Schedule reflection circle'],
-      evidence: ['Debrief doc', 'Cleanup record'],
-      successCriteria: ['I document impact', 'I close safely', 'I suggest improvements']
+      summary: 'Students document impact, finalize legal closure, and plan next steps.',
+      studentDirections: [
+        'Collect partner quotes documenting impact and trust',
+        'Write legal debrief summarizing compliance and lessons',
+        'Submit cleanup proof photos and signed confirmations',
+        'Propose next-step collaborations and improvements',
+        'Share personal reflection connecting crypto to civic life'
+      ],
+      teacherSetup: [
+        'Provide debrief template and reflection prompts',
+        'Collect cleanup records and confirm permission closure',
+        'Schedule reflection circle with partners invited'
+      ],
+      evidence: ['Legal debrief document', 'Cleanup record'],
+      successCriteria: ['I document impact clearly', 'I close permissions safely', 'I recommend future improvements']
     }
   ],
-  polish: {
-    microRubric: [
-      'Legal and safety compliance',
-      'Readable, accessible visual language',
-      'Accurate crypto concepts',
-      'Respectful, engaging public event'
-    ],
-    checkpoints: ['Permission approvals logged', 'Usability threshold met', 'Post‑event debrief filed'],
-    tags: ['cs', 'math', 'arts']
-  },
-  planningNotes: 'Submit permits and insurance 3 weeks early so site owners confirm legal surfaces and time windows. Require removable materials and documented cleanup. Coordinate safety routes with public art staff.'
 };

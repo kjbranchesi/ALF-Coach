@@ -1,9 +1,6 @@
 # Enrichment Batches
 
-## Batch A (0)
-None
-
-## Batch B (30)
+## Batch A (30)
 - accessability-ai — AccessAbility AI: Captions, Alt-Text, and Simplified Reading (AI 100%, Checkpoints 100%)
 - ai-emotional-weather-vane — AI Emotional Weather Vane (AI 100%, Checkpoints 100%)
 - ar-disaster-wardens — AR Disaster Wardens (AI 100%, Checkpoints 100%)
@@ -34,6 +31,9 @@ None
 - sustainability-campaign — Campus Sustainability Initiative (AI 100%, Checkpoints 100%)
 - synesthetic-data-galleries — Synesthetic Data Galleries (AI 100%, Checkpoints 100%)
 - urban-heat — HeatSafe Blocks: Cooling Our Neighborhood (AI 100%, Checkpoints 100%)
+
+## Batch B (0)
+None
 
 ## Batch C (0)
 None

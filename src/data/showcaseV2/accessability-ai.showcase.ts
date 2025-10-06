@@ -23,7 +23,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Ground the team in disability justice and media accessibility standards.',
+      focus: 'Ground the team in disability justice and media accessibility standards so every workflow begins with respect.',
       teacher: [
         'Invite disabled creators for panel',
         'Introduce Web Content Accessibility Guidelines (WCAG)',
@@ -41,7 +41,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design AI-assisted accessibility pipeline and editorial safeguards.',
+      focus: 'Design AI-assisted accessibility pipeline and editorial safeguards that keep human editors in control of voice.',
       teacher: [
         'Demo captioning and alt-text tools',
         'Guide bias and error brainstorming',
@@ -59,7 +59,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Generate AI drafts and refine with human editors.',
+      focus: 'Generate AI drafts and refine them with human editors to prove the workflow protects dignity.',
       teacher: [
         'Provide tool training sessions',
         'Monitor for accuracy and respect',
@@ -78,7 +78,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Package final assets and design simplified reading supports.',
+      focus: 'Package final assets and design simplified reading supports that invite broad community use.',
       teacher: [
         'Model plain-language rewriting strategies',
         'Facilitate tone and ownership check-ins',
@@ -96,7 +96,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Launch accessibility kits and train content creators.',
+      focus: 'Launch accessibility kits and train content creators so adoption feels practical and inviting.',
       teacher: [
         'Organize training workshops',
         'Coordinate resource distribution',
@@ -114,7 +114,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Document governance and plan long-term stewardship.',
+      focus: 'Document governance and plan long-term stewardship so accessibility stays active after launch.',
       teacher: [
         'Review governance template',
         'Assist with help desk plan',
@@ -229,7 +229,6 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
         critique: 'Validate AI suggestions with consultant',
         noAIAlt: 'Use peer editing checklist'
       },
-      safety: ['Respect confidentiality of featured individuals']
     },
     {
       id: 'A4',
@@ -258,19 +257,4 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Assets honor original voice and intent',
-      'Workflow protects privacy and dignity',
-      'Training empowers future creators',
-      'Governance ensures sustainability'
-    ],
-    checkpoints: [
-      'Workflow approved before AI drafts',
-      'Consultants review assets before launch',
-      'Support plan active after training'
-    ],
-    tags: ['ACCESS', 'AI', 'HCD']
-  },
-  planningNotes: 'Lock consultant honoraria and schedule reviews 4 weeks ahead with disabled experts. Verify media licensing, captions, and alt-text with legal before Week 3, then assign an owner for ongoing updates.'
 };

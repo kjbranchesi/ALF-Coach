@@ -24,7 +24,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Climate impacts of textiles and bio‑material safety basics.',
+      focus: 'Investigate climate impacts of textiles and bio-material safety basics to reframe fashion as systems work.',
       teacher: ['Launch fashion emissions case', 'Review SDS and PPE', 'Model LCA concept'],
       students: ['Map fast‑fashion impacts', 'Pass lab safety quiz', 'Sketch early bio‑material ideas'],
       deliverables: ['Impact map', 'Safety acknowledgement'],
@@ -34,7 +34,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Procure safe materials and design test plans with controls.',
+      focus: 'Procure safe materials and design controlled test plans so every experiment earns valid results.',
       teacher: ['Approve BOMs', 'Share emissions factors sheet', 'Demo casting/coating'],
       students: ['Draft test matrix', 'Specify controls', 'Confirm materials sourcing'],
       deliverables: ['BOM + SDS packet', 'Test plan matrix'],
@@ -44,7 +44,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Produce swatches and run bench tests—strength, flexibility, water.',
+      focus: 'Produce swatches and run bench tests on strength, flexibility, and water resistance to ground decisions in data.',
       teacher: ['Supervise PPE & waste bins', 'Calibrate test jigs', 'Coach data logging'],
       students: ['Cast/coat swatches', 'Cure and cut samples', 'Test and log results'],
       deliverables: ['Swatch set', 'Test data sheets'],
@@ -54,7 +54,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Compute simple LCA and iterate materials for performance/emissions.',
+      focus: 'Compute simple LCAs and iterate materials to balance performance with lower emissions.',
       teacher: ['Model LCA math', 'Review data sources', 'Facilitate design critique'],
       students: ['Calculate kgCO₂e per swatch', 'Compare to baseline', 'Revise recipe'],
       deliverables: ['LCA workbook', 'Revised swatch'],
@@ -64,7 +64,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host climate‑neutral runway and publish technical cards.',
+      focus: 'Host climate-neutral runway and publish technical cards that make the science accessible to partners.',
       teacher: ['Invite partners', 'Check venue energy plan', 'Coach runway narration'],
       students: ['Stage looks with swatches', 'Present LCA results', 'Collect partner feedback'],
       deliverables: ['Technical card set', 'LCA storyboard'],
@@ -74,7 +74,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Pilot adoption plan with makers/brands and publish toolkit.',
+      focus: 'Pilot adoption plans with makers and publish a toolkit so the work continues beyond class.',
       teacher: ['Coordinate maker visits', 'Review toolkit layout', 'Debrief safety + waste'],
       students: ['Draft adoption plan', 'Publish toolkit', 'Submit waste/disposal log'],
       deliverables: ['Adoption one‑pager', 'Toolkit v1', 'Disposal log'],
@@ -112,7 +112,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Textile Climate Portrait + Safety Passport',
-      summary: 'Map fashion emissions and pass lab safety basics.',
+      summary: 'Students map fashion emissions and complete lab safety basics to ground the studio in climate reality.',
       studentDirections: ['List top fashion impacts with sources', 'Sketch safer material inputs', 'Pass lab safety quiz with 100%', 'Log PPE sizes and needs', 'Propose safe lab roles and responsibilities'],
       teacherSetup: ['Curate fashion impact datasets', 'Prepare safety certification quiz', 'Assign lab roles and rotations'],
       evidence: ['Impact map', 'Signed passport'],
@@ -126,7 +126,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Recipe + Test Plan',
-      summary: 'Design a material recipe and a fair test plan.',
+      summary: 'Teams design material recipes and fair test plans so future labs can replicate the work confidently.',
       studentDirections: ['Draft BOM with quantities and vendors', 'Add SDS links for every material', 'Define variables and measurement methods', 'Set controls and replicates for fair tests', 'Schedule test sessions and curing windows'],
       teacherSetup: ['Approve BOM and SDS compliance', 'Share emissions factors reference sheet', 'Model control setup and data tables'],
       evidence: ['BOM + SDS packet', 'Test plan matrix'],
@@ -140,7 +140,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Swatch Build + Bench Test',
-      summary: 'Produce testable swatches and log performance.',
+      summary: 'Students produce testable swatches and log performance data to benchmark carbon-negative potential.',
       studentDirections: ['Cast or coat swatches with PPE', 'Cure and label samples consistently', 'Run strength/flex/water tests accurately', 'Log data with units and trial counts', 'Photo document process and anomalies'],
       teacherSetup: ['Calibrate test jigs and measurement tools', 'Supervise PPE and waste handling', 'Check data sheets for accuracy'],
       evidence: ['Swatch set', 'Data log'],
@@ -154,7 +154,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mini‑LCA + Revision',
-      summary: 'Compute kgCO₂e and revise for lower impact.',
+      summary: 'Teams compute kgCO₂e and revise recipes toward lower impact while honoring performance targets.',
       studentDirections: ['Calculate baseline emissions using template', 'Compare scenarios and highlight reductions', 'Revise recipe to lower kgCO₂e while meeting specs', 'Note trade-offs and next experiments', 'Cite every factor and dataset used'],
       teacherSetup: ['Provide LCA template with unit guide', 'Review unit conversions and emission factors', 'Coach trade-off discussion'],
       evidence: ['LCA workbook', 'Revised swatch'],
@@ -168,7 +168,7 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     {
       id: 'A5',
       title: 'Climate‑Neutral Runway + Toolkit',
-      summary: 'Stage results and publish a reusable guide.',
+      summary: 'Students stage results and publish a reusable guide that invites partners into carbon-negative fashion.',
       studentDirections: ['Design technical cards with data and care', 'Orchestrate climate-neutral event logistics', 'Present LCA results and key insights', 'Collect partner feedback systematically', 'Publish toolkit and adoption plan for makers'],
       teacherSetup: ['Invite partners and confirm venue sustainability plan', 'Review technical card drafts', 'Provide toolkit template and hosting checklist'],
       evidence: ['Technical card set', 'Toolkit link'],
@@ -180,15 +180,4 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Safe, documented lab practice',
-      'Fair tests with controls',
-      'Correct LCA math + sources',
-      'Persuasive adoption storytelling'
-    ],
-    checkpoints: ['Safety + SDS sign‑off', 'Mid‑build data audit', 'LCA sources verified'],
-    tags: ['chem', 'design', 'sustainability']
-  },
-  planningNotes: 'Submit BOMs and SDS sheets to science leads 4 weeks out to approve sourcing and ventilation. Align waste disposal with custodial before Week 3 and book maker critiques early for adoption feedback.'
 };

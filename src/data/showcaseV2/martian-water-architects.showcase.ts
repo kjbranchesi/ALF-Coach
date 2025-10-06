@@ -24,7 +24,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Martian environment + ISRU fundamentals; human water/energy needs on Mars.',
+      focus: 'Study Martian ISRU fundamentals and mission water needs to ground every later decision.',
       teacher: ['Show Mars DEM/ice maps', 'Model mission water math', 'Define safety in design'],
       students: ['Compare sites', 'Compute daily water needs', 'List environmental constraints'],
       deliverables: ['Candidate site list', 'Water needs worksheet'],
@@ -34,7 +34,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Select site and draft capture approach with assumptions.',
+      focus: 'Select a site and draft capture approach with explicit assumptions for review.',
       teacher: ['Provide data sheets', 'Review assumptions', 'Coach trade‑off framing'],
       students: ['Choose one site', 'Draft capture concept', 'List assumptions + risks'],
       deliverables: ['Site selection memo', 'Concept scamp'],
@@ -44,7 +44,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Create 3D site model and system schematics.',
+      focus: 'Create 3D site models and system schematics to communicate ideas clearly to reviewers.',
       teacher: ['Share modeling options', 'Coach clear labeling', 'Review energy budgets'],
       students: ['Build terrain mockup', 'Draft schematics', 'Annotate energy inputs'],
       deliverables: ['3D site model', 'System schematic v1'],
@@ -54,7 +54,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Run trade‑offs: yield vs energy vs risk; revise design.',
+      focus: 'Run trade-offs between yield, energy, and risk so the design can withstand scrutiny.',
       teacher: ['Provide trade‑off template', 'Facilitate design critique', 'Check math units'],
       students: ['Compare alternatives', 'Revise plan', 'Note EVA hazards'],
       deliverables: ['Trade‑off table', 'Revised schematic'],
@@ -63,7 +63,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
-      focus: 'Mission review panel with EVA flow and risk mitigation.',
+      focus: 'Host mission review panel with EVA flow and risk mitigation to earn a go/no-go.',
       teacher: ['Invite panel', 'Time presentations', 'Record Q&A notes'],
       students: ['Present mission brief', 'Defend trade‑offs', 'Log risks + mitigations'],
       deliverables: ['Mission brief deck', 'Risk register'],
@@ -73,7 +73,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
-      focus: 'Create deployment storyboard and cross‑team synthesis.',
+      focus: 'Create deployment storyboard and cross-team synthesis to document how the mission launches.',
       teacher: ['Model storyboard format', 'Arrange gallery walk', 'Facilitate synthesis'],
       students: ['Storyboard deployment', 'Peer review', 'Publish data pack'],
       deliverables: ['Deployment storyboard', 'Data pack v1'],
@@ -109,7 +109,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Mars Site Recon & Needs Math',
-      summary: 'Scout candidate sites and compute daily water needs.',
+      summary: 'Students scout candidate sites and compute daily water needs to size the mission challenge.',
       studentDirections: ['Compare three sites using DEM and ice data', 'Compute daily water needs for crew scenario', 'List environmental constraints and hazards', 'Cite NASA/ESA sources for data and assumptions', 'Pick top two candidate sites with rationale'],
       teacherSetup: ['Provide datasets and calculators', 'Model mission water math', 'Review citations and assumptions'],
       evidence: ['Site table', 'Needs worksheet'],
@@ -123,7 +123,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Site Selection Memo',
-      summary: 'Choose a site and defend assumptions.',
+      summary: 'Teams choose a site and defend assumptions, preparing for critical trade-off debates.',
       studentDirections: ['State choice', 'List assumptions', 'Note risks', 'Share rationale', 'Submit memo'],
       teacherSetup: ['Share memo template', 'Coach assumptions', 'Review risk framing'],
       evidence: ['Selection memo'],
@@ -133,7 +133,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Site Model + Schematic v1',
-      summary: 'Build terrain and draft capture schematics.',
+      summary: 'Students build terrain models and draft capture schematics that make energy flows legible.',
       studentDirections: ['Build model', 'Draft schematic', 'Label energy', 'Check units', 'Photo log'],
       teacherSetup: ['Provide examples', 'Check units', 'Review labels'],
       evidence: ['Model photos', 'Schematic v1'],
@@ -143,7 +143,7 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Mission Brief + EVA Risk',
-      summary: 'Present design and defend trade‑offs and risks.',
+      summary: 'Teams present designs and defend trade-offs and risks, updating mission materials live.',
       studentDirections: ['Present mission brief to review panel', 'Defend trade-offs with data and assumptions', 'Log Q&A decisions and action items', 'Revise risk register and mitigations', 'Publish mission deck and data pack'],
       teacherSetup: ['Invite panel and schedule review', 'Time presentations and Q&A', 'Record decisions and commitments'],
       evidence: ['Brief deck', 'Risk register'],
@@ -155,15 +155,4 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Defensible site selection',
-      'Clear, unit‑correct math',
-      'Readable schematics & labels',
-      'Realistic risk trade‑offs'
-    ],
-    checkpoints: ['Selection memo approved', 'Units sanity check', 'Publishing checklist met'],
-    tags: ['space', 'geo', 'eng']
-  },
-  planningNotes: 'Cache DEM and ice datasets early so studios run offline if needed. Verify licensing with NASA or USGS before Week 2 and invite a planetary scientist for Week 5 critiques to stress-test assumptions.'
 };

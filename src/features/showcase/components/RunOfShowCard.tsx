@@ -1,6 +1,6 @@
 import React from 'react';
 import type { WeekCard } from '../../../types/showcaseV2';
-import { getPhaseColor, getPhaseIcon } from '../utils/phaseColors';
+import { getPhaseColor } from '../utils/phaseColors';
 import PhaseBeadge from './PhaseBeadge';
 import CheckpointAlert from './CheckpointAlert';
 
@@ -11,8 +11,6 @@ interface RunOfShowCardProps {
 
 export default function RunOfShowCard({ card, onAssignmentClick }: RunOfShowCardProps) {
   const phaseColor = getPhaseColor(card.kind);
-  const phaseIcon = getPhaseIcon(card.kind);
-
   return (
     <div
       className="group relative squircle-pure border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-[0_2px_8px_rgba(15,23,42,0.08)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)] transition-all duration-300 overflow-hidden"
@@ -110,9 +108,7 @@ export default function RunOfShowCard({ card, onAssignmentClick }: RunOfShowCard
           <div className="space-y-2.5 p-4 rounded-xl bg-gradient-to-br from-violet-50/50 to-violet-100/30 dark:from-violet-950/20 dark:to-violet-900/10 border border-violet-200/40 dark:border-violet-800/40">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider font-bold text-violet-700 dark:text-violet-400 mb-3">
               <div className="w-5 h-5 rounded-md bg-violet-200/50 dark:bg-violet-800/50 flex items-center justify-center">
-                <span role="img" aria-hidden="true" className="text-xs">
-                  {phaseIcon}
-                </span>
+                <span className="text-[10px] font-semibold text-violet-700 dark:text-violet-300">{card.kind.charAt(0)}</span>
               </div>
               Students
             </div>

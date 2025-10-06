@@ -23,7 +23,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Understand circular economy principles and cafeteria system flows.',
+      focus: 'Understand circular economy principles and cafeteria system flows to spotlight leverage points.',
       teacher: [
         'Introduce circular economy case studies',
         'Lead back-of-house kitchen tour',
@@ -41,7 +41,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design waste audit and procurement research plan.',
+      focus: 'Design waste audit and procurement research plan so data captures both costs and equity.',
       teacher: [
         'Model waste audit protocols',
         'Share procurement data sources',
@@ -59,7 +59,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect waste, nutrition, and perception data.',
+      focus: 'Collect waste, nutrition, and perception data to ground intervention choices in evidence.',
       teacher: [
         'Monitor audits for food safety',
         'Coach real-time data uploads',
@@ -78,7 +78,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Prototype closed-loop interventions and test viability.',
+      focus: 'Prototype closed-loop interventions and test viability with partners before scaling.',
       teacher: [
         'Facilitate menu innovation lab',
         'Connect teams with local composters',
@@ -96,7 +96,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host tasting lab and circular economy showcase.',
+      focus: 'Host tasting lab and circular economy showcase to earn stakeholder buy-in.',
       teacher: [
         'Coordinate tasting logistics with kitchen',
         'Invite district leaders and families',
@@ -114,7 +114,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Launch pilots and monitor closed-loop metrics.',
+      focus: 'Launch pilots and monitor closed-loop metrics to prove durability after showcase.',
       teacher: [
         'Coordinate scheduling of ongoing pilots',
         'Review data monitoring cadence',
@@ -155,7 +155,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Cafeteria Systems Portrait',
-      summary: 'Students capture how resources move through the cafeteria ecosystem.',
+      summary: 'Students capture how resources move through the cafeteria ecosystem to expose waste and opportunity.',
       studentDirections: [
         'Conduct kitchen tour observation',
         'Interview staff about top challenges',
@@ -181,7 +181,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Waste and Procurement Audit',
-      summary: 'Teams design and execute a cafeteria waste and sourcing audit.',
+      summary: 'Teams design and execute a cafeteria waste and sourcing audit that blends quantitative and narrative data.',
       studentDirections: [
         'Coordinate audit schedule with staff partners',
         'Collect waste data by category using agreed methods',
@@ -203,12 +203,11 @@ export const future_foodV2: ProjectShowcaseV2 = {
         critique: 'Confirm charts tell truth',
         noAIAlt: 'Use spreadsheet templates'
       },
-      safety: ['Wear gloves during waste handling']
     },
     {
       id: 'A3',
       title: 'Circular Prototype Lab',
-      summary: 'Students design and test closed-loop interventions.',
+      summary: 'Students design and test closed-loop interventions in partnership with cafeteria teams.',
       studentDirections: [
         'Ideate three circular solutions',
         'Select concept with staff partner',
@@ -234,7 +233,7 @@ export const future_foodV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Closed-Loop Pitch + Launch',
-      summary: 'Teams pitch pilots and launch ongoing monitoring.',
+      summary: 'Teams pitch pilots and launch ongoing monitoring so the cafeteria can sustain circular gains.',
       studentDirections: [
         'Build pitch deck with data stories',
         'Host tasting or demo experience',
@@ -258,19 +257,4 @@ export const future_foodV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Pilot measurably reduces waste or cost',
-      'Stakeholder voices guide solutions',
-      'Financial model is transparent',
-      'Launch plan sustains momentum'
-    ],
-    checkpoints: [
-      'Audit validated before prototyping',
-      'Pilots tested before showcase',
-      'Monitoring plan delivered to staff'
-    ],
-    tags: ['FOOD', 'SUST', 'ENTR']
-  },
-  planningNotes: 'Meet food services and custodial teams 4 weeks out to lock kitchen access and sanitation routines. Secure tasting approvals and allergy forms before Week 3 and confirm waste plans and messaging.'
 };

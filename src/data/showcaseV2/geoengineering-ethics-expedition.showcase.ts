@@ -24,7 +24,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Overview of proposals, uncertainties, and justice.',
+      focus: 'Survey proposals, uncertainties, and justice questions to frame the expedition.',
       teacher: ['Facilitate geoengineering concept studios', 'Model uncertainty mapping protocol', 'Lead governance and consent dialogue'],
       students: ['Select proposals with mission rationale', 'Draft inquiry questions for experts', 'Map impacted stakeholders and power'],
       deliverables: ['Proposal picks', 'Stakeholder map'],
@@ -34,7 +34,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Digital twin setup and data sources.',
+      focus: 'Plan digital twin setup and data sources so evidence stays credible.',
       teacher: ['Provide vetted model sandboxes', 'Review source credibility frameworks', 'Coach scenario planning workshops'],
       students: ['Set parameters with justification', 'Compile annotated data citations', 'Design what-if scenario matrices'],
       deliverables: ['Model plan', 'Data source list'],
@@ -44,7 +44,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'Build',
-      focus: 'Run scenarios and equity analysis.',
+      focus: 'Run scenarios and equity analysis to surface trade-offs across communities.',
       teacher: ['Guide comparative analysis protocols', 'Audit assumption logs daily', 'Coach evidence visualization choices'],
       students: ['Run simulations across populations', 'Compare equity impacts transparently', 'Visualize findings for jurors'],
       deliverables: ['Scenario results', 'Equity chart'],
@@ -54,7 +54,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Citizen jury design: briefs, evidence packs, roles.',
+      focus: 'Design citizen jury briefs, evidence packs, and roles to ensure deliberation is informed.',
       teacher: ['Share juror briefing templates', 'Recruit diverse juror panel', 'Time dress-rehearsal agenda'],
       students: ['Assemble balanced evidence briefs', 'Assign facilitation and observer roles', 'Rehearse testimony and questioning'],
       deliverables: ['Jury brief pack', 'Agenda'],
@@ -63,7 +63,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Run the jury; record deliberation and decision.',
+      focus: 'Run the jury, record deliberation, and capture decisions with transparency.',
       teacher: ['Moderate jury session impartially', 'Record deliberation notes transparently', 'Ensure equity norms stay intact'],
       students: ['Present evidence packets clearly', 'Deliberate using decision tools', 'Issue decision with rationale'],
       deliverables: ['Decision report', 'Deliberation notes'],
@@ -73,7 +73,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Extension',
-      focus: 'Public explainer and governance recommendations.',
+      focus: 'Publish public explainer and governance recommendations to guide real-world dialogue.',
       teacher: ['Coach public explainer storytelling', 'Review governance recommendations for rigor', 'Coordinate outreach timeline with partners'],
       students: ['Publish accessible explainer content', 'Draft governance recommendations memo', 'Share outputs with stakeholders for response'],
       deliverables: ['Public explainer', 'Governance memo'],
@@ -97,7 +97,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Scope + Stakeholders',
-      summary: 'Pick proposals and map who is affected.',
+      summary: 'Students pick proposals and map who is affected to anchor the work in justice.',
       studentDirections: [
         'Select two interventions with written rationale',
         'Map stakeholders and power relationships',
@@ -117,7 +117,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Model Plan + Sources',
-      summary: 'Plan digital twins and cite sources.',
+      summary: 'Teams plan digital twins and cite sources so analyses rest on credible evidence.',
       studentDirections: [
         'Set model parameters with scientific justification',
         'Compile annotated bibliography of data sources',
@@ -137,7 +137,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Scenario + Equity',
-      summary: 'Run sims and analyze impacts on groups.',
+      summary: 'Students run simulations and analyze group impacts to prepare jurors for equity questions.',
       studentDirections: [
         'Run simulations for multiple regions and populations',
         'Chart benefits and harms with clarifying annotations',
@@ -157,7 +157,7 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Jury + Decision Pack',
-      summary: 'Host a citizen jury and issue a decision.',
+      summary: 'Teams host the citizen jury and issue a decision with clear rationale and caveats.',
       studentDirections: [
         'Present evidence using juror-friendly language',
         'Facilitate deliberation with fairness checklist',
@@ -175,10 +175,4 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: ['Transparent assumptions', 'Equity foregrounded', 'Fair process', 'Clear communication'],
-    checkpoints: ['Sources checked', 'Assumptions logged', 'Process audit complete'],
-    tags: ['policy', 'ethics', 'data']
-  },
-  planningNotes: 'Audit scenario models with science partners 3 weeks ahead to confirm accessibility. Recruit a diverse jury and lock logistics before Week 3, and message that uncertainty and ethics guide decisions.'
 };

@@ -23,7 +23,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Build shared context on mobility justice and neighborhood history.',
+      focus: 'Build shared context on mobility justice and neighborhood history to anchor empathy work.',
       teacher: [
         'Facilitate transit history case studies',
         'Map inequality through storytelling',
@@ -41,7 +41,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Design research plan covering data, observation, and community listening.',
+      focus: 'Design research plans covering data, observation, and community listening so evidence feels complete.',
       teacher: [
         'Model mixed-methods research design',
         'Broker meetings with planning staff',
@@ -59,7 +59,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Collect mobility data and community narratives.',
+      focus: 'Collect mobility data and community narratives to capture both numbers and lived experiences.',
       teacher: [
         'Shadow walk audits for safety',
         'Coordinate translation support',
@@ -78,7 +78,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Analyze findings and frame opportunity areas.',
+      focus: 'Analyze findings and frame opportunity areas that reveal leverage for equity.',
       teacher: [
         'Model equity scoring frameworks',
         'Facilitate systems mapping workshop',
@@ -96,7 +96,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Prototype interventions and test feasibility.',
+      focus: 'Prototype interventions and test feasibility alongside community partners.',
       teacher: [
         'Source materials for tactical pilots',
         'Facilitate policy scenario labs',
@@ -114,7 +114,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host Move Fair summit with stakeholders.',
+      focus: 'Host Move Fair summit with stakeholders to secure commitments in public.',
       teacher: [
         'Organize summit logistics',
         'Coach persuasive storytelling',
@@ -132,7 +132,7 @@ export const move_fairV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Publish action playbook and transition ownership.',
+      focus: 'Publish action playbook and transition ownership so improvements continue after the project.',
       teacher: [
         'Review playbook structure',
         'Connect teams with city staff',
@@ -247,7 +247,6 @@ export const move_fairV2: ProjectShowcaseV2 = {
         critique: 'Ensure AI clustering matches evidence',
         noAIAlt: 'Use manual affinity mapping'
       },
-      safety: ['Follow traffic safety protocols during pilots']
     },
     {
       id: 'A4',
@@ -276,19 +275,4 @@ export const move_fairV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Data and stories elevate equity reality',
-      'Pilots demonstrate tangible feasibility',
-      'Playbook empowers community ownership',
-      'Calls to action feel time-bound'
-    ],
-    checkpoints: [
-      'Research toolkit approved before fieldwork',
-      'Pilots evaluated before summit',
-      'Playbook distributed within one week'
-    ],
-    tags: ['MOBI', 'CIVIC', 'DATA']
-  },
-  planningNotes: 'Book interpreters, ASL, and mobility supports 4 weeks ahead to ensure inclusive attendance. Secure permits and street closures before Week 3 and share participation packets with families and vendors.'
 };

@@ -24,7 +24,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'Launch inquiry about whose stories shape community memory.',
+      focus: 'Launch inquiry about whose stories shape community memory so students see the stakes.',
       teacher: [
         'Introduce driving question with storytelling montage',
         'Facilitate empathy interview norms circle',
@@ -42,7 +42,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Plan ethical fieldwork and secure storytellers.',
+      focus: 'Plan ethical fieldwork and secure storytellers to ensure every interview starts with trust.',
       teacher: [
         'Coach teams drafting outreach scripts',
         'Coordinate guardian permission workflows',
@@ -60,7 +60,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 3–4',
       kind: 'FieldworkLoop',
-      focus: 'Conduct interviews and capture primary source materials.',
+      focus: 'Conduct interviews and capture primary source materials to build a living archive responsibly.',
       teacher: [
         'Monitor interviews for safety adherence',
         'Provide feedback on questioning moves',
@@ -78,7 +78,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Transform interviews into polished story cuts.',
+      focus: 'Transform interviews into polished story cuts that preserve voice and context.',
       teacher: [
         'Guide teams segmenting key story beats',
         'Model audio cleanup workflow',
@@ -96,7 +96,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Build',
-      focus: 'Design the living museum experience.',
+      focus: 'Design the living museum experience so visitors can navigate stories with ease and respect.',
       teacher: [
         'Model story card layout in CMS',
         'Coach students on balancing media rights and releases',
@@ -113,7 +113,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 7',
       kind: 'Exhibit',
-      focus: 'Host community preview and gather authentic feedback.',
+      focus: 'Host community preview and gather authentic feedback to refine curation with partners.',
       teacher: [
         'Coordinate exhibit event logistics',
         'Coach students rehearsing story intros',
@@ -131,7 +131,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Weeks 8–9',
       kind: 'Extension',
-      focus: 'Publish archive online and plan next storytellers.',
+      focus: 'Publish archive online and plan next storytellers to keep the living history growing.',
       teacher: [
         'Coach students as they export files for web accessibility',
         'Connect teams with library partners',
@@ -173,7 +173,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'Interview Foundations Lab',
-      summary: 'Students analyze expert interviews, co-create norms, and rehearse mindful listening.',
+      summary: 'Students analyze expert interviews, co-create norms, and rehearse mindful listening to anchor community trust.',
       studentDirections: [
         'Annotate exemplar transcript for empathy moves',
         'List three open-ended follow-up prompts',
@@ -199,7 +199,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Community Interview Plan',
-      summary: 'Teams secure storytellers, permissions, and logistics before fieldwork begins.',
+      summary: 'Teams secure storytellers, permissions, and logistics so fieldwork begins with clear agreements.',
       studentDirections: [
         'Draft respectful outreach message as a team',
         'Identify three storytellers spanning generations',
@@ -221,7 +221,6 @@ export const living_historyV2: ProjectShowcaseV2 = {
         critique: 'Check tone for cultural sensitivity',
         noAIAlt: 'Use counselor review for tone check'
       },
-      safety: ['Respect storyteller privacy boundaries on outreach']
     },
     {
       id: 'A3',
@@ -254,7 +253,6 @@ export const living_historyV2: ProjectShowcaseV2 = {
         critique: 'Verify AI edits preserved tone',
         noAIAlt: 'Use manual EQ on editing software'
       },
-      safety: ['Honor privacy requests in releases']
     },
     {
       id: 'A4',
@@ -282,22 +280,6 @@ export const living_historyV2: ProjectShowcaseV2 = {
         'I capture feedback for follow-up and share it with the team'
       ],
       checkpoint: 'Teacher checks stations before doors open',
-      safety: ['Secure recordings when event ends', 'Honor no-photography requests']
     }
   ],
-  polish: {
-    microRubric: [
-      'Story arc centers storyteller agency',
-      'Audio mix feels clear and warm',
-      'Context text invites diverse audiences',
-      'Artifacts reinforce story meaning'
-    ],
-    checkpoints: [
-      'Consent verified before publishing',
-      'Rough cut approved before exhibit build',
-      'Visitor feedback logged within 24 hours'
-    ],
-    tags: ['ORAL', 'COMM', 'ARCH']
-  },
-  planningNotes: 'Schedule interpreters or translation partners early to cover captions and outreach. Send audio and artifact releases before Week 2, track responses, and coordinate storage with the media center.'
 };

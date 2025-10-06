@@ -9,15 +9,6 @@ export const PHASE_COLORS: Record<PhaseKind, string> = {
   Extension: '#06b6d4'
 };
 
-export const PHASE_ICONS: Record<PhaseKind, string> = {
-  Foundations: '🏗️',
-  Planning: '📋',
-  FieldworkLoop: '🔄',
-  Build: '🔨',
-  Exhibit: '🎨',
-  Extension: '🚀'
-};
-
 export const ASSIGNMENT_COLORS: Record<string, string> = {
   A: '#3b82f6',
   B: '#8b5cf6',
@@ -29,10 +20,6 @@ export const ASSIGNMENT_COLORS: Record<string, string> = {
 
 export const getPhaseColor = (kind: PhaseKind): string => {
   return PHASE_COLORS[kind] || '#64748b';
-};
-
-export const getPhaseIcon = (kind: PhaseKind): string => {
-  return PHASE_ICONS[kind] || '📌';
 };
 
 export const getPhaseColorWithOpacity = (kind: PhaseKind, opacity: number): string => {

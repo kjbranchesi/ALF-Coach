@@ -24,7 +24,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 1',
       kind: 'Foundations',
-      focus: 'What is eDNA? Safety, ethics, and permissions for water sampling.',
+      focus: 'Explore eDNA, safety, ethics, and permissions to earn community trust before sampling.',
       teacher: ['Explain eDNA concept', 'Review safety checklist', 'Confirm partner permissions'],
       students: ['Assemble sampler kit', 'Label sample bottles during practice', 'Draft tide‑safe plan'],
       deliverables: ['Sampler checklist', 'Safety acknowledgement'],
@@ -34,7 +34,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
-      focus: 'Route mapping, tide timing, and sample chain‑of‑custody.',
+      focus: 'Plan route mapping, tide timing, and chain-of-custody so collections stay compliant.',
       teacher: ['Share route maps', 'Model chain‑of‑custody', 'Schedule partner windows'],
       students: ['Map three sites', 'Draft labels + logs', 'Prep coolers/transport'],
       deliverables: ['Route map', 'Chain‑of‑custody log'],
@@ -44,7 +44,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 3',
       kind: 'FieldworkLoop',
-      focus: 'Collect samples safely; log metadata; submit to lab or process proxy kits.',
+      focus: 'Collect samples safely, log metadata, and submit kits to keep the science defensible.',
       teacher: ['Supervise sampling', 'Check logs', 'Coordinate courier'],
       students: ['Collect water', 'Label and chill', 'Log metadata'],
       deliverables: ['Sample set', 'Metadata log'],
@@ -53,7 +53,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 4',
       kind: 'Build',
-      focus: 'Analyze results or proxies; visualize presence trends and hotspots.',
+      focus: 'Analyze results or proxies and visualize trends to tell the biodiversity story clearly.',
       teacher: ['Provide template', 'Model visualization', 'Review citations'],
       students: ['Load results', 'Plot trends', 'Draft hotspot notes'],
       deliverables: ['Trends dashboard', 'Hotspot notes'],
@@ -63,7 +63,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 5',
       kind: 'Build',
-      focus: 'Model future stress scenarios; propose stewardship actions.',
+      focus: 'Model future stress scenarios and propose stewardship actions grounded in evidence.',
       teacher: ['Coach scenario design', 'Review feasibility', 'Invite expert reviewer'],
       students: ['Run scenarios', 'Propose actions', 'Draft brief'],
       deliverables: ['Scenario results', 'Action brief v1'],
@@ -72,7 +72,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Mini symposium—share methods, limits, and stewardship ideas.',
+      focus: 'Host mini symposium to share methods, limits, and stewardship ideas with partners.',
       teacher: ['Invite families/partners', 'Coordinate posters', 'Facilitate Q&A'],
       students: ['Present dashboard', 'Explain limits', 'Collect pledges'],
       deliverables: ['Poster set', 'Pledge tracker'],
@@ -107,7 +107,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'eDNA 101 + Safety',
-      summary: 'Learn eDNA basics and pass safety/permissions.',
+      summary: 'Students learn eDNA basics and pass safety permissions so sampling can move forward responsibly.',
       studentDirections: ['Explain eDNA and why it matters locally', 'Assemble sampler kit following SOP', 'Rehearse labeling and storage procedures', 'List safety rules and contingencies', 'Sign acknowledgement with partner approval'],
       teacherSetup: ['Teach eDNA concepts with examples', 'Provide kit parts and SOPs', 'Review safety, permissions, and contingencies'],
       evidence: ['Safety acknowledgement', 'Kit checklist'],
@@ -121,7 +121,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Route + Chain‑of‑Custody',
-      summary: 'Plan routes and prepare labeling/logging.',
+      summary: 'Teams plan routes and prepare labeling logs to protect chain-of-custody and partner trust.',
       studentDirections: ['Map sites', 'Note tide times', 'Draft labels', 'Prep logs', 'Confirm partner window'],
       teacherSetup: ['Share maps', 'Review tides', 'Check logs'],
       evidence: ['Route map', 'Chain‑of‑custody log'],
@@ -131,7 +131,7 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Trends Dashboard + Brief',
-      summary: 'Visualize results and draft insights.',
+      summary: 'Students visualize results and draft insights that connect data to stewardship actions.',
       studentDirections: ['Load lab or proxy results into template', 'Plot trends and hotspots with annotations', 'Draft briefing statements tying data to climate drivers', 'Cite sources and partners in dashboard', 'Propose stewardship actions in brief'],
       teacherSetup: ['Provide dashboard template and examples', 'Model chart interpretation', 'Check sources and partner acknowledgements'],
       evidence: ['Dashboard', 'Brief v1'],
@@ -143,15 +143,4 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: [
-      'Safe, permitted sampling',
-      'Clear chain‑of‑custody',
-      'Accurate, cited charts',
-      'Realistic, local actions'
-    ],
-    checkpoints: ['Permissions cleared', 'Safety at water', 'Expert feedback received'],
-    tags: ['bio', 'ocean', 'data']
-  },
-  planningNotes: 'Confirm lab partners early so sample slots are guaranteed. Arrange lifeguard supervision, float plans, and guardian permissions before Week 2, and keep proxy kits ready if weather interrupts.'
 };

@@ -21,30 +21,112 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     'Students build a civic help desk powered by transparent artificial intelligence (AI). They collect FAQs with agencies, prototype advisors with prompt transparency, citations, and disclaimers, and run usability tests with plain‑language checks. Ethics are central: consent, data privacy—including protection of personally identifiable information (PII)—bias mitigation, and deflection to human officials when stakes are high. A pop‑up booth invites residents to try the tool; teams publish methods, limits, and an improvement log for officials.',
   schedule: { totalWeeks: 7, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
-    { weekLabel: 'Week 1', kind: 'Foundations', focus: 'Policy FAQs, plain language, and ethics of AI advice.',
-      teacher: ['Invite agency partner', 'Model plain language', 'Share ethics guardrails'],
-      students: ['Collect FAQs', 'Draft disclaimers', 'Map privacy'],
-      deliverables: ['FAQ set', 'Disclaimer draft'], checkpoint: ['Partner scope signed'], assignments: ['A1'] },
-    { weekLabel: 'Week 2', kind: 'Planning', focus: 'Advisor prompting, citations, and escalation paths.',
-      teacher: ['Coach prompt design', 'Review citation patterns', 'Define escalation'],
-      students: ['Draft prompts', 'Add citations', 'Design escalation plan'],
-      deliverables: ['Prompt pack', 'Escalation plan'], checkpoint: ['Teacher review passed'], assignments: ['A2'] },
-    { weekLabel: 'Weeks 3–4', kind: 'Build', focus: 'Prototype advisors and run usability/accuracy tests.',
-      teacher: ['Share test scripts', 'Check accuracy', 'Review bias'],
-      students: ['Build prototype', 'Test with users', 'Fix clarity'],
-      deliverables: ['Prototype v1', 'Usability notes'], checkpoint: ['Bias review done'], assignments: ['A3'] },
-    { weekLabel: 'Week 5', kind: 'Build', focus: 'Set up pop‑up booth and accessibility supports.',
-      teacher: ['Coordinate venue', 'Approve signage', 'Coordinate volunteers'],
-      students: ['Design booth', 'Write guides', 'Train volunteers'],
-      deliverables: ['Booth plan', 'Volunteer guide'], checkpoint: ['Venue approval logged'] },
-    { weekLabel: 'Week 6', kind: 'Exhibit', focus: 'Run the Ombuds booth and log improvement requests.',
-      teacher: ['Oversee safety', 'Collect requests', 'Confirm deflection paths'],
-      students: ['Assist residents respectfully', 'Log issues without collecting PII', 'Share resources'],
-      deliverables: ['Issue log', 'Resource list'], checkpoint: ['No PII stored'], assignments: ['A4'] },
-    { weekLabel: 'Week 7', kind: 'Extension', focus: 'Publish methods/limits and partner handoff.',
-      teacher: ['Review methods', 'Confirm privacy', 'Schedule handoff'],
-      students: ['Publish methods', 'Report limits', 'Deliver handoff'],
-      deliverables: ['Methods page', 'Handoff memo'], checkpoint: ['Partner receipt confirmed'] }
+    {
+      weekLabel: 'Week 1',
+      kind: 'Foundations',
+      focus: 'Surface community FAQs and ethics frameworks to define safe AI advisory scope.',
+      teacher: [
+        'Host agency listening session about resident questions and pain points',
+        'Model translating policy jargon into plain-language summaries',
+        'Facilitate ethics workshop covering consent, privacy, and escalation'
+      ],
+      students: [
+        'Gather resident FAQs from partners and public datasets',
+        'Rewrite policy answers in plain language with citations',
+        'Draft consent and disclaimer statements aligned to partner guidance'
+      ],
+      deliverables: ['FAQ research packet', 'Consent and disclaimer draft'],
+      checkpoint: ['Partner signs scope and privacy commitments'],
+      assignments: ['A1']
+    },
+    {
+      weekLabel: 'Week 2',
+      kind: 'Planning',
+      focus: 'Design transparent advisor prompts with citations and escalation protecting residents.',
+      teacher: [
+        'Coach prompt pattern building with rationales and guardrails',
+        'Review citation formatting using compliance templates',
+        'Define escalation thresholds alongside agency legal advisors'
+      ],
+      students: [
+        'Draft advisor prompts that state role, limits, and tone',
+        'Attach citations and source URLs to every answer',
+        'Map escalation decision trees with human contact details'
+      ],
+      deliverables: ['Prompt playbook', 'Escalation decision map'],
+      checkpoint: ['Teacher approves prompts and escalation safeguards'],
+      assignments: ['A2']
+    },
+    {
+      weekLabel: 'Weeks 3–4',
+      kind: 'Build',
+      focus: 'Prototype advisors and run usability tests to ensure clarity and fairness.',
+      teacher: [
+        'Provide structured testing scripts for diverse community testers',
+        'Audit advisor logs for accuracy, tone, and bias issues',
+        'Coach iteration cycles responding to resident feedback'
+      ],
+      students: [
+        'Build advisor prototype with transparent prompt documentation',
+        'Run usability sessions capturing clarity and trust metrics',
+        'Fix outputs and document bias mitigations after tests'
+      ],
+      deliverables: ['Advisor prototype v1', 'Usability and bias log'],
+      checkpoint: ['Bias review completed with partner observers'],
+      assignments: ['A3']
+    },
+    {
+      weekLabel: 'Week 5',
+      kind: 'Build',
+      focus: 'Stage pop-up booth with accessibility supports and volunteer readiness.',
+      teacher: [
+        'Coordinate accessible venue setup with signage approvals',
+        'Review booth scripts covering consent and escalation steps',
+        'Schedule volunteer coverage and supervision roles'
+      ],
+      students: [
+        'Design booth layout with privacy and accessibility zones',
+        'Write quick guides for volunteers and escalation calls',
+        'Train volunteers through roleplay and consent practice'
+      ],
+      deliverables: ['Booth operations plan', 'Volunteer readiness kit'],
+      checkpoint: ['Venue approval logged with accessibility checklist']
+    },
+    {
+      weekLabel: 'Week 6',
+      kind: 'Exhibit',
+      focus: 'Run the Ombuds booth, support residents, and capture improvement data.',
+      teacher: [
+        'Oversee safety compliance and on-site data handling',
+        'Monitor escalation cases and human follow-up logs',
+        'Collect improvement requests and kudos systematically'
+      ],
+      students: [
+        'Assist residents with AI advisor using consent scripts',
+        'Log issues without storing personally identifiable information',
+        'Share human referrals and printed resources compassionately'
+      ],
+      deliverables: ['Resident issue log', 'Resource referral tracker'],
+      checkpoint: ['No personally identifiable information stored in logs'],
+      assignments: ['A4']
+    },
+    {
+      weekLabel: 'Week 7',
+      kind: 'Extension',
+      focus: 'Publish transparent methods and deliver partner handoff for sustained support.',
+      teacher: [
+        'Review methods document for accuracy and accessible tone',
+        'Confirm privacy safeguards and data deletion steps',
+        'Schedule handoff presentation with partner leadership'
+      ],
+      students: [
+        'Publish methods and limitations page with citations',
+        'Report improvement backlog and maintenance plan to partners',
+        'Deliver handoff kit summarizing operations and training'
+      ],
+      deliverables: ['Methods and limits page', 'Partner handoff memo'],
+      checkpoint: ['Partner receipt confirmed with next steps scheduled']
+    }
   ],
   outcomes: {
     core: [
@@ -63,10 +145,20 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A1',
       title: 'FAQ + Ethics Scope',
-      summary: 'Collect FAQs and set ethics boundaries.',
-      studentDirections: ['Collect FAQs with partner approval', 'Draft disclaimers and consent language', 'Map privacy rules and data flows', 'List deflection scenarios to humans', 'Submit scope for partner sign-off'],
-      teacherSetup: ['Invite partner to review FAQs', 'Share ethics templates and consent forms', 'Approve scope with counselors'],
-      evidence: ['FAQ set', 'Scope note'],
+      summary: 'Teams gather resident FAQs and co-create ethics scope for the advisor.',
+      studentDirections: [
+        'Interview partners and residents about recurring policy questions',
+        'Consolidate FAQs with citations and context notes',
+        'Draft consent, disclaimers, and privacy commitments collaboratively',
+        'Identify escalation scenarios requiring human officials',
+        'Submit scope packet for partner feedback and approval'
+      ],
+      teacherSetup: [
+        'Invite agency partners to validate FAQ priorities',
+        'Share ethics and consent templates for drafting',
+        'Review scope packet with counselors and legal advisors'
+      ],
+      evidence: ['FAQ research packet', 'Ethics scope note'],
       successCriteria: ['I gather FAQs that match partner priorities', 'I write disclaimers residents can understand', 'I define scope and deflections that keep residents safe'],
       aiOptional: {
         toolUse: 'Summarize policy FAQs into plain language drafts',
@@ -77,9 +169,19 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A2',
       title: 'Prompt + Citations',
-      summary: 'Design advisors with citations and escalation.',
-      studentDirections: ['Draft advisor prompts with rationale', 'Add citations and source URLs for every fact', 'Design escalation paths and thresholds', 'Test sample interactions for tone', 'Revise based on partner feedback'],
-      teacherSetup: ['Coach prompt transparency strategies', 'Review citation formatting', 'Check escalation plan with agencies'],
+      summary: 'Teams craft transparent prompts with citations and escalation safeguards for advisors.',
+      studentDirections: [
+        'Draft advisor prompts that state role and limits',
+        'Attach citations and URL references to each answer',
+        'Design escalation decision paths and contact info',
+        'Test sample interactions for tone and clarity',
+        'Revise prompts using partner critique and resident feedback'
+      ],
+      teacherSetup: [
+        'Coach prompt documentation and rationale annotation',
+        'Review citation formatting and sourcing expectations',
+        'Check escalation plan alignment with agency policies'
+      ],
       evidence: ['Prompt pack', 'Escalation plan'],
       successCriteria: ['I cite every answer transparently', 'I design escalation paths that protect residents', 'I revise prompts to remove ambiguity'],
       aiOptional: {
@@ -91,10 +193,20 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A3',
       title: 'Usability + Bias Test',
-      summary: 'Test clarity and fairness.',
-      studentDirections: ['Run usability tests with community scripts', 'Measure clarity, accuracy, and tone', 'Check for bias or harmful outputs', 'Fix issues and document changes', 'Re-test to confirm improvements'],
-      teacherSetup: ['Provide testing scripts and rubrics', 'Check measurement data for consistency', 'Review fixes with partner'],
-      evidence: ['Usability notes', 'Bias report'],
+      summary: 'Students run usability and bias tests to keep advisors accurate and fair.',
+      studentDirections: [
+        'Conduct usability sessions with diverse community testers',
+        'Measure clarity, accuracy, and trust using rubrics',
+        'Analyze transcripts for bias, tone, and misinformation',
+        'Implement fixes and document rationale with evidence',
+        'Re-test updated advisor confirming improvements hold'
+      ],
+      teacherSetup: [
+        'Provide testing scripts and consent tracking sheets',
+        'Audit results for reliability and ethical compliance',
+        'Review mitigation plans with partner team'
+      ],
+      evidence: ['Usability findings log', 'Bias mitigation report'],
       successCriteria: ['I test advisors fairly with diverse users', 'I fix clarity and bias issues thoroughly', 'I re-test to confirm the advisor stays safe'],
       aiOptional: {
         toolUse: 'Analyze logs for repeated bias patterns',
@@ -105,9 +217,19 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     {
       id: 'A4',
       title: 'Booth + Handoff',
-      summary: 'Host the Ombuds booth and publish methods.',
-      studentDirections: ['Host ombuds booth with clear consent steps', 'Log issues without collecting PII', 'Share human resources and deflection options', 'Publish methods/limits page openly', 'Deliver handoff pack to partners'],
-      teacherSetup: ['Oversee safety and privacy compliance', 'Collect logs securely', 'Verify methods page meets partner requirements'],
+      summary: 'Teams host the Ombuds booth, document requests, and deliver partner handoff.',
+      studentDirections: [
+        'Operate ombuds booth using consent and privacy scripts',
+        'Log issues without personal data and tag themes',
+        'Provide referrals and handouts for human assistance',
+        'Publish methods page detailing limits and safeguards',
+        'Assemble handoff kit with improvement backlog for partners'
+      ],
+      teacherSetup: [
+        'Oversee safety, privacy, and de-escalation protocols',
+        'Secure storage for logs and resident follow-ups',
+        'Verify handoff artifacts meet partner requirements'
+      ],
       evidence: ['Issue log', 'Methods page'],
       successCriteria: ['I support residents kindly within scope', 'I protect privacy and document issues responsibly', 'I deliver a handoff partners can maintain'],
       aiOptional: {
@@ -117,10 +239,4 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
       }
     }
   ],
-  polish: {
-    microRubric: ['Transparent prompts/citations', 'Plain language', 'Bias checks', 'Safe escalation'],
-    checkpoints: ['Scope approved', 'Bias review done', 'Privacy verified'],
-    tags: ['cs', 'civics', 'ethics']
-  },
-  planningNotes: 'Book the ombuds partner 4 weeks out to lock scope, data boundaries, and escalation paths. Run privacy reviews before Week 2 and set a weekly check-in so approvals stay fast.'
 };
