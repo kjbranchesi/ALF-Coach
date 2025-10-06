@@ -58,6 +58,7 @@ import {
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription, generateTagline, verifyDescriptionQuality } from './domain/courseDescriptionGenerator';
+import { generateProjectShowcase } from './domain/projectShowcaseGenerator';
 import { getPostCaptureCoaching, getStageGuidance } from './domain/coachingResponses';
 import { resolveGradeBand, gradeBandRules, type GradeBandKey, type GradeBandRule } from '../../ai/gradeBandRules';
 
@@ -554,7 +555,7 @@ export function ChatMVP({
       engine.appendMessage({
         id: String(Date.now()),
         role: 'assistant',
-        content: '✨ **Finalizing your project...**\n\nI\'m generating a professional course description and preparing everything for your dashboard. This will just take a moment.',
+        content: '**Finalizing your project...**\n\nGenerating professional course description, assignments, and showcase materials. This will take a moment.',
         timestamp: new Date()
       } as any);
 
@@ -572,41 +573,57 @@ export function ChatMVP({
         console.warn('[ChatMVP] Description quality warnings:', quality.warnings);
       }
 
+      // Build complete project title
+      const existingProject = await unifiedStorage.loadProject(projectId);
+      const projectTitle = existingProject?.title ||
+                          captured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
+                          'Untitled Project';
+
+      // Generate complete showcase structure with assignments
+      console.log('[ChatMVP] Generating complete project showcase...');
+      const showcase = await generateProjectShowcase(captured, wizard, {
+        projectId,
+        title: projectTitle,
+        tagline,
+        description
+      });
+      console.log('[ChatMVP] Showcase generation complete:', {
+        assignments: showcase.assignments.length,
+        weeks: showcase.runOfShow.length
+      });
+
       // Extract display metadata
       const gradeLevel = wizard.gradeLevel || 'K-12';
       const subjects = wizard.subjects || [];
       const subject = subjects.length > 0 ? subjects.join(', ') : 'General';
       const duration = wizard.duration || '';
 
-      // Build complete project title (use auto-generated or big idea)
-      const existingProject = await unifiedStorage.loadProject(projectId);
-      const projectTitle = existingProject?.title ||
-                          captured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
-                          'Untitled Project';
-
       // Show preview before final save
       engine.appendMessage({
         id: String(Date.now() + 5),
         role: 'assistant',
-        content: `📋 **Project Preview**\n\n**Title:** ${projectTitle}\n\n**Tagline:** ${tagline}\n\n**Description:**\n${description}\n\n---\n\n✅ **Quality Check:** ${quality.wordCount} words ${quality.isValid ? '(looks great!)' : '(has minor issues)'}\n\nSaving your project now...`,
+        content: `**Project Preview**\n\n**Title:** ${projectTitle}\n\n**Tagline:** ${tagline}\n\n**Description:**\n${description}\n\n**Generated:**\n- ${showcase.assignments.length} detailed assignments\n- ${showcase.runOfShow.length} week-by-week lesson plans\n- Complete materials list and rubric\n\n**Quality Check:** ${quality.wordCount} words ${quality.isValid ? '(looks great)' : '(has minor issues)'}\n\nSaving your project now...`,
         timestamp: new Date()
       } as any);
 
       // Small delay so user can see preview
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // Build complete project structure
+      // Build complete project structure with showcase data
       const completeProject = {
         id: projectId,
         title: projectTitle,
         description,
-        tagline, // ← NEW: Store tagline
+        tagline,
 
         // Display metadata
         gradeLevel,
         subject,
         subjects,
         duration,
+
+        // Complete showcase structure (NEW)
+        showcase,
 
         // From wizard
         wizardData: {
@@ -654,11 +671,21 @@ export function ChatMVP({
         qualityCheck: quality
       });
 
-      // Show completion message with celebration
+      // Trigger hero transformation for showcase view
+      try {
+        console.log('[ChatMVP] Triggering hero transformation...');
+        await unifiedStorage.loadHeroProject(projectId);
+        console.log('[ChatMVP] Hero transformation complete');
+      } catch (heroError) {
+        console.warn('[ChatMVP] Hero transformation failed (non-critical):', heroError);
+        // Non-critical - project is still saved and usable
+      }
+
+      // Show completion message
       engine.appendMessage({
         id: String(Date.now() + 10),
         role: 'assistant',
-        content: `🎉 **Project Complete!**\n\nYour PBL project **"${projectTitle}"** is ready!\n\nI've structured everything you need:\n• **${captured.journey?.phases?.length || 0} learning phases** with clear progressions\n• **${captured.deliverables?.milestones?.length || 0} milestones** to track student progress\n• **${captured.deliverables?.artifacts?.length || 0} artifacts** for authentic assessment\n• **Professional rubric** with ${captured.deliverables?.rubric?.criteria?.length || 0} quality criteria\n\n**Next Steps:**\n→ View your complete project on the Dashboard\n→ Export as PDF for planning\n→ Share with your team for feedback\n\nGreat work bringing this vision to life! Your students will love this experience.`,
+        content: `**Project Complete**\n\nYour PBL project "${projectTitle}" is ready.\n\n**What's included:**\n- ${showcase.assignments.length} detailed assignments with student directions and teacher setup\n- ${showcase.runOfShow.length} weeks of lesson plans with checkpoints and deliverables\n- Complete materials list and assessment rubric\n- ${captured.journey?.phases?.length || 0} learning phases with clear progressions\n- ${captured.deliverables?.milestones?.length || 0} milestones and ${captured.deliverables?.artifacts?.length || 0} authentic artifacts\n\n**Next steps:**\n- Review Project - View your professional showcase with all assignments and materials\n- Dashboard - Access and manage all your projects\n- The project is now available on your dashboard as a completed project\n\nYour project is ready to implement with your students.`,
         timestamp: new Date()
       } as any);
 

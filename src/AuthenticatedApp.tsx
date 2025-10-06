@@ -278,9 +278,11 @@ export default function AuthenticatedApp() {
             {/* User project preview route - for completed projects */}
             <Route path="/app/project/:id/preview" element={
               <ProtectedRoute>
-                <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading project…</div></div>}>
-                  <ReviewScreen />
-                </Suspense>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading project…</div></div>}>
+                    <ReviewScreen />
+                  </Suspense>
+                </AppLayout>
               </ProtectedRoute>
             } />
 
