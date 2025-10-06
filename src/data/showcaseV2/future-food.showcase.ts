@@ -150,7 +150,6 @@ export const future_foodV2: ProjectShowcaseV2 = {
       'Food safety gloves and aprons'
     ],
     noTechFallback: ['Paper tally sheets', 'Poster board for marketing', 'Handwritten tasting ballots'],
-    safetyEthics: ['Follow food handling regulations', 'Label allergens clearly', 'Obtain consent for taste testing']
   },
   assignments: [
     {
@@ -273,5 +272,5 @@ export const future_foodV2: ProjectShowcaseV2 = {
     ],
     tags: ['FOOD', 'SUST', 'ENTR']
   },
-  planningNotes: 'Coordinate with food services early for kitchen access, compliance checks, and tasting approvals.'
+  planningNotes: 'Meet food services and custodial teams 4 weeks out to lock kitchen access and sanitation routines. Secure tasting approvals and allergy forms before Week 3 and confirm waste plans and messaging.'
 };

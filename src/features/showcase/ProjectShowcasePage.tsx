@@ -1,12 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProjectV2 } from '../../utils/showcaseV2-registry';
+import RunOfShowCard from './components/RunOfShowCard';
+import AssignmentPanel from './components/AssignmentPanel';
+import PlanningNotesCard from './components/PlanningNotesCard';
+import { scrollToElement } from './utils/scrollToElement';
 
 export default function ProjectShowcasePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const data = useMemo(() => (id ? getProjectV2(id) : undefined), [id]);
-  const [expandOverview, setExpandOverview] = useState(Boolean(data?.fullOverview));
 
   if (!id || !data) {
     return (
@@ -23,6 +26,13 @@ export default function ProjectShowcasePage() {
   }
 
   const { hero, microOverview, fullOverview, schedule, runOfShow, outcomes, materialsPrep, assignments, polish, planningNotes } = data;
+
+  const scrollToAssignment = (assignmentId: string) => {
+    scrollToElement(`assignment-${assignmentId}`, {
+      highlightClasses: ['ring-2', 'ring-primary-500', 'ring-offset-4', 'dark:ring-offset-slate-900'],
+      highlightDurationMs: 2000
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628] text-slate-900 dark:text-slate-100">
@@ -82,83 +92,24 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
+        {planningNotes && (
+          <section className="mb-10">
+            <PlanningNotesCard notes={planningNotes} />
+          </section>
+        )}
+
         <section className="mb-10 space-y-4">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Run of show</h2>
           <div className="space-y-3">
             {runOfShow.map((card, index) => (
-              <div
-                key={card.weekLabel + index}
-                className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm"
-              >
-                <div className="flex flex-wrap items-center gap-2 mb-3 text-xs sm:text-[13px]">
-                  <span className="px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-xs font-semibold">{card.weekLabel}</span>
-                  <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200 text-xs font-medium">{card.kind}</span>
-                  <span className="text-sm text-slate-500 dark:text-slate-300">{card.focus}</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-600 dark:text-slate-300">
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Teacher</div>
-                    <ul className="space-y-1 leading-snug">
-                      {card.teacher.map((item, idx) => <li key={idx}>• {item}</li>)}
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Students</div>
-                    <ul className="space-y-1 leading-snug">
-                      {card.students.map((item, idx) => <li key={idx}>• {item}</li>)}
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Deliverables</div>
-                    <ul className="space-y-1 leading-snug">
-                      {card.deliverables.map((item, idx) => <li key={idx}>• {item}</li>)}
-                    </ul>
-                    {card.checkpoint?.length ? (
-                      <div className="mt-2 text-xs text-primary-600">Checkpoints: {card.checkpoint.join(', ')}</div>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
+              <RunOfShowCard key={`${card.weekLabel}-${index}`} card={card} onAssignmentClick={scrollToAssignment} />
             ))}
           </div>
         </section>
 
         <section className="mb-10 space-y-4">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Assignments</h2>
-          <div className="space-y-3">
-            {assignments.map((assignment) => (
-              <details key={assignment.id} className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm">
-                <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between">
-                  <span>{assignment.id} · {assignment.title}</span>
-                  <span className="text-xs text-primary-600">Expand</span>
-                </summary>
-                <div className="px-4 pb-4 space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                  <p>{assignment.summary}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Student directions</div>
-                      <ul className="space-y-1 leading-snug">
-                        {assignment.studentDirections.map((item, idx) => <li key={idx}>• {item}</li>)}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Teacher setup</div>
-                      <ul className="space-y-1 leading-snug">
-                        {assignment.teacherSetup.map((item, idx) => <li key={idx}>• {item}</li>)}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Evidence & success</div>
-                      <ul className="space-y-1 leading-snug">
-                        {assignment.evidence.map((item, idx) => <li key={idx}>• {item}</li>)}
-                      </ul>
-                      <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">Success criteria: {assignment.successCriteria.join(', ')}</div>
-                    </div>
-                  </div>
-                </div>
-              </details>
-            ))}
-          </div>
+          <AssignmentPanel assignments={assignments} runOfShow={runOfShow} />
         </section>
 
         <section className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
@@ -182,7 +133,7 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
-        <section className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+        <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
           <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Core kit</div>
             <ul className="space-y-1 leading-snug">
@@ -193,12 +144,6 @@ export default function ProjectShowcasePage() {
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">No-tech fallback</div>
             <ul className="space-y-1 leading-snug">
               {materialsPrep.noTechFallback.map((item, idx) => <li key={idx}>• {item}</li>)}
-            </ul>
-          </div>
-          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
-            <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Safety & ethics</div>
-            <ul className="space-y-1 leading-snug">
-              {materialsPrep.safetyEthics.map((item, idx) => <li key={idx}>• {item}</li>)}
             </ul>
           </div>
         </section>

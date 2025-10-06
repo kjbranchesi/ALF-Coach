@@ -151,7 +151,6 @@ export const urban_heatV2: ProjectShowcaseV2 = {
       'Laptops with GIS software'
     ],
     noTechFallback: ['Paper temperature logs', 'Analog thermometers', 'Printable neighborhood maps'],
-    safetyEthics: ['Hydration and break schedule', 'Heat advisory monitoring protocol', 'Guardian communication plan']
   },
   assignments: [
     {
@@ -275,5 +274,5 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     ],
     tags: ['CLIM', 'CIVIC', 'ENG']
   },
-  planningNotes: 'Monitor daily heat index and adjust fieldwork blocks; secure city permits for sidewalk demos early.'
+  planningNotes: 'Meet nurse and facilities before kickoff to lock hydration, shade, and indoor backups. File street and utility permits 3 weeks out. Prep family alerts so schedule shifts happen fast.'
 };

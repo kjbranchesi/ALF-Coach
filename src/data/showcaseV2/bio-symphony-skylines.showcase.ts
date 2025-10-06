@@ -101,7 +101,6 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       'Laptops/tablets with DAW or browser synths'
     ],
     noTechFallback: ['Paper tally sheets', 'Analogue rhythm cards', 'Printed spectrogram examples'],
-    safetyEthics: ['Guardian/partner consent for recording', 'Avoid voices; capture ambient only', 'Respect wildlife distance rules']
   },
   assignments: [
     {
@@ -165,5 +164,5 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety + ethics sign‑off', 'First data validity check', 'Gallery curation review'],
     tags: ['bio', 'music', 'data']
   },
-  planningNotes: 'Post consent signage on routes; schedule library gallery two weeks ahead; confirm ambient‑only recording policy.'
+  planningNotes: 'Reserve the library or gallery 3 weeks ahead to lock install and power windows. Post consent signage, train students on ambient-only recording before Week 2, and arrange translation/tactile supports.'
 };

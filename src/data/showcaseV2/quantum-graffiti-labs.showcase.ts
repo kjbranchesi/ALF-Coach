@@ -109,7 +109,6 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       'Phones with QR/cipher app'
     ],
     noTechFallback: ['Paper codes + clipboards', 'Chalk on approved pavements', 'Printable decode wheels'],
-    safetyEthics: ['Written site permissions', 'PPE for install', 'No permanent or illegal tagging']
   },
   assignments: [
     {
@@ -172,5 +171,5 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     checkpoints: ['Permission approvals logged', 'Usability threshold met', 'Post‑event debrief filed'],
     tags: ['cs', 'math', 'arts']
   },
-  planningNotes: 'Obtain written site permissions two weeks prior; require removable materials and documented cleanup proof; coordinate community routes with safety officer.'
+  planningNotes: 'Submit permits and insurance 3 weeks early so site owners confirm legal surfaces and time windows. Require removable materials and documented cleanup. Coordinate safety routes with public art staff.'
 };

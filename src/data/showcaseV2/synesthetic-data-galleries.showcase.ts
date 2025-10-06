@@ -82,7 +82,6 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Colored paper/LEDs', 'Small chimes/instruments', 'Textured materials', 'Safe adhesives', 'Caption cards'],
     noTechFallback: ['Paper galleries', 'Handheld chimes', 'Touch boards'],
-    safetyEthics: ['Consent for any personal data', 'No identifying info', 'Stable, safe installations']
   },
   assignments: [
     {
@@ -147,5 +146,5 @@ export const synesthetic_data_galleriesV2: ProjectShowcaseV2 = {
     checkpoints: ['Consent confirmed', 'Safety check', 'Debrief done'],
     tags: ['arts', 'data', 'community']
   },
-  planningNotes: 'Pre‑review data topics for privacy; ensure stable, child‑safe installations; translate zines if needed.'
+  planningNotes: 'Schedule install and teardown windows with gallery partners 3 weeks ahead to lock power and safety walkthroughs. Pre-screen datasets before Week 2 and line up translation or tactile supports.'
 };

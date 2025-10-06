@@ -168,7 +168,6 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
       'Portable shelters for shoreline work'
     ],
     noTechFallback: ['Manual titration supplies', 'Paper data logs', 'Printed ID guides for species'],
-    safetyEthics: ['Follow water safety protocols', 'Respect wildlife handling guidelines', 'Obtain permission for site access']
   },
   assignments: [
     {
@@ -291,5 +290,5 @@ export const harbor_healthV2: ProjectShowcaseV2 = {
     ],
     tags: ['STEM', 'CIVIC', 'ENV']
   },
-  planningNotes: 'Confirm tide schedules, transportation, and weather contingencies well before field days to maximize safe sampling windows.'
+  planningNotes: 'Coordinate with harbor partners 4 weeks ahead for permits, tide windows, and dock access. Arrange transport, safety gear, and backups before Week 2, then share roles and data agreements with crews.'
 };

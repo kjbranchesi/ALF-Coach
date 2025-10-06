@@ -58,7 +58,6 @@ export const metabolic_city_dashboardsV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Laptops', 'Spreadsheet/BI tool', 'Data portal accounts', 'Interview scripts'],
     noTechFallback: ['Printed charts', 'Manual calculators', 'Poster briefs'],
-    safetyEthics: ['Respect data privacy', 'Verify sources', 'Avoid doxxing or sensitive geodata']
   },
   assignments: [
     {
@@ -123,5 +122,5 @@ export const metabolic_city_dashboardsV2: ProjectShowcaseV2 = {
     checkpoints: ['Metrics approved', 'Pipeline validated', 'Citations checked'],
     tags: ['data', 'civics', 'env']
   },
-  planningNotes: 'Pre‑check data access; align with city data stewards; be mindful of sensitive location data.'
+  planningNotes: 'Audit datasets and API keys to confirm credentials, rate limits, and backups. Align with city data stewards before Week 2 so location data is masked, then document storage and retention policies.'
 };

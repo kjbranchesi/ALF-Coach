@@ -58,7 +58,6 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Temp sensors', 'PM2.5 sensor', 'Sound meter', 'Wearable mounts', 'Laptops/phones'],
     noTechFallback: ['Manual thermometers', 'Neighborhood logs', 'Paper maps'],
-    safetyEthics: ['Consent for routes', 'Avoid risky areas', 'De‑identify personal data']
   },
   assignments: [
     {
@@ -123,5 +122,5 @@ export const climate_justice_wearablesV2: ProjectShowcaseV2 = {
     checkpoints: ['Consent approved', 'Calibration passed', 'Citations verified'],
     tags: ['eng', 'data', 'civics']
   },
-  planningNotes: 'Confirm consent and safety routes; avoid identifying individuals; invite public health and city staff early.'
+  planningNotes: 'Secure district consent packets and safe walking routes with risk management 4 weeks ahead. Schedule a calibration clinic before Week 3 and invite public health staff early for policy feedback.'
 };

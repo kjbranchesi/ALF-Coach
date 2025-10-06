@@ -107,7 +107,6 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
       'Laptops with spreadsheet'
     ],
     noTechFallback: ['Paper tally sheets', 'Manual rulers + hang weights', 'Printed emissions tables'],
-    safetyEthics: ['Follow SDS & PPE rules', 'No solvent use without fume controls', 'Document and close all waste streams']
   },
   assignments: [
     {
@@ -191,5 +190,5 @@ export const carbon_negative_fashion_forgeV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety + SDS sign‑off', 'Mid‑build data audit', 'LCA sources verified'],
     tags: ['chem', 'design', 'sustainability']
   },
-  planningNotes: 'Pre‑approve BOMs with SDS; align disposal with custodial; coordinate maker/brand feedback before Week 6.'
+  planningNotes: 'Submit BOMs and SDS sheets to science leads 4 weeks out to approve sourcing and ventilation. Align waste disposal with custodial before Week 3 and book maker critiques early for adoption feedback.'
 };

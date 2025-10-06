@@ -64,7 +64,6 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Phones/tablets', 'Printed base maps', 'High‑vis vests', 'Wayfinding signs', 'Survey forms'],
     noTechFallback: ['Paper arrows and posters', 'Laminated ADA cards', 'Manual route maps'],
-    safetyEthics: ['Adult supervision during walks', 'No live emergencies simulated', 'Protect personal data']
   },
   assignments: [
     {
@@ -129,5 +128,5 @@ export const ar_disaster_wardensV2: ProjectShowcaseV2 = {
     checkpoints: ['Equity/ADA check', 'Partner demo sign‑off', 'Translations done'],
     tags: ['cs', 'geo', 'civics']
   },
-  planningNotes: 'Coordinate with emergency partners early; require readable/ADA overlays; brief families on opt‑in and privacy.'
+  planningNotes: 'Book partners 4 weeks out to lock data access, roles, and liability forms. Run ADA readability and privacy reviews before Week 3 and send opt-in briefings so families know walks stay voluntary.'
 };

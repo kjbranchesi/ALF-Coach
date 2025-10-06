@@ -92,7 +92,6 @@ export const inclusive_exoskeleton_studiosV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Textiles, elastic straps', 'Velcro, buckles', '3D‑printed brackets (optional)', 'Sewing kits', 'Measurement tools'],
     noTechFallback: ['Hand sewing', 'Cardboard templates', 'Manual fit guides'],
-    safetyEthics: ['Explicit consent + boundaries', 'Comfort and stop criteria', 'Secure data handling']
   },
   assignments: [
     {
@@ -181,5 +180,5 @@ export const inclusive_exoskeleton_studiosV2: ProjectShowcaseV2 = {
     checkpoints: ['Consent approved', 'Comfort passed', 'Referral options set'],
     tags: ['eng', 'health', 'design']
   },
-  planningNotes: 'Secure consent and boundaries first; involve OT/PT mentors; store data securely; avoid powered exos in class.'
+  planningNotes: 'Hold a consent workshop with consultants and caregivers 3 weeks ahead to set boundaries and stop language. Loop OT/PT mentors before Week 2 to vet movement ranges and keep powered exos off campus.'
 };

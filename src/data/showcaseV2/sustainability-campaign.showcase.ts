@@ -172,7 +172,6 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
       'Graphic design templates'
     ],
     noTechFallback: ['Manual data tally sheets', 'Printed maps of campus', 'Poster board displays'],
-    safetyEthics: ['Follow PPE expectations in mechanical rooms', 'Respect staff schedules and workloads', 'Secure approval for public messaging']
   },
   assignments: [
     {
@@ -295,5 +294,5 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     ],
     tags: ['SUST', 'DATA', 'COMM']
   },
-  planningNotes: 'Loop in district facilities early so students can access meters and schedules without delays.'
+  planningNotes: 'Meet facilities and energy managers to secure meter access and escorts. Align with communications before Week 3 so campaign artifacts publish quickly. Submit utility login requests during Week 0.'
 };

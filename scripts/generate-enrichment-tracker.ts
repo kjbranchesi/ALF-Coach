@@ -21,8 +21,7 @@ function decideBatch(opts: {
   weakScore: number;
   microRubricCount: number;
   noTechFallbackCount: number;
-  safetyEthicsCount: number;
-  planningNotesMissing: boolean;
+  shortPlanningNotes: boolean;
   studentVoiceGaps: number;
 }): Batch {
   const {
@@ -31,8 +30,7 @@ function decideBatch(opts: {
     weakScore,
     microRubricCount,
     noTechFallbackCount,
-    safetyEthicsCount,
-    planningNotesMissing,
+    shortPlanningNotes,
     studentVoiceGaps
   } = opts;
 
@@ -42,8 +40,7 @@ function decideBatch(opts: {
     weakScore >= 4 ||
     microRubricCount < 4 ||
     noTechFallbackCount < 2 ||
-    safetyEthicsCount === 0 ||
-    planningNotesMissing ||
+    shortPlanningNotes ||
     studentVoiceGaps > 1
   ) {
     return 'A';
@@ -68,6 +65,7 @@ function priorityFor(batch: Batch): 'High' | 'Medium' | 'Low' {
 
 function main() {
   const projects = getAllProjects();
+  const PLANNING_NOTES_MIN = 120;
 
   const rows = projects.map(({ id, project }) => {
     const weekCount = project.runOfShow.length;
@@ -77,10 +75,11 @@ function main() {
     const weakDir = weakDirections(project.assignments);
     const weakWeek = weakWeekBullets(project.runOfShow);
     const studentVoice = successCriteriaNotStudentVoice(project.assignments);
-    const planningNotesMissing = !project.planningNotes || project.planningNotes.trim().length === 0;
+    const planningNotesRaw = project.planningNotes?.trim() ?? '';
+    const planningNotesLength = planningNotesRaw.length;
+    const shortPlanningNotes = planningNotesLength < PLANNING_NOTES_MIN;
     const microRubricCount = project.polish?.microRubric?.length ?? 0;
     const noTechFallbackCount = project.materialsPrep.noTechFallback.length;
-    const safetyEthicsCount = project.materialsPrep.safetyEthics.length;
     const knownIds = uniqueAssignmentIds(project.assignments);
     const unknownRefs = project.runOfShow.flatMap(week => referencesUnknownAssignments(week, knownIds));
 
@@ -93,8 +92,7 @@ function main() {
       weakScore: weakDir.length + weakWeek.length,
       microRubricCount,
       noTechFallbackCount,
-      safetyEthicsCount,
-      planningNotesMissing,
+      shortPlanningNotes,
       studentVoiceGaps: studentVoice.length,
     });
 
@@ -106,8 +104,7 @@ function main() {
     if (studentVoice.length > 0) fieldsNeedingWork.push(`student-voice gaps ${studentVoice.length}`);
     if (microRubricCount < 4) fieldsNeedingWork.push(`microRubric short (${microRubricCount})`);
     if (noTechFallbackCount < 2) fieldsNeedingWork.push(`noTechFallback ${noTechFallbackCount}`);
-    if (safetyEthicsCount === 0) fieldsNeedingWork.push('safetyEthics missing');
-    if (planningNotesMissing) fieldsNeedingWork.push('planningNotes missing');
+    if (shortPlanningNotes) fieldsNeedingWork.push(`planningNotes short (${planningNotesLength} chars)`);
     if (unknownRefs.length > 0) fieldsNeedingWork.push(`unknown assignment refs ${unknownRefs.length}`);
 
     return {
@@ -120,7 +117,8 @@ function main() {
       checkpointPercent: percentage(checkpointCount, weekCount),
       microRubricCount,
       noTechFallbackCount,
-      safetyEthicsCount,
+      planningNotesLength,
+      shortPlanningNotes,
       studentVoiceGaps: studentVoice.length,
       weakDirections: weakDir.length,
       weakWeekBullets: weakWeek.length,
@@ -166,7 +164,7 @@ function main() {
         'Not Started',
         '', // Assigned To
         r.fieldsNeedingWork.replace(/[,\n]/g, '; '),
-        `AI ${r.aiPercent}%; Checkpoints ${r.checkpointPercent}%; microRubric ${r.microRubricCount}; noTechFallback ${r.noTechFallbackCount}; safety ${r.safetyEthicsCount}; voiceGaps ${r.studentVoiceGaps}; weakDirs ${r.weakDirections}; weakWeek ${r.weakWeekBullets}`.replace(/[,\n]/g, '; '),
+        `AI ${r.aiPercent}%; Checkpoints ${r.checkpointPercent}%; microRubric ${r.microRubricCount}; noTechFallback ${r.noTechFallbackCount}; planningNotes ${r.planningNotesLength} chars${r.shortPlanningNotes ? ' (short)' : ''}; voiceGaps ${r.studentVoiceGaps}; weakDirs ${r.weakDirections}; weakWeek ${r.weakWeekBullets}`.replace(/[,\n]/g, '; '),
         '' // Completion Date
       ].join(',');
       trackerLines.push(line);
@@ -202,4 +200,3 @@ function main() {
 }
 
 main();
-

@@ -451,11 +451,10 @@ export default function ProjectShowcase() {
               title="Materials & Prep"
               description="Pull together what you need, plus low-tech options and guardrails."
             />
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               {[
                 { title: 'Core kit', items: project.materialsPrep.coreKit },
-                { title: 'No-tech fallback', items: project.materialsPrep.noTechFallback },
-                { title: 'Safety & ethics', items: project.materialsPrep.safetyEthics }
+                { title: 'No-tech fallback', items: project.materialsPrep.noTechFallback }
               ].map(({ title, items }) => (
                 <div key={title} className="rounded-3xl border border-white bg-white/85 p-6 shadow-sm backdrop-blur">
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">{title}</h3>

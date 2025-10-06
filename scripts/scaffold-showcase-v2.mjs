@@ -102,7 +102,7 @@ for (const project of manifest.projects) {
     `  schedule: { totalWeeks: ${totalWeeks}, lessonsPerWeek: 3, lessonLengthMin: 55 },`,
     '  runOfShow: [],',
     "  outcomes: { core: [], extras: [], audiences: [] },",
-    "  materialsPrep: { coreKit: [], noTechFallback: [], safetyEthics: [] },",
+    "  materialsPrep: { coreKit: [], noTechFallback: [] },",
     '  assignments: [],',
     '  polish: undefined,',
     "  planningNotes: ''",

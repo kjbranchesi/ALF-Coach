@@ -45,7 +45,6 @@ export interface ProjectShowcaseV2 {
   materialsPrep: {
     coreKit: string[]; // ≤ 8
     noTechFallback: string[]; // ≤ 3
-    safetyEthics: string[]; // ≤ 3
   };
   assignments: AssignmentCard[]; // 3–6
   polish?: {
@@ -53,7 +52,7 @@ export interface ProjectShowcaseV2 {
     checkpoints?: string[]; // 2–5
     tags?: string[]; // 1–4 (codes only)
   };
-  planningNotes?: string; // collapsed, optional
+  planningNotes?: string; // collapsed, optional; target 2–3 sentences (~120+ chars)
 }
 
 export interface WeekCard {

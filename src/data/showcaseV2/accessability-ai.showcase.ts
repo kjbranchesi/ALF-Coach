@@ -150,7 +150,6 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
       'Feedback forms for consultants'
     ],
     noTechFallback: ['Manual caption scripts', 'Printed alt-text guidelines', 'Plain-language rewrite templates'],
-    safetyEthics: ['Honor consultant boundaries', 'Avoid AI overreach without review', 'Protect private or sensitive content']
   },
   assignments: [
     {
@@ -273,5 +272,5 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     ],
     tags: ['ACCESS', 'AI', 'HCD']
   },
-  planningNotes: 'Budget for consultant honoraria and double-check licensing for media before distributing new accessibility assets.'
+  planningNotes: 'Lock consultant honoraria and schedule reviews 4 weeks ahead with disabled experts. Verify media licensing, captions, and alt-text with legal before Week 3, then assign an owner for ongoing updates.'
 };

@@ -92,7 +92,6 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Laptops with models', 'Brief templates', 'Visualization tool', 'Recording sheet'],
     noTechFallback: ['Printed charts', 'Manual calculators', 'Paper juror packs'],
-    safetyEthics: ['Avoid false certainty', 'Represent multiple voices', 'Disclose limitations']
   },
   assignments: [
     {
@@ -181,5 +180,5 @@ export const geoengineering_ethics_expeditionV2: ProjectShowcaseV2 = {
     checkpoints: ['Sources checked', 'Assumptions logged', 'Process audit complete'],
     tags: ['policy', 'ethics', 'data']
   },
-  planningNotes: 'Pre‑select accessible models; recruit diverse jurors; emphasize uncertainty and ethics at each step.'
+  planningNotes: 'Audit scenario models with science partners 3 weeks ahead to confirm accessibility. Recruit a diverse jury and lock logistics before Week 3, and message that uncertainty and ethics guide decisions.'
 };

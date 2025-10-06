@@ -92,7 +92,6 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Laptops', 'Audio interface or datasets', 'Speakers with limiter', 'Station enclosure', 'Signage'],
     noTechFallback: ['Printed sonograms', 'Manual ID cards', 'Poster etiquette'],
-    safetyEthics: ['No harassment of wildlife', 'Volume/time restrictions', 'Permits for field recordings']
   },
   assignments: [
     {
@@ -181,5 +180,5 @@ export const interspecies_language_translatorsV2: ProjectShowcaseV2 = {
     checkpoints: ['Charter approved', 'Provenance logged', 'Ethics sign‑off met'],
     tags: ['ml', 'bio', 'ethics']
   },
-  planningNotes: 'Secure data sources and permits; set strict playback rules; prefer pre‑recorded datasets when in doubt.'
+  planningNotes: 'Coordinate with wildlife partners early to secure permits, record zones, and etiquette tips. Finalize data provenance logs and playback limits before Week 2, then brief families on quiet rules.'
 };

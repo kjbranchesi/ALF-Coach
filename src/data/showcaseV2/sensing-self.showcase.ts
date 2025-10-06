@@ -150,7 +150,6 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
       'Consent and wellness forms'
     ],
     noTechFallback: ['Paper-based habit trackers', 'Analog pulse monitors', 'Poster templates for data walls'],
-    safetyEthics: ['Follow data privacy agreements', 'Sanitize wearables between tests', 'Consult nurse for health-sensitive cases']
   },
   assignments: [
     {
@@ -273,5 +272,5 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     ],
     tags: ['WELL', 'DATA', 'HCD']
   },
-  planningNotes: 'Coordinate with school wellness policies regarding student biometric data before devices collect information.'
+  planningNotes: 'Meet wellness and privacy teams to clarify biometric signals and escalation steps. Align counselor communications and opt-ins before Week 2. Set device checkout and cleaning routines with the nurse.'
 };

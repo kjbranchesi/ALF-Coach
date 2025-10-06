@@ -94,7 +94,6 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
       'Clipboards for observations'
     ],
     noTechFallback: ['Paper timing charts', 'Sticker smile scales', 'Printed station cards'],
-    safetyEthics: ['Adult supervision at every station', 'Safe hand tools only', 'Consent from buddy class']
   },
   assignments: [
     {
@@ -164,5 +163,5 @@ export const neuroplastic_playgroundsV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety routine passed', 'Station safety check', 'Consent confirmed'],
     tags: ['neuro', 'pe', 'design']
   },
-  planningNotes: 'Coordinate with PE and buddy teachers early; keep stations lightweight, modular, and easy to store; share accessibility tips with families.'
+  planningNotes: 'Meet PE, OT, and buddy teachers to align supervision and storage. Prototype lightweight stations with 10-minute teardown guides. Send accessibility tip sheets and consent logistics before Week 2.'
 };

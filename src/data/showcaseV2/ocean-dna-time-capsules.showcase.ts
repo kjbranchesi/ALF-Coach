@@ -102,7 +102,6 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
       'Laptops for visualization'
     ],
     noTechFallback: ['Paper maps and logs', 'Hand‑drawn trend charts', 'Poster boards'],
-    safetyEthics: ['Adult supervision at water', 'Partner permissions required', 'No student DNA processing without lab partner']
   },
   assignments: [
     {
@@ -154,5 +153,5 @@ export const ocean_dna_time_capsulesV2: ProjectShowcaseV2 = {
     checkpoints: ['Permissions cleared', 'Safety at water', 'Expert feedback received'],
     tags: ['bio', 'ocean', 'data']
   },
-  planningNotes: 'Confirm partner lab capacity early; consider classroom proxy kits for timing; guard student privacy and water safety rigorously.'
+  planningNotes: 'Confirm lab partners early so sample slots are guaranteed. Arrange lifeguard supervision, float plans, and guardian permissions before Week 2, and keep proxy kits ready if weather interrupts.'
 };

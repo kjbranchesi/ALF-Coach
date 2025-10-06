@@ -150,7 +150,6 @@ export const playable_cityV2: ProjectShowcaseV2 = {
       'Insurance and permit packets'
     ],
     noTechFallback: ['Cardboard mockups', 'Chalk and tape kits', 'Paper feedback forms'],
-    safetyEthics: ['Secure event permits early', 'Implement crowd safety protocols', 'Ensure ADA-compliant navigation']
   },
   assignments: [
     {
@@ -272,5 +271,5 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     ],
     tags: ['PLAY', 'CIVIC', 'DESIGN']
   },
-  planningNotes: 'Secure permits, insurance, and custodial coordination several weeks ahead of the festival date.'
+  planningNotes: 'Submit permits and insurance 6 weeks ahead to lock routes early. Confirm custodial, AV, and security shifts before Week 3 with clear load-in/out timelines and prep neighborhood outreach.'
 };

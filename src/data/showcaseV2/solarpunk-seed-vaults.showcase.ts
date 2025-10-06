@@ -83,7 +83,6 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Wood/cardboard box', 'Child‑safe solar kit', 'Label cards', 'Seed envelopes', 'Signage'],
     noTechFallback: ['Hand labels', 'Manual sign‑in book', 'Paper care guide'],
-    safetyEthics: ['Adult supervision for tools', 'Use low‑voltage kits', 'Avoid treated lumber']
   },
   assignments: [
     {
@@ -148,5 +147,5 @@ export const solarpunk_seed_vaultsV2: ProjectShowcaseV2 = {
     checkpoints: ['Parts approved', 'Safety check', 'Caretakers signed'],
     tags: ['eng', 'energy', 'ag']
   },
-  planningNotes: 'Pre‑approve low‑voltage solar kits; invite families early; consider weatherproofing if outdoors.'
+  planningNotes: 'Submit kit lists to facilities early to confirm compliance. Invite caretakers before Week 2 to plan weatherproofing or indoor backups and coordinate with custodial and grounds teams on safe installs.'
 };

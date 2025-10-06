@@ -104,7 +104,6 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
       'Laptops for logging'
     ],
     noTechFallback: ['Paper log sheets', 'Visual OD comparison card', 'Manual weight charts'],
-    safetyEthics: ['BSL‑1 only, sealed kits', 'Teacher handles disposal', 'No unknown cultures or environmental release']
   },
   assignments: [
     {
@@ -170,5 +169,5 @@ export const plastic_to_protein_microfactoriesV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety quiz passed', 'Mid‑trial audit', 'Disposal log filed'],
     tags: ['bio', 'chem', 'eng']
   },
-  planningNotes: 'Use only sealed, BSL‑1 kits and safe analogs; confirm custodial disposal procedures up front; invite a university mentor for demo day.'
+  planningNotes: 'Confirm before kickoff that only sealed BSL-1 kits and approved analogs are on the list. Align disposal routines with custodial during Week 1 and invite a university mentor for demo day feedback.'
 };

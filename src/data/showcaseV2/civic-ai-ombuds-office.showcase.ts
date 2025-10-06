@@ -58,7 +58,6 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Laptops', 'Partner FAQ data', 'Plain‑language checklist', 'Signage + flyers'],
     noTechFallback: ['Paper flowcharts', 'Printed FAQs', 'Manual referral list'],
-    safetyEthics: ['Consent and privacy protection', 'No legal/medical advice', 'Clear escalation to humans']
   },
   assignments: [
     {
@@ -123,5 +122,5 @@ export const civic_ai_ombuds_officeV2: ProjectShowcaseV2 = {
     checkpoints: ['Scope approved', 'Bias review done', 'Privacy verified'],
     tags: ['cs', 'civics', 'ethics']
   },
-  planningNotes: 'Align with agency partner early; set strict privacy; ensure human escalation for sensitive questions.'
+  planningNotes: 'Book the ombuds partner 4 weeks out to lock scope, data boundaries, and escalation paths. Run privacy reviews before Week 2 and set a weekly check-in so approvals stay fast.'
 };

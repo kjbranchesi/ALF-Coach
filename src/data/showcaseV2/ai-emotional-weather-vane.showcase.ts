@@ -103,7 +103,6 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
       'Printed consent + signage'
     ],
     noTechFallback: ['Paper emoji check‑ins', 'Manual tally board', 'Colored flags display'],
-    safetyEthics: ['Opt‑in only + de‑identified', 'No individual dashboards', 'Counselor oversight for trials']
   },
   assignments: [
     {
@@ -173,5 +172,5 @@ export const ai_emotional_weather_vaneV2: ProjectShowcaseV2 = {
     checkpoints: ['Admin/counselor review', 'Wiring safety check', 'Privacy checklist complete'],
     tags: ['cs', 'sel', 'design']
   },
-  planningNotes: 'Coordinate with counselors/admin first; keep de‑identification strict; avoid individual‑level dashboards or alerts.'
+  planningNotes: 'Meet counselors and admin before kickoff to lock consent language, alert protocols, and SEL guardrails. Configure de-identification and storage with IT before Week 2 so only aggregate trends ship.'
 };

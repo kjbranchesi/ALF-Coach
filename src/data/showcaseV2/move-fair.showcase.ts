@@ -168,7 +168,6 @@ export const move_fairV2: ProjectShowcaseV2 = {
       'Summit signage materials'
     ],
     noTechFallback: ['Printed grid maps', 'Clipboards and stopwatches', 'Paper pledge cards'],
-    safetyEthics: ['Follow fieldwork buddy system', 'Obtain consent for recordings', 'Coordinate street pilot permits']
   },
   assignments: [
     {
@@ -291,5 +290,5 @@ export const move_fairV2: ProjectShowcaseV2 = {
     ],
     tags: ['MOBI', 'CIVIC', 'DATA']
   },
-  planningNotes: 'Reserve translation and accessibility supports early—summit success hinges on truly inclusive participation.'
+  planningNotes: 'Book interpreters, ASL, and mobility supports 4 weeks ahead to ensure inclusive attendance. Secure permits and street closures before Week 3 and share participation packets with families and vendors.'
 };

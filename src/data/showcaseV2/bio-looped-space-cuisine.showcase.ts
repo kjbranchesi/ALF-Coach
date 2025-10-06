@@ -83,7 +83,6 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
   materialsPrep: {
     coreKit: ['Grow trays/seeds', 'LED lights', 'Water containers', 'Safe filter media', 'Timers', 'Scales'],
     noTechFallback: ['Manual logs', 'Paper budget charts', 'Poster loop diagrams'],
-    safetyEthics: ['No ingesting classroom crops', 'Avoid mold growth', 'Teacher handles any disposal']
   },
   assignments: [
     {
@@ -172,5 +171,5 @@ export const bio_looped_space_cuisineV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety rules passed', 'Mid‑build audit', 'Reviewers debrief'],
     tags: ['bio', 'systems']
   },
-  planningNotes: 'Order grow supplies early; set strict hygiene and non‑ingestion rules; consider partnering with a local hydroponics mentor.'
+  planningNotes: 'Order grow lights and nutrient kits 4 weeks ahead so shipping stays on track. Post hygiene and no-ingestion rules with admin before Week 2, then bring in a hydroponics mentor for mid-build feedback.'
 };

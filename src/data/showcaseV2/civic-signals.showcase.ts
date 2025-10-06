@@ -168,7 +168,6 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
       'Accessible briefing templates'
     ],
     noTechFallback: ['Paper coding sheets', 'Manual affinity mapping boards', 'Printed briefing packets'],
-    safetyEthics: ['Comply with privacy regulations', 'Document consent for data use', 'Run bias audits regularly']
   },
   assignments: [
     {
@@ -291,5 +290,5 @@ export const civic_signalsV2: ProjectShowcaseV2 = {
     ],
     tags: ['CIVIC', 'AI', 'ETH']
   },
-  planningNotes: 'Secure data-sharing agreements and translation partners before Week 2 to avoid pipeline delays.'
+  planningNotes: 'Secure data-sharing agreements, privacy reviews, and translation partners before Week 2 to keep pipelines on schedule. Align with IT on API access and storage at kickoff and share governance cadence.'
 };

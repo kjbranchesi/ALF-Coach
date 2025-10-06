@@ -168,7 +168,6 @@ export const living_historyV2: ProjectShowcaseV2 = {
       'Archival storage bins'
     ],
     noTechFallback: ['Paper interview sheets', 'Colored pens for metadata', 'Bulletin board display'],
-    safetyEthics: ['Signed guardian consent forms', 'Community storytelling agreement', 'Secure storage for recordings']
   },
   assignments: [
     {
@@ -300,5 +299,5 @@ export const living_historyV2: ProjectShowcaseV2 = {
     ],
     tags: ['ORAL', 'COMM', 'ARCH']
   },
-  planningNotes: 'Coordinate translator support early and confirm photography permissions with families.'
+  planningNotes: 'Schedule interpreters or translation partners early to cover captions and outreach. Send audio and artifact releases before Week 2, track responses, and coordinate storage with the media center.'
 };

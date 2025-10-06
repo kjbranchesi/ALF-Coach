@@ -150,7 +150,6 @@ export const assistive_techV2: ProjectShowcaseV2 = {
       'User testing feedback forms'
     ],
     noTechFallback: ['Cardboard prototyping kits', 'Velcro and foam materials', 'Paper-based design templates'],
-    safetyEthics: ['Follow lab PPE policies', 'Obtain partner consent for testing', 'Respect boundaries around lived experiences']
   },
   assignments: [
     {
@@ -274,5 +273,5 @@ export const assistive_techV2: ProjectShowcaseV2 = {
     ],
     tags: ['HCD', 'STEM', 'CARE']
   },
-  planningNotes: 'Align with occupational therapists early to validate safety constraints and equipment access.'
+  planningNotes: 'Meet the OT team 4 weeks ahead to confirm boundaries, equipment loans, and emergency contacts. Reserve maker tools and storage before Week 2 and align parent messages for consent and follow-up care.'
 };

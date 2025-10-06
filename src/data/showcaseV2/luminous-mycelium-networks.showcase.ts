@@ -92,7 +92,6 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       'LED test lights for comparison'
     ],
     noTechFallback: ['Paper growth charts', 'Light/dark visual scale', 'Cardboard diffuser mockups'],
-    safetyEthics: ['No open plating or DIY inoculation', 'Keep kits sealed; PPE required', 'Teacher handles any disposal']
   },
   assignments: [
     {
@@ -156,5 +155,5 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     checkpoints: ['Safety passport check', 'Mid‑build audit', 'Post‑exhibit care review'],
     tags: ['bio', 'design', 'sustainability']
   },
-  planningNotes: 'Order pre‑inoculated kits early; review BSL‑1 rules with admin; pre‑plan disposal with custodial and local waste guidance.'
+  planningNotes: 'Order inoculated kits and grow lights early so shipping and incubation stay on track. Review BSL-1 rules with admin before Week 2, cover PPE and storage, and plan disposal with custodial partners.'
 };

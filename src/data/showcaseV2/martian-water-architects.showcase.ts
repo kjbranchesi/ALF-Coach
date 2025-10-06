@@ -104,7 +104,6 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
       'Marker set for annotation'
     ],
     noTechFallback: ['Printed DEM tiles', 'Paper calculators', 'Manual route maps'],
-    safetyEthics: ['Note: speculative design with real data', 'Cite all sources', 'Respect licensing of datasets']
   },
   assignments: [
     {
@@ -166,5 +165,5 @@ export const martian_water_architectsV2: ProjectShowcaseV2 = {
     checkpoints: ['Selection memo approved', 'Units sanity check', 'Publishing checklist met'],
     tags: ['space', 'geo', 'eng']
   },
-  planningNotes: 'Pre‑load DEM/ice layers; align sources/licensing; consider inviting a local university planetary scientist to the Week 5 panel.'
+  planningNotes: 'Cache DEM and ice datasets early so studios run offline if needed. Verify licensing with NASA or USGS before Week 2 and invite a planetary scientist for Week 5 critiques to stress-test assumptions.'
 };

@@ -23,6 +23,7 @@ const MIN_NO_TECH = 2;
 const MIN_MICRO_RUBRIC = 4;
 const MAX_MICRO_RUBRIC = 6;
 const MIN_PROJECT_CHECKPOINTS = 2;
+const MIN_PLANNING_NOTES_CHARS = 120;
 
 function main() {
   const errors: string[] = [];
@@ -94,16 +95,13 @@ function main() {
       });
     });
 
-    if (!project.planningNotes || project.planningNotes.trim().length === 0) {
-      errors.push(`${header} planningNotes missing (${path})`);
+    const planningNotesText = project.planningNotes?.trim() ?? '';
+    if (planningNotesText.length < MIN_PLANNING_NOTES_CHARS) {
+      errors.push(`${header} planningNotes under ${MIN_PLANNING_NOTES_CHARS} chars (${planningNotesText.length}) (${path})`);
     }
 
     if (project.materialsPrep.noTechFallback.length < MIN_NO_TECH) {
       errors.push(`${header} noTechFallback has ${project.materialsPrep.noTechFallback.length} entries (need ${MIN_NO_TECH}+) (${path})`);
-    }
-
-    if (project.materialsPrep.safetyEthics.length === 0) {
-      errors.push(`${header} safetyEthics missing (${path})`);
     }
 
     const microRubricLength = project.polish?.microRubric?.length ?? 0;
