@@ -25,7 +25,7 @@ export function CompactStageStepper({
 }: CompactStageStepperProps) {
   return (
     <nav
-      className="flex items-center gap-2 overflow-x-auto rounded-2xl border border-gray-200/70 bg-white/80 px-3 py-2 shadow-sm dark:border-gray-700/60 dark:bg-gray-800/70"
+      className="flex items-center gap-2 overflow-x-auto rounded-2xl border border-gray-200/50 bg-white/80 px-3 py-2 shadow-sm dark:border-gray-700/50 dark:bg-gray-800/70"
       aria-label="Project design progress"
     >
       <ol className="flex items-center gap-2" role="list">

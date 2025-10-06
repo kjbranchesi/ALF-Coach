@@ -38,7 +38,7 @@ export function JourneyPreviewCard({
   };
 
   return (
-    <section className="rounded-3xl border border-gray-200/70 dark:border-gray-800/70 bg-white/95 dark:bg-gray-900/80 shadow-lg px-4 py-4 space-y-4">
+    <section className="rounded-3xl border border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/80 shadow-lg px-4 py-4 space-y-4">
       <header className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] uppercase tracking-wide text-primary-600 dark:text-primary-300">Proposed learning journey</p>
@@ -50,7 +50,7 @@ export function JourneyPreviewCard({
 
       <ol className="space-y-3">
         {phases.map((phase, index) => (
-          <li key={`${phase.name}-${index}`} className="rounded-2xl border border-gray-200/70 dark:border-gray-800/70 bg-white/90 dark:bg-gray-900/60 px-3 py-3">
+          <li key={`${phase.name}-${index}`} className="rounded-2xl border border-gray-200/50 dark:border-gray-800/50 bg-white/90 dark:bg-gray-900/60 px-3 py-3">
             <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="text-[11px] font-semibold text-primary-600 dark:text-primary-300 uppercase">Phase {index + 1}</p>

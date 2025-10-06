@@ -62,7 +62,7 @@ export function DeliverablesPreviewCard({
   };
 
   return (
-    <section className="rounded-3xl border border-gray-200/60 dark:border-gray-800/60 bg-white/95 dark:bg-gray-900/80 shadow-lg px-4 py-4 space-y-4">
+    <section className="rounded-3xl border border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/80 shadow-lg px-4 py-4 space-y-4">
       <header className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] uppercase tracking-wide text-primary-600 dark:text-primary-300">Deliverables package</p>

@@ -43,7 +43,7 @@ export function GuidanceFAB({ guidance, stageName }: GuidanceFABProps) {
           hover:bg-gray-200 dark:hover:bg-slate-700
           transition-all duration-200
           flex items-center justify-center
-          border border-gray-200 dark:border-slate-600
+          border border-gray-200/50 dark:border-slate-600/50
         `}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 0.8 }}
