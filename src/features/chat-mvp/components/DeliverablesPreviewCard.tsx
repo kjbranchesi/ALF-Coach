@@ -12,6 +12,7 @@ type DeliverablesPreviewCardProps = {
   onRegenerate(): void;
   onRename(section: SectionKey, index: number, name: string): void;
   onReorder(section: SectionKey, from: number, to: number): void;
+  hideFooter?: boolean;
 };
 
 const sectionMeta: Record<SectionKey, { title: string; icon: React.ReactNode; tone: string }> = {
@@ -40,7 +41,8 @@ export function DeliverablesPreviewCard({
   onCustomize,
   onRegenerate,
   onRename,
-  onReorder
+  onReorder,
+  hideFooter = false
 }: DeliverablesPreviewCardProps) {
   const sections: Array<{ key: SectionKey; items: string[] }> = [
     { key: 'milestones', items: milestones },
@@ -131,36 +133,38 @@ export function DeliverablesPreviewCard({
         ))}
       </div>
 
-      <footer className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={onAcceptAll}
-          className="inline-flex items-center rounded-full bg-primary-600 text-white px-4 py-1.5 text-[12px] font-semibold hover:bg-primary-700"
-        >
-          Yes, use all of these
-        </button>
-        <button
-          type="button"
-          onClick={() => onCustomize('milestones')}
-          className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
-        >
-          Customize milestones
-        </button>
-        <button
-          type="button"
-          onClick={() => onCustomize('artifacts')}
-          className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
-        >
-          Customize artifacts
-        </button>
-        <button
-          type="button"
-          onClick={onRegenerate}
-          className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
-        >
-          Regenerate
-        </button>
-      </footer>
+      {hideFooter ? null : (
+        <footer className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onAcceptAll}
+            className="inline-flex items-center rounded-full bg-primary-600 text-white px-4 py-1.5 text-[12px] font-semibold hover:bg-primary-700"
+          >
+            Yes, use all of these
+          </button>
+          <button
+            type="button"
+            onClick={() => onCustomize('milestones')}
+            className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
+          >
+            Customize milestones
+          </button>
+          <button
+            type="button"
+            onClick={() => onCustomize('artifacts')}
+            className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
+          >
+            Customize artifacts
+          </button>
+          <button
+            type="button"
+            onClick={onRegenerate}
+            className="inline-flex items-center rounded-full border border-gray-300 px-4 py-1.5 text-[12px] font-semibold text-gray-700 hover:border-gray-400"
+          >
+            Regenerate
+          </button>
+        </footer>
+      )}
     </section>
   );
 }

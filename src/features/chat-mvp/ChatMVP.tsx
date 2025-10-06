@@ -18,6 +18,10 @@ import { useResponsiveLayout } from './hooks';
 import { trackEvent } from '../../utils/analytics';
 import { JourneyPreviewCard } from './components/JourneyPreviewCard';
 import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
+import { JourneyBoard, type JourneyPhaseDraft } from './components/JourneyBoard';
+import { PhaseEditorDrawer } from './components/PhaseEditorDrawer';
+import { DecisionBar } from './components/DecisionBar';
+import { CoachDrawer, type CoachAction } from './components/CoachDrawer';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -47,6 +51,7 @@ import {
   handleJourneyChoice,
   detectPhaseReference,
   getJourneyActionChips,
+  generateSmartJourney,
   type JourneyMicroState
 } from './domain/journeyMicroFlow';
 import {
@@ -122,6 +127,12 @@ export function ChatMVP({
   const sidebarControlsRef = useRef<ResponsiveSidebarControls | null>(null);
   const stageIndex = stageOrder.indexOf(stage);
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
+  const journeyV2Enabled = useMemo(() => (import.meta.env.VITE_FEATURE_STUDIO_JOURNEY_V2 ?? 'true') !== 'false', []);
+  const [journeyDraft, setJourneyDraft] = useState<JourneyPhaseDraft[]>([]);
+  const [journeySuggested, setJourneySuggested] = useState<JourneyPhaseDraft[]>([]);
+  const [journeyEditingPhaseId, setJourneyEditingPhaseId] = useState<string | null>(null);
+  const [journeyDirty, setJourneyDirty] = useState(false);
+  const journeyInitializedRef = useRef(false);
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -148,6 +159,196 @@ export function ChatMVP({
   const hasWizardName = Boolean((projectData?.wizardData as any)?.projectName);
   const gradeBandKey: GradeBandKey | null = useMemo(() => resolveGradeBand(wizard.gradeLevel), [wizard.gradeLevel]);
   const gradeBandLabel = gradeBandKey ?? 'unknown';
+
+  const normalizePhaseDraft = useCallback((phase: Partial<JourneyPhaseDraft> & { name?: string; activities?: string[]; id?: string; focus?: string; checkpoint?: string }, index: number): JourneyPhaseDraft => ({
+    id: phase.id || `phase-${index + 1}`,
+    name: phase.name?.trim() || `Phase ${index + 1}`,
+    focus: phase.focus ? phase.focus : '',
+    activities: Array.isArray(phase.activities) ? phase.activities.filter(Boolean) : [],
+    checkpoint: phase.checkpoint ? phase.checkpoint : ''
+  }), []);
+
+  const buildSuggestedPhases = useCallback((): JourneyPhaseDraft[] => {
+    const suggestions = generateSmartJourney(captured, wizard);
+    return suggestions.map((phase, index) => normalizePhaseDraft({
+      id: `suggest-${index + 1}`,
+      name: phase.name,
+      focus: phase.summary,
+      activities: phase.activities,
+      checkpoint: ''
+    }, index));
+  }, [captured, wizard, normalizePhaseDraft]);
+
+  const handleJourneyRename = useCallback((id: string, nextName: string) => {
+    setJourneyDraft(prev => prev.map(phase => (phase.id === id ? { ...phase, name: nextName } : phase)));
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneyReorder = useCallback((from: number, to: number) => {
+    setJourneyDraft(prev => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneyAddPhase = useCallback(() => {
+    setJourneyDraft(prev => [
+      ...prev,
+      {
+        id: `phase-${Date.now()}`,
+        name: `New phase ${prev.length + 1}`,
+        focus: '',
+        activities: [],
+        checkpoint: ''
+      }
+    ]);
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneyRemovePhase = useCallback((id: string) => {
+    setJourneyDraft(prev => prev.filter(phase => phase.id !== id));
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneySelectPhase = useCallback((id: string) => {
+    setJourneyEditingPhaseId(id);
+  }, []);
+
+  const handleJourneySavePhase = useCallback((updated: JourneyPhaseDraft) => {
+    setJourneyDraft(prev => prev.map(phase => (phase.id === updated.id ? { ...updated } : phase)));
+    setJourneyEditingPhaseId(null);
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneyRegenerate = useCallback(() => {
+    if (!window.confirm('Regenerate the journey map with fresh AI suggestions? Your current edits will be replaced.')) {
+      return;
+    }
+    const drafts = buildSuggestedPhases();
+    setJourneyDraft(drafts);
+    setJourneySuggested(drafts);
+    setJourneyDirty(true);
+  }, [buildSuggestedPhases]);
+
+  const handleJourneyCustomize = useCallback(() => {
+    const first = journeyDraft[0];
+    if (first) {
+      setJourneyEditingPhaseId(first.id);
+    }
+  }, [journeyDraft]);
+
+  const handleJourneyTrimToFour = useCallback(() => {
+    setJourneyDraft(prev => prev.slice(0, 4));
+    setJourneyDirty(true);
+  }, []);
+
+  const handleJourneyEnsureCheckpoints = useCallback(() => {
+    setJourneyDraft(prev => prev.map((phase, index) => ({
+      ...phase,
+      checkpoint: phase.checkpoint || `Checkpoint: ${phase.name || `Phase ${index + 1}`}`
+    })));
+    setJourneyDirty(true);
+  }, []);
+
+  const journeyCanAccept = useMemo(() => (
+    journeyDraft.length >= 3 && journeyDraft.every(phase => phase.name.trim().length >= 3)
+  ), [journeyDraft]);
+
+  const journeyHasCustomChanges = useMemo(() => {
+    if (journeyDraft.length !== journeySuggested.length) {return true;}
+    return journeyDraft.some((phase, index) => {
+      const suggestion = journeySuggested[index];
+      if (!suggestion) {return true;}
+      if (phase.name !== suggestion.name) {return true;}
+      if ((phase.focus || '') !== (suggestion.focus || '')) {return true;}
+      if ((phase.checkpoint || '') !== (suggestion.checkpoint || '')) {return true;}
+      if (phase.activities.length !== suggestion.activities.length) {return true;}
+      for (let i = 0; i < phase.activities.length; i += 1) {
+        if (phase.activities[i] !== suggestion.activities[i]) {return true;}
+      }
+      return false;
+    });
+  }, [journeyDraft, journeySuggested]);
+
+  const journeyCoachActions = useMemo<CoachAction[]>(() => {
+    if (!journeyV2Enabled || stage !== 'JOURNEY') {return [];} 
+    const actions: CoachAction[] = [];
+    if (journeyDraft.length > 4) {
+      actions.push({ id: 'trim-four', label: 'Trim to four phases', onSelect: handleJourneyTrimToFour });
+    }
+    actions.push({ id: 'ensure-checkpoints', label: 'Draft checkpoints for each phase', onSelect: handleJourneyEnsureCheckpoints });
+    if (journeyHasCustomChanges) {
+      actions.push({ id: 'reset-suggested', label: 'Reset to AI suggested journey', onSelect: handleJourneyRegenerate });
+    }
+    return actions;
+  }, [journeyV2Enabled, stage, journeyDraft.length, handleJourneyTrimToFour, handleJourneyEnsureCheckpoints, journeyHasCustomChanges, handleJourneyRegenerate]);
+
+  const editingPhase = useMemo(() => journeyDraft.find(phase => phase.id === journeyEditingPhaseId) || null, [journeyDraft, journeyEditingPhaseId]);
+
+  const handleJourneyAccept = useCallback(() => {
+    const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
+    if (normalized.length < 3) {
+      window.alert('Add at least three phases before accepting the journey.');
+      return;
+    }
+
+    setCaptured(prev => ({
+      ...prev,
+      journey: {
+        ...prev.journey,
+        phases: normalized
+      }
+    }));
+
+    setJourneyDraft(normalized);
+    setJourneySuggested(normalized);
+    setJourneyDirty(false);
+    setJourneyEditingPhaseId(null);
+    setJourneyMicroState(null);
+    setJourneyReceipt({ phaseCount: normalized.length, timestamp: Date.now() });
+    trackEvent('journey_accept', { phaseCount: normalized.length });
+
+    setStage('DELIVERABLES');
+    setStageTurns(0);
+    setHasInput(false);
+    setMode('drafting');
+    setFocus('deliverables');
+    setShowKickoffPanel(false);
+  }, [journeyDraft, normalizePhaseDraft, setCaptured, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel]);
+
+  useEffect(() => {
+    if (journeyV2Enabled) {
+      if (stage === 'JOURNEY') {
+        if (!journeyInitializedRef.current) {
+          journeyInitializedRef.current = true;
+          if (captured.journey.phases.length) {
+            const drafts = captured.journey.phases.map((phase, index) => normalizePhaseDraft(phase, index));
+            setJourneyDraft(drafts);
+            setJourneySuggested(drafts);
+            setJourneyDirty(false);
+          } else {
+            const drafts = buildSuggestedPhases();
+            setJourneyDraft(drafts);
+            setJourneySuggested(drafts);
+            setJourneyDirty(false);
+          }
+        }
+      } else {
+        journeyInitializedRef.current = false;
+        setJourneyEditingPhaseId(null);
+        setJourneyDirty(false);
+      }
+    }
+  }, [journeyV2Enabled, stage, captured.journey.phases, buildSuggestedPhases, normalizePhaseDraft]);
+
+  useEffect(() => {
+    if (journeyV2Enabled && stage === 'JOURNEY') {
+      setMicroFlowActionChips([]);
+    }
+  }, [journeyV2Enabled, stage]);
 
   useEffect(() => {
     if (stage === 'JOURNEY') {
@@ -1489,7 +1690,7 @@ Your project structure is ready!`,
         }
 
         // JOURNEY STAGE: Initialize micro-flow and show complete journey suggestion
-        if (nxt === 'JOURNEY') {
+        if (nxt === 'JOURNEY' && !journeyV2Enabled) {
           const microState = initJourneyMicroFlow(updatedCaptured, wizard);
           setJourneyMicroState(microState);
 
@@ -1616,16 +1817,47 @@ Your project structure is ready!`,
               actionsDisabled={aiStatus !== 'online'}
               latestAssistantId={latestAssistantId}
             />
-            {journeyMicroState && (
-              <JourneyPreviewCard
-                phases={journeyMicroState.suggestedPhases}
-                onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
-                onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
-                onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
-                onRenamePhase={handleJourneyRenamePhase}
-                onReorderPhase={handleJourneyReorderPhase}
-              />
-            )}
+            {journeyV2Enabled && stage === 'JOURNEY'
+              ? (
+                <JourneyBoard
+                  phases={journeyDraft}
+                  selectedId={journeyEditingPhaseId}
+                  onSelect={handleJourneySelectPhase}
+                  onRename={handleJourneyRename}
+                  onReorder={handleJourneyReorder}
+                  onAdd={handleJourneyAddPhase}
+                  onRemove={handleJourneyRemovePhase}
+                />
+              ) : journeyMicroState ? (
+                <JourneyPreviewCard
+                  phases={journeyMicroState.suggestedPhases}
+                  onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
+                  onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
+                  onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
+                  onRenamePhase={handleJourneyRenamePhase}
+                  onReorderPhase={handleJourneyReorderPhase}
+                />
+              ) : null}
+
+            {journeyV2Enabled && stage === 'JOURNEY' ? (
+              <>
+                <PhaseEditorDrawer
+                  open={Boolean(journeyEditingPhaseId && editingPhase)}
+                  phase={editingPhase}
+                  onClose={() => setJourneyEditingPhaseId(null)}
+                  onSave={handleJourneySavePhase}
+                />
+                <DecisionBar
+                  primaryLabel="Accept journey map"
+                  onPrimary={handleJourneyAccept}
+                  primaryDisabled={!journeyCanAccept}
+                  secondary={[
+                    { label: 'Customize phase', onClick: handleJourneyCustomize },
+                    { label: 'Regenerate', onClick: handleJourneyRegenerate, tone: 'danger' }
+                  ]}
+                />
+              </>
+            ) : null}
             {deliverablesMicroState && (
               <DeliverablesPreviewCard
                 milestones={deliverablesMicroState.suggestedMilestones}
@@ -1639,8 +1871,20 @@ Your project structure is ready!`,
                 onRegenerate={() => { void handleDeliverablesQuickCommand('regenerate'); }}
                 onRename={handleDeliverablesRename}
                 onReorder={handleDeliverablesReorder}
+                hideFooter={journeyV2Enabled}
               />
             )}
+            {journeyV2Enabled && stage === 'DELIVERABLES' && deliverablesMicroState ? (
+              <DecisionBar
+                primaryLabel="Accept deliverables"
+                onPrimary={() => { void handleDeliverablesQuickCommand('yes'); }}
+                secondary={[
+                  { label: 'Customize milestones', onClick: () => { void handleDeliverablesQuickCommand('customize milestones'); } },
+                  { label: 'Customize artifacts', onClick: () => { void handleDeliverablesQuickCommand('customize artifacts'); } },
+                  { label: 'Regenerate', onClick: () => { void handleDeliverablesQuickCommand('regenerate'); }, tone: 'danger' }
+                ]}
+              />
+            ) : null}
             {journeyReceipt && !journeyMicroState && (
               <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-800 flex items-center justify-between">
                 <span>Journey saved — {journeyReceipt.phaseCount} phases captured.</span>
@@ -1655,6 +1899,9 @@ Your project structure is ready!`,
             )}
           </div>
         </div>
+        {journeyV2Enabled && stage === 'JOURNEY' ? (
+          <CoachDrawer actions={journeyCoachActions} />
+        ) : null}
         <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2 sm:px-4 sm:pb-5 sm:pt-3 border-t border-gray-200/50 dark:border-gray-800/50 shadow-lg shadow-black/10 dark:shadow-black/30">
           <div className="relative w-full">
             {projectId && projectStatus === 'ready' && (
