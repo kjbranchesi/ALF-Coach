@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import ConfirmationModal from './ConfirmationModal.jsx';
 import { getSubjectTheme, getGradeBandTheme } from '../utils/projectThemes';
+import { unifiedStorage } from '../services/UnifiedStorageManager';
 import {
   Clock,
   BookOpen,
@@ -20,7 +21,10 @@ import {
   Dumbbell,
   HeartPulse,
   Leaf,
-  Sparkles
+  Sparkles,
+  Pencil,
+  Check,
+  X
 } from 'lucide-react';
 
 // Design System imports
@@ -110,9 +114,12 @@ function resolveSubjectIcon(subjectLabel) {
 export default function ProjectCard({ draft, onDelete, onOpen }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(draft?.title || 'Untitled Project');
 
   // Extract project metadata with intelligent defaults
   const title = draft?.title || 'Untitled Project';
+  const tagline = draft?.tagline || ''; // AI-generated tagline
   const description = draft?.description || ''; // Course description
   const subject = draft?.subject || draft?.subjects?.[0] || 'General';
   const gradeBand = draft?.gradeBand || draft?.grade_level || 'K-12';
@@ -143,9 +150,10 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
   };
   const badge = getBadge();
 
-  // Show description if available, otherwise show topic
-  const showDescription = description && description.trim();
-  const showTopic = !showDescription && topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
+  // Display priority: tagline > description > topic
+  const showTagline = tagline && tagline.trim();
+  const showDescription = !showTagline && description && description.trim();
+  const showTopic = !showTagline && !showDescription && topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
 
   const handleOpen = () => {
     if (!draft?.id) {return;}
@@ -171,6 +179,41 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
     } finally {
       setIsDeleting(false);
       setIsModalOpen(false);
+    }
+  };
+
+  const handleTitleEdit = (event) => {
+    event.stopPropagation();
+    setIsEditingTitle(true);
+    setEditedTitle(title);
+  };
+
+  const handleTitleSave = async (event) => {
+    event.stopPropagation();
+    if (editedTitle.trim() && editedTitle.trim() !== title) {
+      try {
+        await unifiedStorage.updateProjectTitle(draft.id, editedTitle.trim());
+        // Force re-render by updating local state
+        draft.title = editedTitle.trim();
+      } catch (error) {
+        console.error('[ProjectCard] Title update failed:', error);
+        setEditedTitle(title); // Revert on error
+      }
+    }
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleCancel = (event) => {
+    event.stopPropagation();
+    setEditedTitle(title);
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleTitleSave(event);
+    } else if (event.key === 'Escape') {
+      handleTitleCancel(event);
     }
   };
 
@@ -216,9 +259,53 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
             {/* Title and Description */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 truncate mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                {title}
-              </h3>
+              {isEditingTitle ? (
+                <div className="flex items-center gap-2 mb-1">
+                  <input
+                    type="text"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    onKeyDown={handleTitleKeyDown}
+                    onClick={(e) => e.stopPropagation()}
+                    autoFocus
+                    className="flex-1 px-2 py-1 text-lg font-semibold text-slate-900 dark:text-slate-50 bg-white dark:bg-slate-800 border border-primary-400 dark:border-primary-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <button
+                    onClick={handleTitleSave}
+                    className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 transition-colors"
+                    title="Save"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleTitleCancel}
+                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+                    title="Cancel"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 mb-1 group/title">
+                  <h3 className="flex-1 text-lg font-semibold text-slate-900 dark:text-slate-50 truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    {title}
+                  </h3>
+                  {isComplete && (
+                    <button
+                      onClick={handleTitleEdit}
+                      className="opacity-0 group-hover/title:opacity-100 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-all"
+                      title="Edit title"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+              {showTagline && (
+                <p className="text-sm text-slate-700 dark:text-slate-300 font-medium line-clamp-2 leading-relaxed mt-1 italic">
+                  {tagline}
+                </p>
+              )}
               {showDescription && (
                 <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1">
                   {description}

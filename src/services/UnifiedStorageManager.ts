@@ -416,6 +416,30 @@ export class UnifiedStorageManager {
   }
 
   /**
+   * Update project title
+   */
+  async updateProjectTitle(projectId: string, newTitle: string): Promise<void> {
+    try {
+      const project = await this.loadProject(projectId);
+      if (!project) {
+        throw new Error(`Project not found: ${projectId}`);
+      }
+
+      // Update title
+      project.title = newTitle;
+      project.updatedAt = new Date();
+
+      // Save updated project
+      await this.saveProject(project);
+
+      console.log(`[UnifiedStorageManager] Project title updated: ${projectId}`);
+    } catch (error) {
+      console.error('[UnifiedStorageManager] Update title failed:', error);
+      throw new Error(`Failed to update project title: ${error.message}`);
+    }
+  }
+
+  /**
    * Load enhanced hero project data
    */
   async loadHeroProject(projectId: string): Promise<EnhancedHeroProjectData | null> {

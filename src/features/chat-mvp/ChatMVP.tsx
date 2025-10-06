@@ -57,7 +57,7 @@ import {
   getDeliverablesActionChips,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
-import { generateCourseDescription } from './domain/courseDescriptionGenerator';
+import { generateCourseDescription, generateTagline, verifyDescriptionQuality } from './domain/courseDescriptionGenerator';
 import { getPostCaptureCoaching, getStageGuidance } from './domain/coachingResponses';
 import { resolveGradeBand, gradeBandRules, type GradeBandKey, type GradeBandRule } from '../../ai/gradeBandRules';
 
@@ -550,8 +550,27 @@ export function ChatMVP({
     }
 
     try {
-      // Generate professional course description
-      const description = await generateCourseDescription(captured, wizard);
+      // Show generating message
+      engine.appendMessage({
+        id: String(Date.now()),
+        role: 'assistant',
+        content: '✨ **Finalizing your project...**\n\nI\'m generating a professional course description and preparing everything for your dashboard. This will just take a moment.',
+        timestamp: new Date()
+      } as any);
+
+      // Generate professional course description and tagline in parallel
+      const [description, tagline] = await Promise.all([
+        generateCourseDescription(captured, wizard),
+        generateTagline(captured, wizard)
+      ]);
+
+      // Verify description quality
+      const quality = verifyDescriptionQuality(description);
+      console.log('[ChatMVP] Description quality check:', quality);
+
+      if (!quality.isValid && quality.warnings.length > 0) {
+        console.warn('[ChatMVP] Description quality warnings:', quality.warnings);
+      }
 
       // Extract display metadata
       const gradeLevel = wizard.gradeLevel || 'K-12';
@@ -565,11 +584,23 @@ export function ChatMVP({
                           captured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
                           'Untitled Project';
 
+      // Show preview before final save
+      engine.appendMessage({
+        id: String(Date.now() + 5),
+        role: 'assistant',
+        content: `📋 **Project Preview**\n\n**Title:** ${projectTitle}\n\n**Tagline:** ${tagline}\n\n**Description:**\n${description}\n\n---\n\n✅ **Quality Check:** ${quality.wordCount} words ${quality.isValid ? '(looks great!)' : '(has minor issues)'}\n\nSaving your project now...`,
+        timestamp: new Date()
+      } as any);
+
+      // Small delay so user can see preview
+      await new Promise(resolve => setTimeout(resolve, 800));
+
       // Build complete project structure
       const completeProject = {
         id: projectId,
         title: projectTitle,
         description,
+        tagline, // ← NEW: Store tagline
 
         // Display metadata
         gradeLevel,
@@ -615,6 +646,14 @@ export function ChatMVP({
       // Save complete project
       await unifiedStorage.saveProject(completeProject);
 
+      console.log('[ChatMVP] Project saved successfully:', {
+        projectId,
+        title: projectTitle,
+        descriptionLength: description.length,
+        taglineLength: tagline.length,
+        qualityCheck: quality
+      });
+
       // Show completion message with celebration
       engine.appendMessage({
         id: String(Date.now() + 10),
@@ -622,8 +661,6 @@ export function ChatMVP({
         content: `🎉 **Project Complete!**\n\nYour PBL project **"${projectTitle}"** is ready!\n\nI've structured everything you need:\n• **${captured.journey?.phases?.length || 0} learning phases** with clear progressions\n• **${captured.deliverables?.milestones?.length || 0} milestones** to track student progress\n• **${captured.deliverables?.artifacts?.length || 0} artifacts** for authentic assessment\n• **Professional rubric** with ${captured.deliverables?.rubric?.criteria?.length || 0} quality criteria\n\n**Next Steps:**\n→ View your complete project on the Dashboard\n→ Export as PDF for planning\n→ Share with your team for feedback\n\nGreat work bringing this vision to life! Your students will love this experience.`,
         timestamp: new Date()
       } as any);
-
-      console.log('[ChatMVP] Project completed successfully', { projectId, title: projectTitle });
 
     } catch (error) {
       console.error('[ChatMVP] Project completion failed', error);
