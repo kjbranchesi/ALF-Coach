@@ -109,18 +109,18 @@ export function WorkingDraftSidebar({
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur border-r border-gray-200/60 dark:border-gray-700/60">
+    <div className="sticky top-0 h-screen flex flex-col bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur border-r border-gray-200/60 dark:border-gray-700/60">
       {/* Header */}
-      <div className="px-4 py-4 border-b border-gray-200/60 dark:border-gray-700/60">
-        <h3 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      <div className="px-3 py-3 border-b border-gray-200/60 dark:border-gray-700/60">
+        <h3 className="text-[12px] font-semibold text-gray-900 dark:text-gray-100 mb-1.5">
           Working Draft
         </h3>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-gray-600 dark:text-gray-400">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[10px] text-gray-600 dark:text-gray-400">
             <span>{completedCount} of {items.length} complete</span>
             <span className="font-medium">{progressPercent}%</span>
           </div>
-          <div className="h-1.5 rounded-full bg-gray-200 dark:bg-gray-800">
+          <div className="h-1 rounded-full bg-gray-200 dark:bg-gray-800">
             <div
               className="h-full rounded-full bg-primary-500 transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
@@ -130,7 +130,7 @@ export function WorkingDraftSidebar({
       </div>
 
       {/* Draft Items */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+      <div className="flex-1 overflow-y-auto px-2.5 py-2.5 space-y-2">
         {items.map((item) => {
           const isCurrent = item.stage === currentStage;
           const isClickable = onEditStage && item.status !== 'empty';
@@ -144,7 +144,7 @@ export function WorkingDraftSidebar({
               onClick={() => isClickable && onEditStage(item.stage)}
               disabled={!isClickable}
               className={`
-                w-full text-left squircle-card border p-3 transition-all duration-200
+                w-full text-left rounded-xl border p-2 transition-all duration-200 text-[11px]
                 ${isCurrent
                   ? 'border-primary-300/60 bg-primary-50/90 dark:border-primary-700/60 dark:bg-primary-900/30 shadow-sm'
                   : item.status === 'complete'
@@ -153,7 +153,7 @@ export function WorkingDraftSidebar({
                   ? 'border-amber-200/50 bg-white/80 dark:border-amber-800/50 dark:bg-gray-800/60'
                   : 'border-gray-200/40 bg-white/60 dark:border-gray-700/40 dark:bg-gray-800/40'
                 }
-                ${isClickable ? 'hover:scale-[1.02] hover:shadow-md cursor-pointer' : 'cursor-default'}
+                ${isClickable ? 'hover:scale-[1.01] hover:shadow-md cursor-pointer' : 'cursor-default'}
               `}
             >
               <div className="flex items-start gap-2">

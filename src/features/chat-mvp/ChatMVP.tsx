@@ -1461,11 +1461,11 @@ Your project structure is ready!`,
 
       {/* Main Chat Area */}
       <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
-        <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-3 pb-24 sm:px-4 sm:pt-4 sm:pb-28">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-2 pb-20 sm:px-4 sm:pt-2 sm:pb-24">
           {/* Minimal header with stage indicator and consolidated status */}
-          <div className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 pb-2 mb-2 space-y-1.5">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-[11px] font-medium text-gray-700 dark:text-gray-300">
+          <div className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 pb-1.5 mb-1.5 space-y-1">
+            <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-[10px] font-medium text-gray-700 dark:text-gray-300">
                 Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
               </div>
               <div className="flex items-center gap-2">
@@ -1490,7 +1490,7 @@ Your project structure is ready!`,
               onSelectStage={handleEditStage}
             />
           </div>
-          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-2`}>
+          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-1.5`}>
           <StageKickoffPanel
               stage={stage}
               stageIndex={stageIndex}

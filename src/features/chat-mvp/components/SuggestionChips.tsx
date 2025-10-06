@@ -8,7 +8,7 @@ export function SuggestionChips({ items, onSelect }: { items: string[]; onSelect
         <button
           key={i}
           onClick={() => onSelect(t)}
-          className="w-full text-left px-3 py-2 rounded-2xl border border-white/60 dark:border-white/10 bg-white/65 dark:bg-gray-900/35 backdrop-blur-md text-gray-800 dark:text-gray-100 shadow-[0_10px_30px_rgba(15,23,42,0.08)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:bg-white/75 dark:hover:bg-gray-900/45 hover:shadow-[0_14px_36px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_14px_36px_rgba(0,0,0,0.45)] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
+          className="w-full text-left px-3.5 py-2.5 rounded-xl border border-primary-200/60 dark:border-primary-700/50 bg-gradient-to-br from-white/95 via-white/90 to-primary-50/80 dark:from-gray-800/95 dark:via-gray-800/90 dark:to-gray-900/95 backdrop-blur-xl text-gray-900 dark:text-gray-100 text-[13px] font-medium shadow-[0_4px_12px_rgba(59,130,246,0.08),0_2px_4px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.3),0_2px_4px_rgba(0,0,0,0.2)] hover:border-primary-300/80 dark:hover:border-primary-600/60 hover:bg-gradient-to-br hover:from-white hover:to-primary-50 dark:hover:from-gray-800 dark:hover:to-gray-900 hover:shadow-[0_8px_20px_rgba(59,130,246,0.12),0_4px_8px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.4),0_4px_8px_rgba(0,0,0,0.25)] transition-all duration-200 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
           >
           {t}
         </button>

@@ -265,7 +265,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={a}
                       onClick={() => setAgeGroup(a)}
-                      className={`h-12 rounded-full text-[14px] sm:text-[15px] font-medium border inline-flex items-center justify-center transition-all ${
+                      className={`h-12 px-4 rounded-full text-[14px] font-medium border inline-flex items-center justify-center transition-all ${
                         ageGroup === a
                           ? 'bg-primary-50 text-primary-700 border-primary-200 ring-2 ring-primary-200/70 shadow-[0_10px_20px_rgba(59,130,246,0.15)]'
                           : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 hover:shadow-sm'
@@ -285,7 +285,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={d.key}
                       onClick={() => setDuration(d.key)}
-                      className={`h-12 rounded-full text-[15px] font-medium border inline-flex items-center justify-center transition-all ${
+                      className={`h-12 px-4 rounded-full text-[14px] font-medium border inline-flex items-center justify-center transition-all ${
                         duration === d.key
                           ? 'bg-primary-50 text-primary-700 border-primary-200 ring-2 ring-primary-200/70 shadow-[0_10px_20px_rgba(59,130,246,0.15)]'
                           : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 hover:shadow-sm'
