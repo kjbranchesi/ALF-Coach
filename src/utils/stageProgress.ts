@@ -1,4 +1,4 @@
-import type { Stage } from '../components/chat/ProgressSidebar';
+import type { Stage } from '../types/stages';
 import React from 'react';
 import { Lightbulb, Map, Target } from 'lucide-react';
 

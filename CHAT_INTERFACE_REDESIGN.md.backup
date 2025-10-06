@@ -1032,8 +1032,8 @@ const scrollToMessage = (messageId: string) => {
 ### Phase 1: Layout Foundation (Critical) - 3 hours
 
 **Files to modify:**
-1. `src/features/chat-mvp/ChatMVP.tsx`
-2. `src/features/chat-mvp/components/WorkingDraftSidebar.tsx`
+1. `src/components/chat/PBLChatInterface.tsx`
+2. `src/components/chat/ProgressSidebar.tsx`
 3. `src/components/chat/InputArea.tsx`
 
 **Tasks:**
@@ -1093,7 +1093,7 @@ const scrollToMessage = (messageId: string) => {
 ### Phase 4: Stage Navigation (Medium Priority) - 2 hours
 
 **Files to modify:**
-1. `src/features/chat-mvp/ChatMVP.tsx`
+1. `src/components/chat/PBLChatInterface.tsx`
 2. Create new `src/components/chat/CompactStageNav.tsx`
 
 **Tasks:**
@@ -1205,11 +1205,11 @@ const scrollToMessage = (messageId: string) => {
 
 ### Critical Files (Phase 1-2)
 
-1. **`src/features/chat-mvp/ChatMVP.tsx`**
+1. **`src/components/chat/PBLChatInterface.tsx`**
    - Lines: 1-500 (entire component)
    - Changes: Header, layout, z-index
 
-2. **`src/features/chat-mvp/components/WorkingDraftSidebar.tsx`**
+2. **`src/components/chat/ProgressSidebar.tsx`**
    - Lines: 1-200
    - Changes: Fixed positioning, collapse state
 

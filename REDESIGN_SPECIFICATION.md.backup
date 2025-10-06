@@ -73,7 +73,7 @@ z-tooltip: 1070
 
 ### Positioning Strategy
 
-**File: `/src/features/chat-mvp/ChatMVP.tsx`**
+**File: `/src/components/chat/PBLChatInterface.tsx`**
 
 ```tsx
 // Container - Full viewport height
@@ -141,7 +141,7 @@ xl: 1280px  // Large desktop - optimal
 
 **Redesigned Header: 60px total**
 
-**File: `/src/features/chat-mvp/ChatMVP.tsx` (lines 400-434)**
+**File: `/src/components/chat/PBLChatInterface.tsx` (lines 400-434)**
 
 ```tsx
 {/* BEFORE - Remove this entire section */}
@@ -255,7 +255,7 @@ xl: 1280px  // Large desktop - optimal
 
 **Current Issue:** Sidebar scrolls with content, gets cut off
 
-**File: `/src/features/chat-mvp/components/WorkingDraftSidebar.tsx`**
+**File: `/src/components/chat/ProgressSidebar.tsx`**
 
 **Key Changes:**
 1. Make container `position: fixed`
@@ -445,7 +445,7 @@ xl: 1280px  // Large desktop - optimal
 
 ### 3. Chat Message Styling (Reduced Size)
 
-**File: `/src/features/chat-mvp/ChatMVP.tsx` (lines 436-537)**
+**File: `/src/components/chat/PBLChatInterface.tsx` (lines 436-537)**
 
 **Current:** `text-sm` (14px), `px-4 py-3`, `rounded-2xl`
 **New:** `text-[13px]` (13px), `px-3.5 py-2.5`, `rounded-xl`
@@ -505,7 +505,7 @@ xl: 1280px  // Large desktop - optimal
 
 ### 4. Input Area (Consistency)
 
-**File: `/src/features/chat-mvp/ChatMVP.tsx` (lines 539-578)**
+**File: `/src/components/chat/PBLChatInterface.tsx` (lines 539-578)**
 
 ```tsx
 {/* BEFORE */}
@@ -1001,19 +1001,19 @@ const [isCollapsed, setIsCollapsed] = useState(false);
 
 **Priority: Critical**
 
-1. **Fixed Header** - `/src/features/chat-mvp/ChatMVP.tsx`
+1. **Fixed Header** - `/src/components/chat/PBLChatInterface.tsx`
    - Add fixed positioning
    - Reduce height to 60px
    - Implement stage dropdown
    - Test z-index layering
 
-2. **Fixed Sidebar** - `/src/features/chat-mvp/components/WorkingDraftSidebar.tsx`
+2. **Fixed Sidebar** - `/src/components/chat/ProgressSidebar.tsx`
    - Convert to fixed positioning
    - Add proper scrolling
    - Implement collapse/expand
    - Align with input area
 
-3. **Fixed Input Area** - `/src/features/chat-mvp/ChatMVP.tsx`
+3. **Fixed Input Area** - `/src/components/chat/PBLChatInterface.tsx`
    - Make sticky to bottom
    - Ensure proper backdrop blur
    - Test with long suggestion lists
@@ -1313,13 +1313,13 @@ role="listitem"
 
 ### Files to Modify
 
-1. **`/src/features/chat-mvp/ChatMVP.tsx`** (Primary)
+1. **`/src/components/chat/PBLChatInterface.tsx`** (Primary)
    - Lines 248-396: Sidebar section
    - Lines 400-434: Header section
    - Lines 436-537: Messages area
    - Lines 539-578: Input area
 
-2. **`/src/features/chat-mvp/components/WorkingDraftSidebar.tsx`** (Primary)
+2. **`/src/components/chat/ProgressSidebar.tsx`** (Primary)
    - Lines 63-245: Entire component structure
 
 3. **`/src/features/review/ReviewScreen.tsx`** (Secondary)
