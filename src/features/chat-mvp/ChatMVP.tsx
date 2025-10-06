@@ -1648,19 +1648,25 @@ Your project structure is ready!`,
             })()}
             disabled={aiStatus !== 'online'}
             ideasActive={showIdeas}
+            guidance={{
+              what: guide.what,
+              why: guide.why,
+              tip: guide.tip
+            }}
+            stageName={stageDisplayNames[stage]}
           />
         </div>
       </div>
 
-      {/* Floating Guidance FAB - Outside scroll container */}
-      <GuidanceFAB
+      {/* Floating Guidance FAB - Now inline in InputArea */}
+      {/* <GuidanceFAB
         guidance={{
           what: guide.what,
           why: guide.why,
           tip: guide.tip,
         }}
         stageName={stageDisplayNames[stage]}
-      />
+      /> */}
       </div>
     </div>
   );

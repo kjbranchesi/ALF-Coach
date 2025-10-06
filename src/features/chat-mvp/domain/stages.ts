@@ -668,7 +668,19 @@ export function captureStageInput(previous: CapturedData, stage: Stage, content:
       next.ideation.challenge = content.trim();
       break;
     case 'JOURNEY': {
-      const phases = extractPhasesFromText(content);
+      // Check if content is JSON (from accept_all micro-flow) or plain text
+      let phases: Array<{ name: string; activities: string[] }> = [];
+      try {
+        const parsed = JSON.parse(content);
+        if (Array.isArray(parsed)) {
+          phases = parsed;
+        } else {
+          phases = extractPhasesFromText(content);
+        }
+      } catch {
+        // Not JSON, parse as plain text
+        phases = extractPhasesFromText(content);
+      }
       next.journey.phases = phases.length ? phases : next.journey.phases;
       // Also parse resources if teacher listed them in a separate paragraph
       const resourceHint = content.split(/resources?:/i)[1];
