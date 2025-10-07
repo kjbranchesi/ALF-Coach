@@ -410,7 +410,7 @@ export function ReviewScreen() {
   // Combine the data sources based on project type
   const blueprint = isPrebuiltHero ? prebuiltHeroData : firestoreBlueprint;
   const loading = isPrebuiltHero ? false : (firestoreLoading || isLoadingHero);
-  const error = isPrebuiltHero ? null : (firestoreError || heroError);
+  const error = isPrebuiltHero ? null : ((heroData ? null : firestoreError) || heroError);
 
   // Use enhanced hero data if available, otherwise fall back to blueprint
   const displayData = heroData || blueprint;

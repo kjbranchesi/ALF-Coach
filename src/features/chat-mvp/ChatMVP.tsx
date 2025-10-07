@@ -6,13 +6,11 @@ import { useChatEngine } from '../../hooks/useChatEngine';
 import { MessagesList } from '../../components/chat/MessagesList';
 import { InputArea } from '../../components/chat/InputArea';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
-import { StageGuide } from './components/StageGuide';
 import { SuggestionChips } from './components/SuggestionChips';
 import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
-import { ProjectBriefCard } from './components/ProjectBriefCard';
-import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFAB, type SystemStatus, type ResponsiveSidebarControls } from './components/minimal';
+import { ResponsiveSidebar, StatusIndicator, type SystemStatus, type ResponsiveSidebarControls } from './components/minimal';
 import { CompactStageStepper } from './components/CompactStageStepper';
 import { useResponsiveLayout } from './hooks';
 import { trackEvent } from '../../utils/analytics';
@@ -20,7 +18,6 @@ import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { JourneyBoard, type JourneyPhaseDraft } from './components/JourneyBoard';
 import { PhaseEditorDrawer } from './components/PhaseEditorDrawer';
 import { DecisionBar } from './components/DecisionBar';
-import { CoachDrawer, type CoachAction } from './components/CoachDrawer';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -127,9 +124,7 @@ export function ChatMVP({
     return milestones >= 3 && artifacts >= 1 && criteria >= 3;
   }, [captured.deliverables]);
   const [journeyDraft, setJourneyDraft] = useState<JourneyPhaseDraft[]>([]);
-  const [journeySuggested, setJourneySuggested] = useState<JourneyPhaseDraft[]>([]);
   const [journeyEditingPhaseId, setJourneyEditingPhaseId] = useState<string | null>(null);
-  const [journeyDirty, setJourneyDirty] = useState(false);
   const journeyInitializedRef = useRef(false);
 
   const wizard = useMemo(() => {
@@ -179,7 +174,6 @@ export function ChatMVP({
 
   const handleJourneyRename = useCallback((id: string, nextName: string) => {
     setJourneyDraft(prev => prev.map(phase => (phase.id === id ? { ...phase, name: nextName } : phase)));
-    setJourneyDirty(true);
   }, []);
 
   const handleJourneyReorder = useCallback((from: number, to: number) => {
@@ -189,7 +183,6 @@ export function ChatMVP({
       next.splice(to, 0, moved);
       return next;
     });
-    setJourneyDirty(true);
   }, []);
 
   const handleJourneyAddPhase = useCallback(() => {
@@ -203,12 +196,10 @@ export function ChatMVP({
         checkpoint: ''
       }
     ]);
-    setJourneyDirty(true);
   }, []);
 
   const handleJourneyRemovePhase = useCallback((id: string) => {
     setJourneyDraft(prev => prev.filter(phase => phase.id !== id));
-    setJourneyDirty(true);
   }, []);
 
   const handleJourneySelectPhase = useCallback((id: string) => {
@@ -218,7 +209,6 @@ export function ChatMVP({
   const handleJourneySavePhase = useCallback((updated: JourneyPhaseDraft) => {
     setJourneyDraft(prev => prev.map(phase => (phase.id === updated.id ? { ...updated } : phase)));
     setJourneyEditingPhaseId(null);
-    setJourneyDirty(true);
   }, []);
 
   const handleJourneyRegenerate = useCallback(() => {
@@ -227,8 +217,6 @@ export function ChatMVP({
     }
     const drafts = buildSuggestedPhases();
     setJourneyDraft(drafts);
-    setJourneySuggested(drafts);
-    setJourneyDirty(true);
   }, [buildSuggestedPhases]);
 
   const handleJourneyCustomize = useCallback(() => {
@@ -238,51 +226,9 @@ export function ChatMVP({
     }
   }, [journeyDraft]);
 
-  const handleJourneyTrimToFour = useCallback(() => {
-    setJourneyDraft(prev => prev.slice(0, 4));
-    setJourneyDirty(true);
-  }, []);
-
-  const handleJourneyEnsureCheckpoints = useCallback(() => {
-    setJourneyDraft(prev => prev.map((phase, index) => ({
-      ...phase,
-      checkpoint: phase.checkpoint || `Checkpoint: ${phase.name || `Phase ${index + 1}`}`
-    })));
-    setJourneyDirty(true);
-  }, []);
-
   const journeyCanAccept = useMemo(() => (
     journeyDraft.length >= 3 && journeyDraft.every(phase => phase.name.trim().length >= 3)
   ), [journeyDraft]);
-
-  const journeyHasCustomChanges = useMemo(() => {
-    if (journeyDraft.length !== journeySuggested.length) {return true;}
-    return journeyDraft.some((phase, index) => {
-      const suggestion = journeySuggested[index];
-      if (!suggestion) {return true;}
-      if (phase.name !== suggestion.name) {return true;}
-      if ((phase.focus || '') !== (suggestion.focus || '')) {return true;}
-      if ((phase.checkpoint || '') !== (suggestion.checkpoint || '')) {return true;}
-      if (phase.activities.length !== suggestion.activities.length) {return true;}
-      for (let i = 0; i < phase.activities.length; i += 1) {
-        if (phase.activities[i] !== suggestion.activities[i]) {return true;}
-      }
-      return false;
-    });
-  }, [journeyDraft, journeySuggested]);
-
-  const journeyCoachActions = useMemo<CoachAction[]>(() => {
-    if (!journeyV2Enabled || stage !== 'JOURNEY') {return [];} 
-    const actions: CoachAction[] = [];
-    if (journeyDraft.length > 4) {
-      actions.push({ id: 'trim-four', label: 'Trim to four phases', onSelect: handleJourneyTrimToFour });
-    }
-    actions.push({ id: 'ensure-checkpoints', label: 'Draft checkpoints for each phase', onSelect: handleJourneyEnsureCheckpoints });
-    if (journeyHasCustomChanges) {
-      actions.push({ id: 'reset-suggested', label: 'Reset to AI suggested journey', onSelect: handleJourneyRegenerate });
-    }
-    return actions;
-  }, [journeyV2Enabled, stage, journeyDraft.length, handleJourneyTrimToFour, handleJourneyEnsureCheckpoints, journeyHasCustomChanges, handleJourneyRegenerate]);
 
   const editingPhase = useMemo(() => journeyDraft.find(phase => phase.id === journeyEditingPhaseId) || null, [journeyDraft, journeyEditingPhaseId]);
   const updateDeliverablesChips = useCallback((state: DeliverablesMicroState | null) => {
@@ -314,8 +260,6 @@ export function ChatMVP({
     setCaptured(updatedCaptured);
 
     setJourneyDraft(normalized);
-    setJourneySuggested(normalized);
-    setJourneyDirty(false);
     setJourneyEditingPhaseId(null);
     setJourneyReceipt({ phaseCount: normalized.length, timestamp: Date.now() });
     trackEvent('journey_accept', { phaseCount: normalized.length });
@@ -359,19 +303,14 @@ export function ChatMVP({
           if (captured.journey.phases.length) {
             const drafts = captured.journey.phases.map((phase, index) => normalizePhaseDraft(phase, index));
             setJourneyDraft(drafts);
-            setJourneySuggested(drafts);
-            setJourneyDirty(false);
           } else {
             const drafts = buildSuggestedPhases();
             setJourneyDraft(drafts);
-            setJourneySuggested(drafts);
-            setJourneyDirty(false);
           }
         }
       } else {
         journeyInitializedRef.current = false;
         setJourneyEditingPhaseId(null);
-        setJourneyDirty(false);
       }
     }
   }, [journeyV2Enabled, stage, captured.journey.phases, buildSuggestedPhases, normalizePhaseDraft]);
@@ -403,12 +342,6 @@ export function ChatMVP({
     const timeout = setTimeout(() => setDeliverablesReceipt(null), 8000);
     return () => clearTimeout(timeout);
   }, [deliverablesReceipt]);
-
-  useEffect(() => {
-    if (projectStatus === 'ready' && completionState === 'idle') {
-      setCompletionState('ready');
-    }
-  }, [projectStatus, completionState]);
 
   useEffect(() => {
     if (showIntro) {
@@ -783,11 +716,13 @@ export function ChatMVP({
     }
   }, [aiStatus, engine, stage, captured, wizard, guide, latestAssistantId]);
 
-  const handleProjectCompletion = useCallback(async () => {
+  const handleProjectCompletion = useCallback(async (capturedSnapshot?: CapturedData) => {
     if (!projectId) {
       console.error('[ChatMVP] Cannot complete project without projectId');
       return;
     }
+
+    const finalCaptured = capturedSnapshot ?? captured;
 
     try {
       setCompletionState('processing');
@@ -801,8 +736,8 @@ export function ChatMVP({
 
       // Generate professional course description and tagline in parallel
       const [description, tagline] = await Promise.all([
-        generateCourseDescription(captured, wizard),
-        generateTagline(captured, wizard)
+        generateCourseDescription(finalCaptured, wizard),
+        generateTagline(finalCaptured, wizard)
       ]);
 
       // Verify description quality
@@ -816,12 +751,12 @@ export function ChatMVP({
       // Build complete project title
       const existingProject = await unifiedStorage.loadProject(projectId);
       const projectTitle = existingProject?.title ||
-                          captured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
+                          finalCaptured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
                           'Untitled Project';
 
       // Generate complete showcase structure with assignments
       console.log('[ChatMVP] Generating complete project showcase...');
-      const showcase = await generateProjectShowcase(captured, wizard, {
+      const showcase = await generateProjectShowcase(finalCaptured, wizard, {
         projectId,
         title: projectTitle,
         tagline,
@@ -876,20 +811,20 @@ export function ChatMVP({
 
         // From captured data (full structure)
         capturedData: {
-          ideation: captured.ideation,
-          journey: captured.journey,
-          deliverables: captured.deliverables
+          ideation: finalCaptured.ideation,
+          journey: finalCaptured.journey,
+          deliverables: finalCaptured.deliverables
         },
 
         // Also store in legacy format for compatibility
-        ideation: captured.ideation,
-        journey: captured.journey,
-        deliverables: captured.deliverables,
+        ideation: finalCaptured.ideation,
+        journey: finalCaptured.journey,
+        deliverables: finalCaptured.deliverables,
 
         // Project metadata
-        bigIdea: captured.ideation?.bigIdea,
-        essentialQuestion: captured.ideation?.essentialQuestion,
-        challenge: captured.ideation?.challenge,
+        bigIdea: finalCaptured.ideation?.bigIdea,
+        essentialQuestion: finalCaptured.ideation?.essentialQuestion,
+        challenge: finalCaptured.ideation?.challenge,
 
         // Completion metadata
         status: 'ready' as const,
@@ -927,7 +862,7 @@ export function ChatMVP({
       engine.appendMessage({
         id: String(Date.now() + 10),
         role: 'assistant',
-        content: `**Project Complete**\n\nYour PBL project "${projectTitle}" is ready.\n\n**What's included:**\n- ${showcase.assignments.length} detailed assignments with student directions and teacher setup\n- ${showcase.runOfShow.length} weeks of lesson plans with checkpoints and deliverables\n- Complete materials list and assessment rubric\n- ${captured.journey?.phases?.length || 0} learning phases with clear progressions\n- ${captured.deliverables?.milestones?.length || 0} milestones and ${captured.deliverables?.artifacts?.length || 0} authentic artifacts\n\n**Next steps:**\n- Review Project - View your professional showcase with all assignments and materials\n- Dashboard - Access and manage all your projects\n- The project is now available on your dashboard as a completed project\n\nYour project is ready to implement with your students.`,
+        content: `**Project Complete**\n\nYour PBL project "${projectTitle}" is ready.\n\n**What's included:**\n- ${showcase.assignments.length} detailed assignments with student directions and teacher setup\n- ${showcase.runOfShow.length} weeks of lesson plans with checkpoints and deliverables\n- Complete materials list and assessment rubric\n- ${finalCaptured.journey?.phases?.length || 0} learning phases with clear progressions\n- ${finalCaptured.deliverables?.milestones?.length || 0} milestones and ${finalCaptured.deliverables?.artifacts?.length || 0} authentic artifacts\n\n**Next steps:**\n- Review Project - View your professional showcase with all assignments and materials\n- Dashboard - Access and manage all your projects\n- The project is now available on your dashboard as a completed project\n\nYour project is ready to implement with your students.`,
         timestamp: new Date()
       } as any);
 
@@ -952,6 +887,9 @@ export function ChatMVP({
 
     // Clear action chips
     updateDeliverablesChips(null);
+    if (targetStage !== 'DELIVERABLES') {
+      setCompletionState('idle');
+    }
 
     // Navigate to the stage
     trackEvent('stage_jump', { fromStage: stage, toStage: targetStage, gradeBand: gradeBandLabel });
@@ -1041,7 +979,7 @@ Your project structure is ready!`,
         if (previousStatus !== 'ready' && newStatus === 'ready') {
           setMode('validating');
           setFocus('overview');
-          await handleProjectCompletion();
+          await handleProjectCompletion(updatedCaptured);
         }
         return true;
       }
@@ -1061,6 +999,7 @@ Your project structure is ready!`,
       }
 
       case 'regenerate': {
+        setCompletionState('idle');
         const microState = initDeliverablesMicroFlow(captured, wizard);
         setDeliverablesMicroState(microState);
         updateDeliverablesChips(microState);
@@ -1101,6 +1040,7 @@ Your project structure is ready!`,
   }, [deliverablesMicroState, processDeliverablesResult]);
 
   const handleDeliverablesRename = useCallback((section: 'milestones' | 'artifacts' | 'criteria', index: number, text: string) => {
+    setCompletionState('idle');
     setDeliverablesMicroState(prev => {
       if (!prev) {return prev;}
       const clone = { ...prev };
@@ -1124,7 +1064,8 @@ Your project structure is ready!`,
 
   const handleDeliverablesReorder = useCallback((section: 'milestones' | 'artifacts' | 'criteria', from: number, to: number) => {
     if (from === to) {return;}
-      setDeliverablesMicroState(prev => {
+    setCompletionState('idle');
+    setDeliverablesMicroState(prev => {
         if (!prev) {return prev;}
         const clone = { ...prev };
         const reorder = <T,>(arr: T[]) => {
@@ -1144,9 +1085,9 @@ Your project structure is ready!`,
           clone.suggestedCriteria = reorder(clone.suggestedCriteria);
           clone.workingCriteria = clone.workingCriteria.length ? reorder(clone.workingCriteria) : clone.workingCriteria;
         }
-        updateDeliverablesChips(clone);
-        return clone;
-      });
+      updateDeliverablesChips(clone);
+      return clone;
+    });
   }, [updateDeliverablesChips]);
 
   const handleSend = useCallback(async (text?: string) => {
@@ -1547,7 +1488,7 @@ Your project structure is ready!`,
 
       } else if (stage === 'DELIVERABLES' && previousStatus !== 'ready' && newStatus === 'ready') {
         // Project is complete - trigger completion flow
-        await handleProjectCompletion();
+        await handleProjectCompletion(updatedCaptured);
       }
     }
   }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName, deliverablesMicroState, deliverablesComplete, journeyV2Enabled]);
@@ -1567,7 +1508,7 @@ Your project structure is ready!`,
       <div className="flex-1 flex flex-col min-w-0 h-full">
         <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-2 pb-20 sm:px-4 sm:pt-2 sm:pb-24">
           {/* Minimal header with stage indicator and consolidated status */}
-          <div className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 pb-1.5 mb-1.5 space-y-1">
+          <div className="bg-gray-50 dark:bg-gray-900 pb-1.5 mb-1.5 space-y-1">
             <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-[10px] font-medium text-gray-700 dark:text-gray-300">
                 Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
@@ -1594,7 +1535,7 @@ Your project structure is ready!`,
               onSelectStage={handleEditStage}
             />
           </div>
-          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-1.5`}>
+          <div className="mb-1.5">
           <StageKickoffPanel
               stage={stage}
               stageIndex={stageIndex}
@@ -1684,6 +1625,7 @@ Your project structure is ready!`,
                     { label: 'Customize phase', onClick: handleJourneyCustomize },
                     { label: 'Regenerate', onClick: handleJourneyRegenerate, tone: 'danger' }
                   ]}
+                  sticky={false}
                 />
               </>
             ) : null}
@@ -1712,6 +1654,7 @@ Your project structure is ready!`,
                   { label: 'Customize artifacts', onClick: () => { void handleDeliverablesQuickCommand('customize artifacts'); } },
                   { label: 'Regenerate', onClick: () => { void handleDeliverablesQuickCommand('regenerate'); }, tone: 'danger' }
                 ]}
+                sticky={false}
               />
             ) : null}
             {journeyReceipt && (
@@ -1728,9 +1671,6 @@ Your project structure is ready!`,
             )}
           </div>
         </div>
-        {journeyV2Enabled && stage === 'JOURNEY' ? (
-          <CoachDrawer actions={journeyCoachActions} />
-        ) : null}
         <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2 sm:px-4 sm:pb-5 sm:pt-3 border-t border-gray-200/50 dark:border-gray-800/50 shadow-lg shadow-black/10 dark:shadow-black/30">
           <div className="relative w-full">
             {projectId && projectStatus === 'ready' && (
