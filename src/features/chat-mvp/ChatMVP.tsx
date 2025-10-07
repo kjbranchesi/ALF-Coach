@@ -1522,7 +1522,7 @@ Your project structure is ready!`,
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
-        <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-2 pb-20 sm:px-4 sm:pt-2 sm:pb-24">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-2 pb-4 sm:px-4 sm:pt-2 sm:pb-4">
           {/* Minimal header with stage indicator and consolidated status */}
           <div className="bg-gray-50 dark:bg-gray-900 pb-1.5 mb-1.5 space-y-1">
             <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
@@ -1687,7 +1687,7 @@ Your project structure is ready!`,
             )}
           </div>
         </div>
-        <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2 sm:px-4 sm:pb-5 sm:pt-3 border-t border-gray-200/50 dark:border-gray-800/50 shadow-lg shadow-black/10 dark:shadow-black/30">
+        <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 sm:px-4 sm:pb-3 sm:pt-2 border-t border-gray-200/50 dark:border-gray-800/50 shadow-lg shadow-black/10 dark:shadow-black/30">
           <div className="relative w-full">
             {projectId && projectStatus === 'ready' && (
               <div className="mb-3 space-y-2">

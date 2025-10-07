@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Lightbulb, Send, HelpCircle, X } from 'lucide-react';
 
 interface GuidanceContent {
@@ -145,18 +146,27 @@ export const InputArea: React.FC<InputAreaProps> = ({
       </div>
       </div>
 
-      {/* Inline Guidance Modal */}
-      {showHelp && hasGuidance && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm" onClick={() => setShowHelp(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+      {/* Guidance Modal - Rendered via Portal to escape sticky container */}
+      {showHelp && hasGuidance && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setShowHelp(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="guidance-modal-title"
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 id="guidance-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {stageName || 'Guidance'}
               </h3>
               <button
                 onClick={() => setShowHelp(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
-                aria-label="Close"
+                aria-label="Close guidance"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -188,7 +198,8 @@ export const InputArea: React.FC<InputAreaProps> = ({
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
