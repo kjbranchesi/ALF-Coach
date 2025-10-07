@@ -361,6 +361,7 @@ export function ReviewScreen() {
   const [heroData, setHeroData] = useState<EnhancedHeroProjectData | null>(null);
   const [isLoadingHero, setIsLoadingHero] = useState(true);
   const [heroError, setHeroError] = useState<Error | null>(null);
+  const [rawProjectData, setRawProjectData] = useState<any>(null);
 
   // For pre-built hero projects, we need to get the sample data directly
   const isPrebuiltHero = id?.startsWith('hero-');
@@ -388,28 +389,56 @@ export function ReviewScreen() {
         setIsLoadingHero(true);
         setHeroError(null);
 
-        console.log(`[ReviewScreen] =========== LOADING HERO DATA ===========`);
+        console.log(`[ReviewScreen] =========== LOADING PROJECT DATA ===========`);
         console.log(`[ReviewScreen] Project ID: ${id}`);
+
+        // EMERGENCY FIX: Load raw project data directly from localStorage
+        const rawKey = `alf_project_${id}`;
+        const rawData = localStorage.getItem(rawKey);
+        console.log(`[ReviewScreen] Raw localStorage data exists:`, !!rawData);
+
+        if (rawData) {
+          try {
+            const parsed = JSON.parse(rawData);
+            console.log(`[ReviewScreen] Raw project data loaded:`, {
+              hasShowcase: !!parsed.showcase,
+              hasWizardData: !!parsed.wizardData,
+              hasCapturedData: !!parsed.capturedData,
+              status: parsed.status,
+              stage: parsed.stage,
+              keys: Object.keys(parsed)
+            });
+            setRawProjectData(parsed);
+          } catch (parseError) {
+            console.error(`[ReviewScreen] Failed to parse raw data:`, parseError);
+          }
+        }
+
         console.log(`[ReviewScreen] LocalStorage keys:`, Object.keys(localStorage).filter(k => k.includes(id)));
 
-        const enhanced = await unifiedStorage.loadHeroProject(id);
+        // Try hero transformation (but don't fail if it doesn't work)
+        try {
+          const enhanced = await unifiedStorage.loadHeroProject(id);
 
-        console.log(`[ReviewScreen] Hero data loaded:`, {
-          exists: !!enhanced,
-          keys: enhanced ? Object.keys(enhanced) : [],
-          hasShowcase: !!(enhanced as any)?.showcase,
-          transformationMeta: (enhanced as any)?.transformationMeta
-        });
+          console.log(`[ReviewScreen] Hero data loaded:`, {
+            exists: !!enhanced,
+            keys: enhanced ? Object.keys(enhanced) : [],
+            hasShowcase: !!(enhanced as any)?.showcase,
+            transformationMeta: (enhanced as any)?.transformationMeta
+          });
 
-        if (enhanced) {
-          setHeroData(enhanced);
-          console.log(`[ReviewScreen] ✅ Hero data loaded successfully: ${id}`);
-        } else {
-          console.warn(`[ReviewScreen] ⚠️ No hero data returned for: ${id}`);
-          console.warn(`[ReviewScreen] Will attempt Firestore fallback...`);
+          if (enhanced) {
+            setHeroData(enhanced);
+            console.log(`[ReviewScreen] ✅ Hero data loaded successfully: ${id}`);
+          } else {
+            console.warn(`[ReviewScreen] ⚠️ No hero data returned, using raw project data`);
+          }
+        } catch (heroErr) {
+          console.warn(`[ReviewScreen] Hero transformation failed, using raw data:`, heroErr);
         }
+
       } catch (error) {
-        console.error(`[ReviewScreen] ❌ Hero data load failed:`, error);
+        console.error(`[ReviewScreen] ❌ Project load failed:`, error);
         console.error(`[ReviewScreen] Error details:`, {
           message: (error as Error).message,
           stack: (error as Error).stack
@@ -417,7 +446,7 @@ export function ReviewScreen() {
         setHeroError(error as Error);
       } finally {
         setIsLoadingHero(false);
-        console.log(`[ReviewScreen] =========== HERO LOAD COMPLETE ===========`);
+        console.log(`[ReviewScreen] =========== LOAD COMPLETE ===========`);
       }
     };
 
@@ -428,14 +457,13 @@ export function ReviewScreen() {
   const blueprint = isPrebuiltHero ? prebuiltHeroData : firestoreBlueprint;
   const loading = isPrebuiltHero ? false : (firestoreLoading || isLoadingHero);
 
-  // CRITICAL FIX: Only show error if we have NEITHER hero data NOR Firestore data
-  // For chat MVP projects, heroData is the primary source (from localStorage)
-  // Firestore is just a backup/fallback
-  const hasAnyData = heroData || blueprint;
+  // EMERGENCY FIX: Accept ANY data source
+  // Priority: heroData > rawProjectData > blueprint (Firestore)
+  const hasAnyData = heroData || rawProjectData || blueprint;
   const error = isPrebuiltHero ? null : (hasAnyData ? null : (heroError || firestoreError));
 
-  // Use enhanced hero data if available, otherwise fall back to blueprint
-  const displayData = heroData || blueprint;
+  // Use best available data source
+  const displayData = heroData || rawProjectData || blueprint;
   const persistedShowcase = useMemo(() => {
     const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const blueprintShowcase = (blueprint as unknown as { showcase?: ProjectShowcaseV2; projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.showcase;
