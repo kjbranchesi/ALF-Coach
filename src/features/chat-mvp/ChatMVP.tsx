@@ -16,7 +16,6 @@ import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFA
 import { CompactStageStepper } from './components/CompactStageStepper';
 import { useResponsiveLayout } from './hooks';
 import { trackEvent } from '../../utils/analytics';
-import { JourneyPreviewCard } from './components/JourneyPreviewCard';
 import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { JourneyBoard, type JourneyPhaseDraft } from './components/JourneyBoard';
 import { PhaseEditorDrawer } from './components/PhaseEditorDrawer';
@@ -45,15 +44,7 @@ import {
 import { assessStageInput } from './domain/inputQuality';
 import { detectIntent, getImmediateAcknowledgment, extractFromConversationalWrapper, type UserIntent } from './domain/intentDetection';
 import { suggestionTracker } from './domain/suggestionTracking';
-import {
-  initJourneyMicroFlow,
-  formatJourneySuggestion,
-  handleJourneyChoice,
-  detectPhaseReference,
-  getJourneyActionChips,
-  generateSmartJourney,
-  type JourneyMicroState
-} from './domain/journeyMicroFlow';
+import { generateSmartJourney } from './domain/journeyMicroFlow';
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
@@ -110,7 +101,6 @@ export function ChatMVP({
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [showWorkingDraft, setShowWorkingDraft] = useState(true); // Working Draft sidebar visibility
   const [conversationHistory, setConversationHistory] = useState<string[]>([]); // Last 5 user inputs for context
-  const [journeyMicroState, setJourneyMicroState] = useState<JourneyMicroState | null>(null);
   const [deliverablesMicroState, setDeliverablesMicroState] = useState<DeliverablesMicroState | null>(null);
   const [microFlowActionChips, setMicroFlowActionChips] = useState<string[]>([]); // Action chips for micro-flows
   const [mode, setMode] = useState<'drafting' | 'refining' | 'validating'>('drafting');
@@ -295,21 +285,40 @@ export function ChatMVP({
       return;
     }
 
-    setCaptured(prev => ({
-      ...prev,
+    const updatedCaptured: CapturedData = {
+      ...captured,
       journey: {
-        ...prev.journey,
+        ...captured.journey,
         phases: normalized
       }
-    }));
+    };
+    setCaptured(updatedCaptured);
 
     setJourneyDraft(normalized);
     setJourneySuggested(normalized);
     setJourneyDirty(false);
     setJourneyEditingPhaseId(null);
-    setJourneyMicroState(null);
     setJourneyReceipt({ phaseCount: normalized.length, timestamp: Date.now() });
     trackEvent('journey_accept', { phaseCount: normalized.length });
+
+    const transition = transitionMessageFor('JOURNEY', updatedCaptured, wizard);
+    const deliverablesState = initDeliverablesMicroFlow(updatedCaptured, wizard);
+    setDeliverablesMicroState(deliverablesState);
+    setMicroFlowActionChips(getDeliverablesActionChips(deliverablesState));
+
+    let completionMessage = 'Great! Your learning journey is captured.';
+    if (transition) {
+      completionMessage = `${completionMessage}\n\n${transition}`;
+    }
+    const deliverablesMessage = formatDeliverablesSuggestion(deliverablesState);
+    completionMessage = `${completionMessage}\n\n${deliverablesMessage}`;
+
+    engine.appendMessage({
+      id: String(Date.now() + 5),
+      role: 'assistant',
+      content: completionMessage,
+      timestamp: new Date()
+    } as any);
 
     setStage('DELIVERABLES');
     setStageTurns(0);
@@ -317,7 +326,7 @@ export function ChatMVP({
     setMode('drafting');
     setFocus('deliverables');
     setShowKickoffPanel(false);
-  }, [journeyDraft, normalizePhaseDraft, setCaptured, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel]);
+  }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel]);
 
   useEffect(() => {
     if (journeyV2Enabled) {
@@ -1169,10 +1178,13 @@ Your project structure is ready!`,
   }, [captured, engine, handleProjectCompletion, wizard, stage]);
 
   const handleJourneyQuickCommand = useCallback(async (command: string) => {
+    if (journeyV2Enabled) {
+      return;
+    }
     if (!journeyMicroState) {return;}
     const result = handleJourneyChoice(journeyMicroState, command);
     await processJourneyResult(journeyMicroState, result);
-  }, [journeyMicroState, processJourneyResult]);
+  }, [journeyV2Enabled, journeyMicroState, processJourneyResult]);
 
   const handleDeliverablesQuickCommand = useCallback(async (command: string) => {
     if (!deliverablesMicroState) {return;}

@@ -68,32 +68,34 @@ export default function SamplesGallery() {
 
     const isStem = Array.from(exact).some(isStemExact);
     const out = new Set(list);
-    if (isStem) out.add('STEM');
+    if (isStem) {
+      out.add('STEM');
+    }
     return Array.from(out);
   };
 
   const subjects = useMemo(() => {
     const set = new Set<string>();
-    allProjects.forEach(p => expandSubjects(p.subjects).forEach(s => set.add(s)));
+    allProjects.forEach(project => {
+      expandSubjects(project.subjects).forEach(subjectEntry => {
+        set.add(subjectEntry);
+      });
+    });
     return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
   }, [allProjects]);
 
   const projects = useMemo(() => {
-    return allProjects.filter(p => {
-      if (band !== 'All' && p.gradeBand !== band) return false;
-      if (subject === 'All') return true;
-      const expanded = expandSubjects(p.subjects);
+    return allProjects.filter(project => {
+      if (band !== 'All' && project.gradeBand !== band) {
+        return false;
+      }
+      if (subject === 'All') {
+        return true;
+      }
+      const expanded = expandSubjects(project.subjects);
       return expanded.includes(subject);
     });
   }, [allProjects, band, subject]);
-
-  const truncate = (text: string, max = 180): string => {
-    if (!text) return text;
-    if (text.length <= max) return text;
-    const slice = text.slice(0, max);
-    const lastBreak = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf(' '));
-    return (lastBreak > 60 ? slice.slice(0, lastBreak) : slice).trimEnd() + '…';
-  };
 
   return (
     <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
@@ -129,14 +131,32 @@ export default function SamplesGallery() {
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
               <label htmlFor="band" className="text-sm text-slate-600 dark:text-slate-300">Grade band</label>
-              <select id="band" className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value={band} onChange={(e) => setBand(e.target.value as any)}>
-                {['All','ES','MS','HS'].map(v => <option key={v} value={v}>{v}</option>)}
+              <select
+                id="band"
+                className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"
+                value={band}
+                onChange={(event) => setBand(event.target.value as 'All' | 'ES' | 'MS' | 'HS')}
+              >
+                {['All', 'ES', 'MS', 'HS'].map(value => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex items-center gap-2">
               <label htmlFor="subject" className="text-sm text-slate-600 dark:text-slate-300">Subject</label>
-              <select id="subject" className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value={subject} onChange={(e) => setSubject(e.target.value)}>
-                {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+              <select
+                id="subject"
+                className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"
+                value={subject}
+                onChange={(event) => setSubject(event.target.value)}
+              >
+                {subjects.map(subjectOption => (
+                  <option key={subjectOption} value={subjectOption}>
+                    {subjectOption}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -153,11 +173,9 @@ export default function SamplesGallery() {
                 const canShowImage = typeof project.image === 'string' && project.image.length > 0;
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
-
-                // Hover reveals COMPLETELY different info
-                const whatStudentsCreate = project.coreOutcomes[0] || '';
-                const whoTheyPresentTo = project.primaryAudience;
-                const projectSummary = project.microOverview[0] || project.tagline;
+                const projectSummary = project.microOverview?.[0] || project.tagline || '';
+                const deliverableSummary = project.coreOutcomes?.[0] || '';
+                const audienceSummary = project.primaryAudience || 'Authentic audience';
 
                 return (
                 <article
@@ -220,14 +238,14 @@ export default function SamplesGallery() {
                             Students Present To
                           </div>
                           <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">
-                            {whoTheyPresentTo}
+                            {audienceSummary}
                           </div>
                         </div>
                       </div>
 
-                      {whatStudentsCreate && (
+                      {deliverableSummary && (
                         <div className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                          {whatStudentsCreate}
+                          {deliverableSummary}
                         </div>
                       )}
                     </div>
@@ -237,7 +255,9 @@ export default function SamplesGallery() {
                       <button
                         type="button"
                         className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
-                        onClick={() => navigate(`/app/showcase/${project.id}`)}
+                        onClick={() => {
+                          navigate(`/app/showcase/${project.id}`);
+                        }}
                       >
                         <span>View project</span>
                         <svg

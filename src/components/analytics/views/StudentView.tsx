@@ -12,7 +12,7 @@
  * - Community connection: Shows relationships and validation
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { type DashboardData } from '../ALFAnalyticsDashboard';
 import { LearningProgressionSpiral } from '../visualizations/LearningProgressionSpiral';
 import { CompetencyConstellation } from '../visualizations/CompetencyConstellation';
@@ -26,20 +26,32 @@ import { CelebrationModal } from '../components/CelebrationModal';
 import { QuickActionPanel } from '../components/QuickActionPanel';
 import { InsightCard } from '../components/InsightCard';
 
+type PortfolioFilters = {
+  evidenceType?: string;
+  minimumAuthenticity?: number;
+};
+
+type PortfolioEvidence = {
+  id: string;
+  type?: string;
+  authenticityScore?: number;
+  [key: string]: unknown;
+};
+
 interface StudentViewProps {
   data: DashboardData;
   studentId: string;
   timeRange: string;
   onTimeRangeChange: (range: string) => void;
-  filters: any;
-  onFiltersChange: (filters: any) => void;
+  filters: PortfolioFilters;
+  onFiltersChange: (filters: PortfolioFilters) => void;
   celebrationMode: boolean;
   onCelebrationClose: () => void;
 }
 
 export const StudentView: React.FC<StudentViewProps> = ({
   data,
-  studentId,
+  studentId: _studentId,
   timeRange,
   onTimeRangeChange,
   filters,
@@ -49,13 +61,15 @@ export const StudentView: React.FC<StudentViewProps> = ({
 }) => {
   const [activeView, setActiveView] = useState<'overview' | 'journey' | 'goals' | 'community' | 'portfolio'>('overview');
   const [selectedVisualization, setSelectedVisualization] = useState<string>('spiral');
-  const [goalSettingMode, setGoalSettingMode] = useState(false);
-  const [insightsExpanded, setInsightsExpanded] = useState(true);
 
   // Generate personalized insights
   const personalInsights = generatePersonalInsights(data);
   const growthHighlights = generateGrowthHighlights(data);
   const opportunities = generateOpportunities(data);
+
+  const handleGoalSetting = useCallback(() => {
+    // Placeholder for future goal-setting modal integration
+  }, []);
 
   return (
     <div className="student-dashboard-view">
@@ -177,7 +191,7 @@ export const StudentView: React.FC<StudentViewProps> = ({
         {activeView === 'goals' && (
           <GoalsSection 
             data={data}
-            onGoalSetting={() => setGoalSettingMode(true)}
+            onGoalSetting={handleGoalSetting}
           />
         )}
 
@@ -201,7 +215,7 @@ export const StudentView: React.FC<StudentViewProps> = ({
       <aside className="quick-actions-sidebar">
         <QuickActionPanel 
           data={data}
-          onGoalSet={() => setGoalSettingMode(true)}
+          onGoalSet={handleGoalSetting}
           onExploreOpportunity={(opportunity) => console.log('Explore:', opportunity)}
           onCelebrate={() => console.log('Celebrate achievement')}
         />
@@ -468,8 +482,10 @@ const CommunitySection: React.FC<{
       <div className="community-stories">
         <h3>🤝 Community Connections</h3>
         <div className="connections-grid">
-          {data.progression.communityValidation.map((validation, index) => (
-            <div key={index} className="connection-card">
+          {data.progression.communityValidation.map(validation => {
+            const key = `${validation.validatorName}-${validation.organization}-${validation.validatorRole}`;
+            return (
+            <div key={key} className="connection-card">
               <div className="partner-info">
                 <h4>{validation.validatorName}</h4>
                 <p className="organization">{validation.organization}</p>
@@ -490,7 +506,8 @@ const CommunitySection: React.FC<{
                 )}
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
     </div>
@@ -500,8 +517,8 @@ const CommunitySection: React.FC<{
 // Portfolio Section Component
 const PortfolioSection: React.FC<{
   data: DashboardData;
-  filters: any;
-  onFiltersChange: (filters: any) => void;
+  filters: PortfolioFilters;
+  onFiltersChange: (filters: PortfolioFilters) => void;
 }> = ({ data, filters, onFiltersChange }) => {
   return (
     <div className="portfolio-section">
@@ -556,7 +573,7 @@ const PortfolioSection: React.FC<{
       <div className="evidence-grid">
         {data.progression.portfolioEvidence
           .filter(evidence => applyPortfolioFilters(evidence, filters))
-          .map((evidence, index) => (
+          .map((evidence) => (
             <div key={evidence.id} className="evidence-card">
               <div className="evidence-header">
                 <h4>{evidence.title}</h4>
@@ -591,7 +608,7 @@ const PortfolioSection: React.FC<{
 };
 
 // Helper functions
-const generatePersonalInsights = (data: DashboardData): PersonalInsight[] => {
+const generatePersonalInsights = (_data: DashboardData): PersonalInsight[] => {
   return [
     {
       type: 'strength',
@@ -643,7 +660,7 @@ const generateGrowthHighlights = (data: DashboardData): GrowthHighlight[] => {
   ];
 };
 
-const generateOpportunities = (data: DashboardData): LearningOpportunity[] => {
+const generateOpportunities = (_data: DashboardData): LearningOpportunity[] => {
   return [
     {
       title: 'Lead a Community Project',
@@ -668,7 +685,7 @@ const generateOpportunities = (data: DashboardData): LearningOpportunity[] => {
   ];
 };
 
-const generateGoalSuggestions = (data: DashboardData): GoalSuggestion[] => {
+const generateGoalSuggestions = (_data: DashboardData): GoalSuggestion[] => {
   return [
     {
       title: 'Mentor Another Student',
@@ -689,27 +706,26 @@ const generateGoalSuggestions = (data: DashboardData): GoalSuggestion[] => {
 
 const identifyRecentAchievements = (data: DashboardData): Achievement[] => {
   const recent = Date.now() - 7 * 24 * 60 * 60 * 1000; // Last week
-  
-  return [
-    ...data.progression.milestones
-      .filter(m => m.achievedDate && m.achievedDate.getTime() > recent)
-      .map(m => ({
-        type: 'milestone' as const,
-        title: m.title,
-        description: m.description,
-        date: m.achievedDate!,
-        evidence: m.evidenceRequired.map(e => e.description)
-      })),
-    // Add other achievement types...
-  ];
+
+  const recentMilestones = data.progression.milestones.filter((milestone): milestone is typeof milestone & { achievedDate: Date } => {
+    return Boolean(milestone.achievedDate && milestone.achievedDate.getTime() > recent);
+  });
+
+  return recentMilestones.map(milestone => ({
+    type: 'milestone' as const,
+    title: milestone.title,
+    description: milestone.description,
+    date: milestone.achievedDate,
+    evidence: milestone.evidenceRequired.map(evidence => evidence.description)
+  }));
 };
 
-const applyPortfolioFilters = (evidence: any, filters: any): boolean => {
+const applyPortfolioFilters = (evidence: PortfolioEvidence, filters: PortfolioFilters): boolean => {
   if (filters.evidenceType && filters.evidenceType !== 'all' && evidence.type !== filters.evidenceType) {
     return false;
   }
   
-  if (filters.minimumAuthenticity && evidence.authenticityScore < filters.minimumAuthenticity) {
+  if (filters.minimumAuthenticity && (evidence.authenticityScore ?? 0) < filters.minimumAuthenticity) {
     return false;
   }
   
@@ -730,7 +746,7 @@ interface GrowthHighlight {
   icon: string;
   title: string;
   description: string;
-  evidence: any[];
+  evidence: unknown[];
 }
 
 interface LearningOpportunity {
