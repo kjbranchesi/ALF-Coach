@@ -143,7 +143,6 @@ export const InputArea: React.FC<InputAreaProps> = ({
           </div>
         </div>
       </div>
-      </div>
 
       {/* Inline Guidance Modal */}
       {showHelp && hasGuidance && (

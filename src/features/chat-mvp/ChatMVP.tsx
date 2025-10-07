@@ -847,13 +847,29 @@ export function ChatMVP({
       });
 
       // Trigger hero transformation for showcase view
-      try {
-        console.log('[ChatMVP] Triggering hero transformation...');
-        await unifiedStorage.loadHeroProject(projectId);
-        console.log('[ChatMVP] Hero transformation complete');
-      } catch (heroError) {
-        console.warn('[ChatMVP] Hero transformation failed (non-critical):', heroError);
-        // Non-critical - project is still saved and usable
+      // This is CRITICAL for the preview page to work properly
+      console.log('[ChatMVP] Triggering hero transformation...');
+
+      // Add small delay to ensure localStorage write is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const heroResult = await unifiedStorage.loadHeroProject(projectId);
+
+      if (!heroResult) {
+        console.error('[ChatMVP] CRITICAL: Hero transformation failed - preview may not work correctly');
+        // Still continue, but log the error
+        engine.appendMessage({
+          id: String(Date.now() - 1),
+          role: 'assistant',
+          content: '⚠️ **Note:** There was an issue generating the preview. Your project is saved, but you may need to refresh to view the preview.',
+          timestamp: new Date()
+        } as any);
+      } else {
+        console.log('[ChatMVP] Hero transformation complete:', {
+          projectId,
+          hasShowcase: !!heroResult.showcase,
+          dataCompleteness: heroResult.transformationMeta?.dataCompleteness
+        });
       }
 
       setCompletionState('ready');

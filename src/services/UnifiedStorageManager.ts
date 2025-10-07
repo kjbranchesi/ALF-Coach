@@ -477,6 +477,14 @@ export class UnifiedStorageManager {
 
       // Transform to hero format
       console.log(`[UnifiedStorageManager] Transforming project to hero format: ${projectId}`);
+      console.log(`[UnifiedStorageManager] Project data structure:`, {
+        id: originalData.id,
+        title: originalData.title,
+        hasShowcase: !!originalData.showcase,
+        hasWizardData: !!originalData.wizardData,
+        hasCapturedData: !!originalData.capturedData
+      });
+
       const heroTransformer = await this.getHeroTransformer();
       const transformedData = await heroTransformer.transformProject(
         originalData,
@@ -484,12 +492,22 @@ export class UnifiedStorageManager {
         this.options.heroTransformationLevel || 'standard'
       );
 
+      if (!transformedData) {
+        console.error(`[UnifiedStorageManager] Transformation returned null for: ${projectId}`);
+        return null;
+      }
+
       // Save the transformed data for future use
       await this.saveHeroToLocalStorage(projectId, transformedData);
+      console.log(`[UnifiedStorageManager] Hero transformation saved successfully: ${projectId}`);
 
       return transformedData;
-    } catch (error) {
-      console.error(`[UnifiedStorageManager] Hero project load failed: ${error.message}`);
+    } catch (error: any) {
+      console.error(`[UnifiedStorageManager] Hero project load failed:`, {
+        projectId,
+        error: error.message,
+        stack: error.stack
+      });
       return null;
     }
   }
@@ -783,20 +801,44 @@ export class UnifiedStorageManager {
 
       const userId = auth.currentUser.isAnonymous ? 'anonymous' : auth.currentUser.uid;
 
-      await saveProjectDraft(userId, {
+      // Prepare project data with showcase included
+      const projectPayload = data.projectData || {};
+
+      // Include showcase data if it exists (critical for preview functionality)
+      if (data.showcase) {
+        projectPayload.showcase = data.showcase;
+      }
+
+      // Include other top-level fields that should be persisted
+      const enhancedPayload: any = {
         wizardData: data.wizardData,
-        project: data.projectData,
+        project: projectPayload,
         capturedData: data.capturedData
-      }, {
+      };
+
+      await saveProjectDraft(userId, enhancedPayload, {
         draftId: id,
         source: data.source || 'chat',
         metadata: {
           title: data.title,
-          stage: data.stage
+          description: data.description,
+          tagline: data.tagline,
+          stage: data.stage,
+          status: data.status,
+          completedAt: data.completedAt ? data.completedAt.toISOString() : undefined,
+          gradeLevel: data.gradeLevel,
+          subject: data.subject,
+          subjects: data.subjects,
+          duration: data.duration
         }
       });
 
-      console.log(`[UnifiedStorageManager] Background Firebase sync successful: ${id}`);
+      console.log(`[UnifiedStorageManager] Background Firebase sync successful: ${id}`, {
+        hasShowcase: !!data.showcase,
+        hasCapturedData: !!data.capturedData,
+        hasWizardData: !!data.wizardData,
+        status: data.status
+      });
 
       // Update sync status
       data.syncStatus = 'synced';
@@ -839,10 +881,19 @@ export class UnifiedStorageManager {
         this.options.heroTransformationLevel || 'standard'
       );
 
+      if (!heroData) {
+        console.error(`[UnifiedStorageManager] Background transformation returned null for: ${id}`);
+        return;
+      }
+
       await this.saveHeroToLocalStorage(id, heroData);
       console.log(`[UnifiedStorageManager] Background hero transformation complete: ${id}`);
-    } catch (error) {
-      console.error(`[UnifiedStorageManager] Background hero transformation failed: ${error.message}`);
+    } catch (error: any) {
+      console.error(`[UnifiedStorageManager] Background hero transformation failed:`, {
+        id,
+        error: error.message,
+        stack: error.stack
+      });
     }
   }
 
@@ -850,10 +901,29 @@ export class UnifiedStorageManager {
     try {
       const key = `${this.HERO_PREFIX}${id}`;
       const serializedData = JSON.stringify(heroData);
-      localStorage.setItem(key, serializedData);
-      console.log(`[UnifiedStorageManager] Hero data saved: ${id}`);
-    } catch (error) {
-      console.error(`[UnifiedStorageManager] Hero data save failed: ${error.message}`);
+
+      // Check localStorage availability and size
+      try {
+        localStorage.setItem(key, serializedData);
+        console.log(`[UnifiedStorageManager] Hero data saved: ${id} (${(serializedData.length / 1024).toFixed(2)} KB)`);
+      } catch (storageError: any) {
+        // Handle quota exceeded errors
+        if (storageError.name === 'QuotaExceededError') {
+          console.warn(`[UnifiedStorageManager] LocalStorage quota exceeded, cleaning up...`);
+          await this.cleanupOldBackups();
+          // Try again after cleanup
+          localStorage.setItem(key, serializedData);
+          console.log(`[UnifiedStorageManager] Hero data saved after cleanup: ${id}`);
+        } else {
+          throw storageError;
+        }
+      }
+    } catch (error: any) {
+      console.error(`[UnifiedStorageManager] Hero data save failed:`, {
+        id,
+        error: error.message,
+        dataSize: heroData ? JSON.stringify(heroData).length : 0
+      });
       throw error;
     }
   }
