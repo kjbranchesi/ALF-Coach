@@ -378,6 +378,7 @@ export function ReviewScreen() {
   // Load enhanced hero project data for educator projects
   useEffect(() => {
     if (isPrebuiltHero || !id) {
+      console.log('[ReviewScreen] Skipping hero load:', { isPrebuiltHero, hasId: !!id });
       setIsLoadingHero(false);
       return;
     }
@@ -387,20 +388,36 @@ export function ReviewScreen() {
         setIsLoadingHero(true);
         setHeroError(null);
 
-        console.log(`[ReviewScreen] Loading enhanced hero data for: ${id}`);
+        console.log(`[ReviewScreen] =========== LOADING HERO DATA ===========`);
+        console.log(`[ReviewScreen] Project ID: ${id}`);
+        console.log(`[ReviewScreen] LocalStorage keys:`, Object.keys(localStorage).filter(k => k.includes(id)));
+
         const enhanced = await unifiedStorage.loadHeroProject(id);
+
+        console.log(`[ReviewScreen] Hero data loaded:`, {
+          exists: !!enhanced,
+          keys: enhanced ? Object.keys(enhanced) : [],
+          hasShowcase: !!(enhanced as any)?.showcase,
+          transformationMeta: (enhanced as any)?.transformationMeta
+        });
 
         if (enhanced) {
           setHeroData(enhanced);
-          console.log(`[ReviewScreen] Enhanced hero data loaded successfully: ${id}`);
+          console.log(`[ReviewScreen] ✅ Hero data loaded successfully: ${id}`);
         } else {
-          console.warn(`[ReviewScreen] No hero data found for: ${id}`);
+          console.warn(`[ReviewScreen] ⚠️ No hero data returned for: ${id}`);
+          console.warn(`[ReviewScreen] Will attempt Firestore fallback...`);
         }
       } catch (error) {
-        console.error(`[ReviewScreen] Failed to load hero data:`, error);
+        console.error(`[ReviewScreen] ❌ Hero data load failed:`, error);
+        console.error(`[ReviewScreen] Error details:`, {
+          message: (error as Error).message,
+          stack: (error as Error).stack
+        });
         setHeroError(error as Error);
       } finally {
         setIsLoadingHero(false);
+        console.log(`[ReviewScreen] =========== HERO LOAD COMPLETE ===========`);
       }
     };
 
@@ -410,7 +427,12 @@ export function ReviewScreen() {
   // Combine the data sources based on project type
   const blueprint = isPrebuiltHero ? prebuiltHeroData : firestoreBlueprint;
   const loading = isPrebuiltHero ? false : (firestoreLoading || isLoadingHero);
-  const error = isPrebuiltHero ? null : ((heroData ? null : firestoreError) || heroError);
+
+  // CRITICAL FIX: Only show error if we have NEITHER hero data NOR Firestore data
+  // For chat MVP projects, heroData is the primary source (from localStorage)
+  // Firestore is just a backup/fallback
+  const hasAnyData = heroData || blueprint;
+  const error = isPrebuiltHero ? null : (hasAnyData ? null : (heroError || firestoreError));
 
   // Use enhanced hero data if available, otherwise fall back to blueprint
   const displayData = heroData || blueprint;
@@ -452,6 +474,19 @@ export function ReviewScreen() {
   }
 
   if (error || !displayData) {
+    // Log detailed error information for debugging
+    console.error('[ReviewScreen] Error state:', {
+      id,
+      error,
+      heroError,
+      firestoreError,
+      hasHeroData: !!heroData,
+      hasBlueprint: !!blueprint,
+      isPrebuiltHero,
+      heroDataKeys: heroData ? Object.keys(heroData) : [],
+      blueprintKeys: blueprint ? Object.keys(blueprint) : []
+    });
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20 p-6 flex items-center justify-center">
         <motion.div
@@ -463,14 +498,32 @@ export function ReviewScreen() {
             <div className="w-16 h-16 bg-gradient-to-br from-error-400 to-error-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h2>
-            <p className="text-gray-600 mb-6">We couldn't locate the requested project.</p>
-            <button
-              onClick={() => navigate('/app/dashboard')}
-              className="px-8 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-2xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-elevation-2 hover:shadow-elevation-3 font-semibold"
-            >
-              Back to Dashboard
-            </button>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Project Preview</h2>
+            <p className="text-gray-600 mb-4">
+              {error ? error.message : "We couldn't locate the project preview data."}
+            </p>
+            <div className="text-left bg-gray-50 rounded-xl p-4 mb-6 text-sm text-gray-700">
+              <p className="font-semibold mb-2">Troubleshooting:</p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>The project may still be processing - try refreshing in a moment</li>
+                <li>Return to the chat to complete the project finalization</li>
+                <li>Check your browser console for detailed error logs</li>
+              </ul>
+            </div>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-white border-2 border-primary-300 text-primary-700 rounded-2xl hover:bg-primary-50 transition-all duration-200 font-semibold"
+              >
+                Refresh Page
+              </button>
+              <button
+                onClick={() => navigate('/app/dashboard')}
+                className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-2xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-elevation-2 hover:shadow-elevation-3 font-semibold"
+              >
+                Back to Dashboard
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
