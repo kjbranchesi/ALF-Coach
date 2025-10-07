@@ -357,6 +357,14 @@ export function ReviewScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  // EMERGENCY: Wrap entire component in error boundary
+  React.useEffect(() => {
+    console.log('🔍 ReviewScreen mounted with id:', id);
+    console.log('🔍 URL:', window.location.href);
+    console.log('🔍 All localStorage keys:', Object.keys(localStorage));
+    console.log('🔍 Project-specific keys:', Object.keys(localStorage).filter(k => k.includes(id || 'none')));
+  }, [id]);
+
   // State for enhanced hero project data
   const [heroData, setHeroData] = useState<EnhancedHeroProjectData | null>(null);
   const [isLoadingHero, setIsLoadingHero] = useState(true);
@@ -461,6 +469,20 @@ export function ReviewScreen() {
   // Priority: heroData > rawProjectData > blueprint (Firestore)
   const hasAnyData = heroData || rawProjectData || blueprint;
   const error = isPrebuiltHero ? null : (hasAnyData ? null : (heroError || firestoreError));
+
+  // EMERGENCY DEBUG
+  console.log('🔍 ReviewScreen data check:', {
+    id,
+    isPrebuiltHero,
+    hasHeroData: !!heroData,
+    hasRawData: !!rawProjectData,
+    hasBlueprint: !!blueprint,
+    hasAnyData,
+    hasError: !!error,
+    loading,
+    heroError: heroError?.message,
+    firestoreError: firestoreError?.message
+  });
 
   // Use best available data source
   const displayData = heroData || rawProjectData || blueprint;
