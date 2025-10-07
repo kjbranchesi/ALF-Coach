@@ -74,7 +74,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
   const canSend = value.trim().length > 0 && !disabled;
 
   return (
-    <>
+    <div>
       <div className="relative z-30 pointer-events-auto">
         <div
           className={`relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-400 transition-all duration-240 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)]`}
@@ -144,7 +144,6 @@ export const InputArea: React.FC<InputAreaProps> = ({
           </div>
         </div>
       </div>
-      </div>
 
       {/* Guidance Modal - Rendered via Portal to escape sticky container */}
       {showHelp && hasGuidance && createPortal(
@@ -201,7 +200,8 @@ export const InputArea: React.FC<InputAreaProps> = ({
         </div>,
         document.body
       )}
-    </>
+    </div>
+    </div>
   );
 };
 
