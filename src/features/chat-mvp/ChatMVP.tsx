@@ -49,7 +49,6 @@ import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
   handleDeliverablesChoice,
-  detectComponentReference,
   getDeliverablesActionChips,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
@@ -72,7 +71,6 @@ const stageDisplayNames: Record<Stage, string> = {
   DELIVERABLES: 'Deliverables'
 };
 
-type JourneyChoiceResult = ReturnType<typeof handleJourneyChoice>;
 type DeliverablesChoiceResult = ReturnType<typeof handleDeliverablesChoice>;
 
 export function ChatMVP({
@@ -913,9 +911,7 @@ export function ChatMVP({
 
   const handleEditStage = useCallback((targetStage: Stage) => {
     // Reset micro-flow states when navigating to a stage
-    if (targetStage === 'JOURNEY') {
-      setJourneyMicroState(null);
-    } else if (targetStage === 'DELIVERABLES') {
+    if (targetStage === 'DELIVERABLES') {
       setDeliverablesMicroState(null);
     }
 
@@ -955,7 +951,6 @@ export function ChatMVP({
     setStage(next);
     setStageTurns(0);
     setHasInput(false);
-    setJourneyMicroState(next === 'JOURNEY' ? null : journeyMicroState);
     setDeliverablesMicroState(next === 'DELIVERABLES' ? null : deliverablesMicroState);
     setMicroFlowActionChips([]);
 
@@ -968,120 +963,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [stage, journeyMicroState, deliverablesMicroState, captured, wizard, engine, gradeBandLabel]);
-
-  const processJourneyResult = useCallback(async (
-    currentState: JourneyMicroState,
-    result: JourneyChoiceResult
-  ) => {
-    switch (result.action) {
-      case 'show_all': {
-        const nextState = result.updatedState ?? currentState;
-        setJourneyMicroState(nextState);
-        setMicroFlowActionChips(getJourneyActionChips(nextState));
-        const suggestion = formatJourneySuggestion(nextState);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: suggestion,
-          timestamp: new Date()
-        } as any);
-        return true;
-      }
-
-      case 'accept_all': {
-        const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
-        setCaptured(updatedCaptured);
-        setJourneyMicroState(null);
-        setMicroFlowActionChips([]);
-        setJourneyReceipt({ phaseCount: result.finalPhases?.length ?? 0, timestamp: Date.now() });
-
-        const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
-        let combinedMessage = coaching || "Great! I've captured your learning journey.";
-
-        const gatingInfo = validate(stage, updatedCaptured);
-        if (gatingInfo.ok) {
-          if (!autosaveEnabled) {setAutosaveEnabled(true);}
-          const nxt = nextStage(stage);
-          if (nxt) {
-            setStage(nxt);
-            setStageTurns(0);
-            setHasInput(false);
-            setMode('drafting');
-            setFocus(nxt === 'JOURNEY' ? 'journey' : nxt === 'DELIVERABLES' ? 'deliverables' : 'ideation');
-
-            const transition = transitionMessageFor(stage, updatedCaptured, wizard);
-            if (transition) {
-              combinedMessage = `${combinedMessage}\n\n${transition}`;
-            }
-
-            if (nxt === 'DELIVERABLES') {
-              const microState = initDeliverablesMicroFlow(updatedCaptured, wizard);
-              setDeliverablesMicroState(microState);
-              const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
-              combinedMessage = `${combinedMessage}\n\n${deliverablesSuggestion}`;
-              setMicroFlowActionChips(getDeliverablesActionChips(microState));
-            }
-          }
-        }
-
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: combinedMessage,
-          timestamp: new Date()
-        } as any);
-        return true;
-      }
-
-      case 'refine': {
-        if (result.updatedState) {
-          setJourneyMicroState(result.updatedState);
-          setMicroFlowActionChips(getJourneyActionChips(result.updatedState));
-          const suggestion = formatJourneySuggestion(result.updatedState);
-          engine.appendMessage({
-            id: String(Date.now() + 2),
-            role: 'assistant',
-            content: suggestion,
-            timestamp: new Date()
-          } as any);
-        }
-        return true;
-      }
-
-      case 'regenerate': {
-        const microState = initJourneyMicroFlow(captured, wizard);
-        setJourneyMicroState(microState);
-        setMicroFlowActionChips(getJourneyActionChips(microState));
-        const journeySuggestion = formatJourneySuggestion(microState);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: `Let's try a different approach.\n\n${  journeySuggestion}`,
-          timestamp: new Date()
-        } as any);
-        return true;
-      }
-
-      case 'none': {
-        if (result.message) {
-          engine.appendMessage({
-            id: String(Date.now() + 2),
-            role: 'assistant',
-            content: result.message,
-            timestamp: new Date()
-          } as any);
-        }
-        if (currentState) {
-          setMicroFlowActionChips(getJourneyActionChips(currentState));
-        }
-        return true;
-      }
-
-      default:
-        return false;
-    }
-  }, [autosaveEnabled, captured, engine, stage, wizard]);
+  }, [stage, deliverablesMicroState, captured, wizard, engine, gradeBandLabel]);
 
   const processDeliverablesResult = useCallback(async (
     currentState: DeliverablesMicroState,
@@ -1177,52 +1059,11 @@ Your project structure is ready!`,
     }
   }, [captured, engine, handleProjectCompletion, wizard, stage]);
 
-  const handleJourneyQuickCommand = useCallback(async (command: string) => {
-    if (journeyV2Enabled) {
-      return;
-    }
-    if (!journeyMicroState) {return;}
-    const result = handleJourneyChoice(journeyMicroState, command);
-    await processJourneyResult(journeyMicroState, result);
-  }, [journeyV2Enabled, journeyMicroState, processJourneyResult]);
-
   const handleDeliverablesQuickCommand = useCallback(async (command: string) => {
     if (!deliverablesMicroState) {return;}
     const result = handleDeliverablesChoice(deliverablesMicroState, command);
     await processDeliverablesResult(deliverablesMicroState, result);
   }, [deliverablesMicroState, processDeliverablesResult]);
-
-  const handleJourneyRenamePhase = useCallback((index: number, name: string) => {
-    setJourneyMicroState(prev => {
-      if (!prev) {return prev;}
-      const updated = prev.suggestedPhases.map((phase, idx) => idx === index ? { ...phase, name } : phase);
-      const working = prev.workingPhases?.map((phase, idx) => idx === index ? { ...phase, name } : phase) || prev.workingPhases;
-      const nextState = { ...prev, suggestedPhases: updated, workingPhases: working ?? [] };
-      setMicroFlowActionChips(getJourneyActionChips(nextState));
-      return nextState;
-    });
-  }, []);
-
-  const handleJourneyReorderPhase = useCallback((from: number, to: number) => {
-    if (from === to) {return;}
-    setJourneyMicroState(prev => {
-      if (!prev) {return prev;}
-      const updated = [...prev.suggestedPhases];
-      const [moved] = updated.splice(from, 1);
-      if (!moved) {return prev;}
-      updated.splice(to, 0, moved);
-      const working = prev.workingPhases?.length ? [...prev.workingPhases] : [];
-      if (working.length) {
-        const [workingMoved] = working.splice(from, 1);
-        if (workingMoved) {
-          working.splice(to, 0, workingMoved);
-        }
-      }
-      const nextState = { ...prev, suggestedPhases: updated, workingPhases: working };
-      setMicroFlowActionChips(getJourneyActionChips(nextState));
-      return nextState;
-    });
-  }, []);
 
   const handleDeliverablesRename = useCallback((section: 'milestones' | 'artifacts' | 'criteria', index: number, text: string) => {
     setDeliverablesMicroState(prev => {
@@ -1380,13 +1221,6 @@ Your project structure is ready!`,
                 } catch {}
               }
 
-              // JOURNEY STAGE: Initialize micro-flow but DON'T auto-dump suggestion
-              // Wait for user to ask for it - reduces information overload
-              if (nxt === 'JOURNEY') {
-                const microState = initJourneyMicroFlow(updatedCaptured, wizard);
-                setJourneyMicroState(microState);
-                // Suggestion will show when user responds (see lines 701-715)
-              }
             }
           }
         }
@@ -1502,8 +1336,7 @@ Your project structure is ready!`,
 
       case 'cancel_flow': {
         // User wants to escape from micro-flow
-        if (journeyMicroState || deliverablesMicroState) {
-          setJourneyMicroState(null);
+        if (deliverablesMicroState) {
           setDeliverablesMicroState(null);
           setMicroFlowActionChips([]);
 
@@ -1524,32 +1357,6 @@ Your project structure is ready!`,
         // Proceed to normal validation flow
         break;
     }
-
-    // JOURNEY STAGE: Initialize micro-flow if not already active - SINGLE-SHOT
-    if (stage === 'JOURNEY' && !journeyMicroState) {
-      const microState = initJourneyMicroFlow(captured, wizard);
-      setJourneyMicroState(microState);
-      setSuppressNextAckUntil(Date.now() + 500);
-      engine.appendMessage({
-        id: String(Date.now() + 2),
-        role: 'assistant',
-        content: "I've mapped a complete learning journey based on your context. Review the card below to accept or tweak it.",
-        timestamp: new Date()
-      } as any);
-
-      setMicroFlowActionChips(getJourneyActionChips(microState));
-      return;
-    }
-
-    // JOURNEY STAGE: Handle user response to journey suggestion
-    if (stage === 'JOURNEY' && journeyMicroState) {
-      const phaseRef = detectPhaseReference(content);
-      const result = handleJourneyChoice(journeyMicroState, content, phaseRef);
-      if (await processJourneyResult(journeyMicroState, result)) {
-        return;
-      }
-    }
-
     // DELIVERABLES STAGE: Initialize micro-flow if not already active
     if (stage === 'DELIVERABLES' && !deliverablesMicroState) {
       const microState = initDeliverablesMicroFlow(captured, wizard);
@@ -1701,23 +1508,6 @@ Your project structure is ready!`,
           } as any);
         }
 
-        // JOURNEY STAGE: Initialize micro-flow and show complete journey suggestion
-        if (nxt === 'JOURNEY' && !journeyV2Enabled) {
-          const microState = initJourneyMicroFlow(updatedCaptured, wizard);
-          setJourneyMicroState(microState);
-
-          // SINGLE-SHOT: Show complete journey immediately
-          const journeySuggestion = formatJourneySuggestion(microState);
-          engine.appendMessage({
-            id: String(Date.now() + 3),
-            role: 'assistant',
-            content: journeySuggestion,
-            timestamp: new Date()
-          } as any);
-
-          // Show action chips
-          setMicroFlowActionChips(getJourneyActionChips(microState));
-        }
       } else if (stage === 'DELIVERABLES' && previousStatus !== 'ready' && newStatus === 'ready') {
         // Project is complete - trigger completion flow
         await handleProjectCompletion();
@@ -1829,27 +1619,17 @@ Your project structure is ready!`,
               actionsDisabled={aiStatus !== 'online'}
               latestAssistantId={latestAssistantId}
             />
-            {journeyV2Enabled && stage === 'JOURNEY'
-              ? (
-                <JourneyBoard
-                  phases={journeyDraft}
-                  selectedId={journeyEditingPhaseId}
-                  onSelect={handleJourneySelectPhase}
-                  onRename={handleJourneyRename}
-                  onReorder={handleJourneyReorder}
-                  onAdd={handleJourneyAddPhase}
-                  onRemove={handleJourneyRemovePhase}
-                />
-              ) : journeyMicroState ? (
-                <JourneyPreviewCard
-                  phases={journeyMicroState.suggestedPhases}
-                  onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
-                  onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
-                  onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
-                  onRenamePhase={handleJourneyRenamePhase}
-                  onReorderPhase={handleJourneyReorderPhase}
-                />
-              ) : null}
+            {journeyV2Enabled && stage === 'JOURNEY' ? (
+              <JourneyBoard
+                phases={journeyDraft}
+                selectedId={journeyEditingPhaseId}
+                onSelect={handleJourneySelectPhase}
+                onRename={handleJourneyRename}
+                onReorder={handleJourneyReorder}
+                onAdd={handleJourneyAddPhase}
+                onRemove={handleJourneyRemovePhase}
+              />
+            ) : null}
 
             {journeyV2Enabled && stage === 'JOURNEY' ? (
               <>
@@ -1897,7 +1677,7 @@ Your project structure is ready!`,
                 ]}
               />
             ) : null}
-            {journeyReceipt && !journeyMicroState && (
+            {journeyReceipt && (
               <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-800 flex items-center justify-between">
                 <span>Journey saved — {journeyReceipt.phaseCount} phases captured.</span>
                 <span className="text-[11px] font-semibold text-emerald-600">You can refine anytime from the sidebar.</span>

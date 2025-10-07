@@ -557,25 +557,25 @@ export function transitionMessageFor(
     case 'BIG_IDEA': {
       const idea = captured.ideation.bigIdea;
       if (!idea) {return null;}
-      base = `Love how “${idea}” frames the learning. Let’s turn it into an essential question that makes ${wizard.gradeLevel || 'students'} want to investigate.`;
+      base = `“${idea}” is a solid anchor for the project. Let’s translate it into an essential question that invites inquiry from ${wizard.gradeLevel || 'your students'}.`;
       break;
     }
     case 'ESSENTIAL_QUESTION': {
       const eq = captured.ideation.essentialQuestion;
       base = eq
-        ? `“${eq}” sets up authentic work. Now, let’s define a challenge where ${wizard.subjects?.[0] ? wizard.subjects[0].toLowerCase() : 'students'} answer it for a real audience.`
-        : 'Great momentum. Let’s name a challenge that brings this question to life for a real audience.';
+        ? `“${eq}” sets a meaningful target. Now we’ll frame a challenge where ${wizard.subjects?.[0] ? wizard.subjects[0].toLowerCase() : 'students'} act for a real audience.`
+        : 'Let’s name a challenge that will move this question into authentic action.';
       break;
     }
     case 'CHALLENGE': {
       const challenge = captured.ideation.challenge;
       base = challenge
-        ? `Perfect! With the challenge **"${challenge}"** locked in, we're ready for the learning journey.\n\nI can suggest a complete ${wizard.duration || ''} journey structure based on your project. **Ready to see it?**`
+        ? `Challenge locked in: “${challenge}.” Next we’ll map the learning journey that guides students toward that outcome.`
         : 'Once the challenge feels right, we\'ll sketch the learning journey so students can iterate with confidence.';
       break;
     }
     case 'JOURNEY': {
-      base = 'Journey mapped—nice work. Let’s capture the milestones, artifacts, and rubric criteria that will show growth.';
+      base = 'Journey mapped. Let’s capture the milestones, artifacts, and rubric criteria that will show growth.';
       break;
     }
     default:
