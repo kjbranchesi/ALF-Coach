@@ -202,14 +202,20 @@ export class ErrorBoundary extends Component<Props, State> {
 
 // Navigation-specific error boundary component
 export const NavigationErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const handleNavigationError = (error: Error, _errorInfo: ErrorInfo) => {
-    console.warn('🚨 Navigation Error Boundary triggered - likely backspace navigation issue:', error);
-    
+  const handleNavigationError = (error: Error, errorInfo: ErrorInfo) => {
+    console.error('🚨🚨🚨 NAVIGATION ERROR BOUNDARY CAUGHT ERROR 🚨🚨🚨');
+    console.error('Error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
+    console.error('Current URL:', window.location.href);
+    console.error('🚨🚨🚨 END ERROR DETAILS 🚨🚨🚨');
+
     // Could send to analytics/monitoring service
-    // analytics.track('navigation_error', { 
-    //   error: error.message, 
+    // analytics.track('navigation_error', {
+    //   error: error.message,
     //   stack: error.stack,
-    //   component: errorInfo.componentStack 
+    //   component: errorInfo.componentStack
     // });
   };
 
