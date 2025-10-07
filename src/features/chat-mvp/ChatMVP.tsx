@@ -100,7 +100,7 @@ export function ChatMVP({
   const [showWorkingDraft, setShowWorkingDraft] = useState(true); // Working Draft sidebar visibility
   const [conversationHistory, setConversationHistory] = useState<string[]>([]); // Last 5 user inputs for context
   const [deliverablesMicroState, setDeliverablesMicroState] = useState<DeliverablesMicroState | null>(null);
-  const [microFlowActionChips, setMicroFlowActionChips] = useState<string[]>([]); // Action chips for micro-flows
+  const [, setMicroFlowActionChips] = useState<string[]>([]); // Retained setter for legacy micro-flow compatibility
   const [mode, setMode] = useState<'drafting' | 'refining' | 'validating'>('drafting');
   const [focus, setFocus] = useState<'ideation' | 'journey' | 'deliverables' | 'overview'>('ideation');
   const [showKickoffPanel, setShowKickoffPanel] = useState(false); // Show kickoff only on stage transitions
@@ -110,12 +110,22 @@ export function ChatMVP({
   const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
   const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
+  const [completionState, setCompletionState] = useState<'idle' | 'processing' | 'ready' | 'error'>(() => {
+    const meta = (projectData?.projectData as any)?.status ?? (projectData as any)?.status;
+    return meta === 'ready' ? 'ready' : 'idle';
+  });
   const greetingSentRef = useRef(false);
   const nameSuggestionSentRef = useRef(false);
   const sidebarControlsRef = useRef<ResponsiveSidebarControls | null>(null);
   const stageIndex = stageOrder.indexOf(stage);
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
   const journeyV2Enabled = useMemo(() => (import.meta.env.VITE_FEATURE_STUDIO_JOURNEY_V2 ?? 'true') !== 'false', []);
+  const deliverablesComplete = useMemo(() => {
+    const milestones = captured.deliverables?.milestones?.length ?? 0;
+    const artifacts = captured.deliverables?.artifacts?.length ?? 0;
+    const criteria = captured.deliverables?.rubric?.criteria?.length ?? 0;
+    return milestones >= 3 && artifacts >= 1 && criteria >= 3;
+  }, [captured.deliverables]);
   const [journeyDraft, setJourneyDraft] = useState<JourneyPhaseDraft[]>([]);
   const [journeySuggested, setJourneySuggested] = useState<JourneyPhaseDraft[]>([]);
   const [journeyEditingPhaseId, setJourneyEditingPhaseId] = useState<string | null>(null);
@@ -275,6 +285,17 @@ export function ChatMVP({
   }, [journeyV2Enabled, stage, journeyDraft.length, handleJourneyTrimToFour, handleJourneyEnsureCheckpoints, journeyHasCustomChanges, handleJourneyRegenerate]);
 
   const editingPhase = useMemo(() => journeyDraft.find(phase => phase.id === journeyEditingPhaseId) || null, [journeyDraft, journeyEditingPhaseId]);
+  const updateDeliverablesChips = useCallback((state: DeliverablesMicroState | null) => {
+    if (journeyV2Enabled) {
+      setMicroFlowActionChips([]);
+      return;
+    }
+    if (state) {
+      setMicroFlowActionChips(getDeliverablesActionChips(state));
+    } else {
+      setMicroFlowActionChips([]);
+    }
+  }, [journeyV2Enabled]);
 
   const handleJourneyAccept = useCallback(() => {
     const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
@@ -302,14 +323,18 @@ export function ChatMVP({
     const transition = transitionMessageFor('JOURNEY', updatedCaptured, wizard);
     const deliverablesState = initDeliverablesMicroFlow(updatedCaptured, wizard);
     setDeliverablesMicroState(deliverablesState);
-    setMicroFlowActionChips(getDeliverablesActionChips(deliverablesState));
+    updateDeliverablesChips(deliverablesState);
 
     let completionMessage = 'Great! Your learning journey is captured.';
     if (transition) {
       completionMessage = `${completionMessage}\n\n${transition}`;
     }
-    const deliverablesMessage = formatDeliverablesSuggestion(deliverablesState);
-    completionMessage = `${completionMessage}\n\n${deliverablesMessage}`;
+    if (journeyV2Enabled) {
+      completionMessage = `${completionMessage}\n\nI've drafted milestones, artifacts, and rubric based on your journey. Review the deliverables card below to accept or tweak them.`;
+    } else {
+      const deliverablesMessage = formatDeliverablesSuggestion(deliverablesState);
+      completionMessage = `${completionMessage}\n\n${deliverablesMessage}`;
+    }
 
     engine.appendMessage({
       id: String(Date.now() + 5),
@@ -324,7 +349,7 @@ export function ChatMVP({
     setMode('drafting');
     setFocus('deliverables');
     setShowKickoffPanel(false);
-  }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel]);
+  }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel, updateDeliverablesChips]);
 
   useEffect(() => {
     if (journeyV2Enabled) {
@@ -353,9 +378,9 @@ export function ChatMVP({
 
   useEffect(() => {
     if (journeyV2Enabled && stage === 'JOURNEY') {
-      setMicroFlowActionChips([]);
+      updateDeliverablesChips(null);
     }
-  }, [journeyV2Enabled, stage]);
+  }, [journeyV2Enabled, stage, updateDeliverablesChips]);
 
   useEffect(() => {
     if (stage === 'JOURNEY') {
@@ -378,6 +403,12 @@ export function ChatMVP({
     const timeout = setTimeout(() => setDeliverablesReceipt(null), 8000);
     return () => clearTimeout(timeout);
   }, [deliverablesReceipt]);
+
+  useEffect(() => {
+    if (projectStatus === 'ready' && completionState === 'idle') {
+      setCompletionState('ready');
+    }
+  }, [projectStatus, completionState]);
 
   useEffect(() => {
     if (showIntro) {
@@ -759,6 +790,7 @@ export function ChatMVP({
     }
 
     try {
+      setCompletionState('processing');
       // Show generating message
       engine.appendMessage({
         id: String(Date.now()),
@@ -889,6 +921,8 @@ export function ChatMVP({
         // Non-critical - project is still saved and usable
       }
 
+      setCompletionState('ready');
+
       // Show completion message
       engine.appendMessage({
         id: String(Date.now() + 10),
@@ -899,6 +933,7 @@ export function ChatMVP({
 
     } catch (error) {
       console.error('[ChatMVP] Project completion failed', error);
+      setCompletionState('error');
 
       engine.appendMessage({
         id: String(Date.now() + 10),
@@ -916,7 +951,7 @@ export function ChatMVP({
     }
 
     // Clear action chips
-    setMicroFlowActionChips([]);
+    updateDeliverablesChips(null);
 
     // Navigate to the stage
     trackEvent('stage_jump', { fromStage: stage, toStage: targetStage, gradeBand: gradeBandLabel });
@@ -935,7 +970,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [captured, wizard, engine, stage, gradeBandLabel]);
+  }, [captured, wizard, engine, stage, gradeBandLabel, updateDeliverablesChips]);
 
   const handleStageContinue = useCallback(() => {
     const next = nextStage(stage);
@@ -952,7 +987,7 @@ export function ChatMVP({
     setStageTurns(0);
     setHasInput(false);
     setDeliverablesMicroState(next === 'DELIVERABLES' ? null : deliverablesMicroState);
-    setMicroFlowActionChips([]);
+    updateDeliverablesChips(null);
 
     const transition = transitionMessageFor(stage, captured, wizard);
     if (transition) {
@@ -963,7 +998,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [stage, deliverablesMicroState, captured, wizard, engine, gradeBandLabel]);
+  }, [stage, deliverablesMicroState, captured, wizard, engine, gradeBandLabel, updateDeliverablesChips]);
 
   const processDeliverablesResult = useCallback(async (
     currentState: DeliverablesMicroState,
@@ -981,7 +1016,7 @@ export function ChatMVP({
         };
         setCaptured(updatedCaptured);
         setDeliverablesMicroState(null);
-        setMicroFlowActionChips([]);
+        updateDeliverablesChips(null);
         setDeliverablesReceipt({
           milestoneCount: result.captured!.milestones.length,
           artifactCount: result.captured!.artifacts.length,
@@ -1014,7 +1049,7 @@ Your project structure is ready!`,
       case 'show_all': {
         const nextState = result.newState ?? currentState;
         setDeliverablesMicroState(nextState);
-        setMicroFlowActionChips(getDeliverablesActionChips(nextState));
+        updateDeliverablesChips(nextState);
         const suggestion = formatDeliverablesSuggestion(nextState);
         engine.appendMessage({
           id: String(Date.now() + 2),
@@ -1028,7 +1063,7 @@ Your project structure is ready!`,
       case 'regenerate': {
         const microState = initDeliverablesMicroFlow(captured, wizard);
         setDeliverablesMicroState(microState);
-        setMicroFlowActionChips(getDeliverablesActionChips(microState));
+        updateDeliverablesChips(microState);
         const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
         engine.appendMessage({
           id: String(Date.now() + 2),
@@ -1049,7 +1084,7 @@ Your project structure is ready!`,
           } as any);
         }
         if (currentState) {
-          setMicroFlowActionChips(getDeliverablesActionChips(currentState));
+          updateDeliverablesChips(currentState);
         }
         return true;
       }
@@ -1057,7 +1092,7 @@ Your project structure is ready!`,
       default:
         return false;
     }
-  }, [captured, engine, handleProjectCompletion, wizard, stage]);
+  }, [captured, engine, handleProjectCompletion, wizard, stage, updateDeliverablesChips]);
 
   const handleDeliverablesQuickCommand = useCallback(async (command: string) => {
     if (!deliverablesMicroState) {return;}
@@ -1082,10 +1117,10 @@ Your project structure is ready!`,
         items[index] = text;
         clone.suggestedCriteria = items;
       }
-      setMicroFlowActionChips(getDeliverablesActionChips(clone));
+      updateDeliverablesChips(clone);
       return clone;
     });
-  }, []);
+  }, [updateDeliverablesChips]);
 
   const handleDeliverablesReorder = useCallback((section: 'milestones' | 'artifacts' | 'criteria', from: number, to: number) => {
     if (from === to) {return;}
@@ -1109,10 +1144,10 @@ Your project structure is ready!`,
           clone.suggestedCriteria = reorder(clone.suggestedCriteria);
           clone.workingCriteria = clone.workingCriteria.length ? reorder(clone.workingCriteria) : clone.workingCriteria;
         }
-        setMicroFlowActionChips(getDeliverablesActionChips(clone));
+        updateDeliverablesChips(clone);
         return clone;
       });
-  }, []);
+  }, [updateDeliverablesChips]);
 
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
@@ -1338,7 +1373,7 @@ Your project structure is ready!`,
         // User wants to escape from micro-flow
         if (deliverablesMicroState) {
           setDeliverablesMicroState(null);
-          setMicroFlowActionChips([]);
+          updateDeliverablesChips(null);
 
           engine.appendMessage({
             id: String(Date.now() + 2),
@@ -1358,18 +1393,20 @@ Your project structure is ready!`,
         break;
     }
     // DELIVERABLES STAGE: Initialize micro-flow if not already active
-    if (stage === 'DELIVERABLES' && !deliverablesMicroState) {
+    if (stage === 'DELIVERABLES' && !deliverablesMicroState && !deliverablesComplete) {
       const microState = initDeliverablesMicroFlow(captured, wizard);
       setDeliverablesMicroState(microState);
       setSuppressNextAckUntil(Date.now() + 500);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: "Here's a complete deliverables package—milestones, artifacts, and rubric. Review the card below to finalize or customize.",
+        content: journeyV2Enabled
+          ? "Here's a deliverables package aligned to your journey. Review the card below to finalize or customize anything you'd like."
+          : "Here's a complete deliverables package—milestones, artifacts, and rubric. Review the card below to finalize or customize.",
         timestamp: new Date()
       } as any);
 
-      setMicroFlowActionChips(getDeliverablesActionChips(microState));
+      updateDeliverablesChips(microState);
       return;
     }
 
@@ -1513,10 +1550,10 @@ Your project structure is ready!`,
         await handleProjectCompletion();
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName, deliverablesMicroState, deliverablesComplete, journeyV2Enabled]);
 
   return (
-    <div className="relative flex min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
+    <div className="relative flex h-[100dvh] min-h-[100dvh] bg-gray-50 dark:bg-gray-900 overflow-hidden">
       {/* Responsive Sidebar - Desktop rail, Mobile slide-over */}
       <ResponsiveSidebar onControls={handleSidebarControls}>
         <WorkingDraftSidebar
@@ -1527,7 +1564,7 @@ Your project structure is ready!`,
       </ResponsiveSidebar>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full">
         <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-2 pb-20 sm:px-4 sm:pt-2 sm:pb-24">
           {/* Minimal header with stage indicator and consolidated status */}
           <div className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 pb-1.5 mb-1.5 space-y-1">
@@ -1697,30 +1734,44 @@ Your project structure is ready!`,
         <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2 sm:px-4 sm:pb-5 sm:pt-3 border-t border-gray-200/50 dark:border-gray-800/50 shadow-lg shadow-black/10 dark:shadow-black/30">
           <div className="relative w-full">
             {projectId && projectStatus === 'ready' && (
-              <div className="mb-3">
+              <div className="mb-3 space-y-2">
                 <button
                   type="button"
-                onClick={() => navigate(`/app/project/${projectId}/preview`)}
-                className="w-full inline-flex items-center justify-center rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-semibold px-4 py-2 shadow-sm"
-              >
-                View your Review →
-              </button>
-            </div>
-          )}
-          {/* Micro-flow action chips - always visible when available */}
-          {microFlowActionChips.length > 0 && (
-            <div className="mb-3">
-              <p className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Action options</p>
-              <SuggestionChips
-                items={microFlowActionChips}
-                onSelect={(t) => {
-                  setMicroFlowActionChips([]); // Clear chips when user clicks one
-                  void handleSend(t);
-                }}
-              />
-            </div>
-          )}
-
+                  onClick={() => navigate(`/app/project/${projectId}/preview`)}
+                  disabled={completionState !== 'ready'}
+                  aria-busy={completionState === 'processing'}
+                  className={`w-full inline-flex items-center justify-center rounded-full px-4 py-2 text-[12px] font-semibold shadow-sm transition-colors ${
+                    completionState === 'ready'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      : 'bg-emerald-500/60 text-white/70 cursor-not-allowed'
+                  }`}
+                >
+                  {completionState === 'processing'
+                    ? 'Finalizing your project…'
+                    : completionState === 'error'
+                      ? 'Preview unavailable'
+                      : 'View your Review →'}
+                </button>
+                {completionState === 'processing' && (
+                  <p className="text-[11px] text-gray-500 text-center">
+                    Sit tight—polishing your showcase for the review page.
+                  </p>
+                )}
+                {completionState === 'error' && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-700 space-y-1.5">
+                    <p className="font-semibold text-rose-800">Preview not ready yet</p>
+                    <p>We hit a snag saving the showcase. Retry finalizing to generate the review view.</p>
+                    <button
+                      type="button"
+                      onClick={() => { void handleProjectCompletion(); }}
+                      className="inline-flex items-center rounded-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 font-semibold"
+                    >
+                      Retry finalization
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           {/* Regular suggestions - toggleable via lightbulb */}
           <div
             className={`absolute left-0 right-0 bottom-full mb-3 transition-all duration-200 ease-out ${
