@@ -486,12 +486,21 @@ export function ReviewScreen() {
 
   // Use best available data source
   const displayData = heroData || rawProjectData || blueprint;
+
+  // Include raw local project showcase as a valid source to render
   const persistedShowcase = useMemo(() => {
     const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
+    const rawShowcase = (rawProjectData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const blueprintShowcase = (blueprint as unknown as { showcase?: ProjectShowcaseV2; projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.showcase;
     const legacyShowcase = (blueprint as unknown as { projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.projectData?.showcase;
-    return heroShowcase || blueprintShowcase || legacyShowcase || null;
-  }, [heroData, blueprint]);
+    return heroShowcase || rawShowcase || blueprintShowcase || legacyShowcase || null;
+  }, [heroData, rawProjectData, blueprint]);
+
+  // Dev observability: which data source is used
+  useEffect(() => {
+    const source = heroData ? 'hero' : rawProjectData ? 'raw' : blueprint ? 'firestore' : 'none';
+    console.log('[ReviewScreen] Selected data source:', { id, source, hasShowcase: !!persistedShowcase });
+  }, [id, heroData, rawProjectData, blueprint, persistedShowcase]);
 
   if (loading) {
     return (

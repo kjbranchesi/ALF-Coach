@@ -872,7 +872,43 @@ export function ChatMVP({
         });
       }
 
-      setCompletionState('ready');
+      // Gate readiness on presence of a usable preview source (hero cache or raw showcase)
+      const checkPreviewReady = (): boolean => {
+        try {
+          const heroKey = `alf_hero_${projectId}`;
+          const rawKey = `alf_project_${projectId}`;
+          const hasHero = !!localStorage.getItem(heroKey);
+          let hasRawShowcase = false;
+          const raw = localStorage.getItem(rawKey);
+          if (raw) {
+            try {
+              const parsed = JSON.parse(raw);
+              hasRawShowcase = !!parsed?.showcase;
+            } catch {
+              // ignore parse error
+            }
+          }
+          return hasHero || hasRawShowcase;
+        } catch {
+          return false;
+        }
+      };
+
+      let isReady = checkPreviewReady();
+      if (!isReady) {
+        // Small bounded wait to let storage/transform finish
+        for (let i = 0; i < 6; i++) {
+          await new Promise(resolve => setTimeout(resolve, 250));
+          if (checkPreviewReady()) { isReady = true; break; }
+        }
+      }
+
+      if (isReady) {
+        setCompletionState('ready');
+      } else {
+        console.warn('[ChatMVP] Preview sources not ready after wait; marking as error.');
+        setCompletionState('error');
+      }
 
       // Show completion message
       engine.appendMessage({
