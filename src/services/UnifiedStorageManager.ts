@@ -770,6 +770,35 @@ export class UnifiedStorageManager {
     }
   }
 
+  /**
+   * Sanitize data for Firestore by removing undefined values and functions
+   * Firestore doesn't allow undefined - it must be null or omitted
+   */
+  private sanitizeForFirestore(obj: any): any {
+    if (obj === null || obj === undefined) {
+      return null;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.sanitizeForFirestore(item));
+    }
+
+    if (typeof obj === 'object') {
+      const sanitized: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        // Skip undefined and functions
+        if (value === undefined || typeof value === 'function') {
+          continue;
+        }
+        // Recursively sanitize nested objects
+        sanitized[key] = this.sanitizeForFirestore(value);
+      }
+      return sanitized;
+    }
+
+    return obj;
+  }
+
   private async backgroundFirebaseSync(id: string, data: UnifiedProjectData): Promise<void> {
     try {
       const FIREBASE_DISABLED = (import.meta as any)?.env?.VITE_FIREBASE_DISABLED === 'true';
@@ -805,40 +834,60 @@ export class UnifiedStorageManager {
       const projectPayload = data.projectData || {};
 
       // Include showcase data if it exists (critical for preview functionality)
+      // Sanitize to remove any undefined values that Firestore rejects
       if (data.showcase) {
-        projectPayload.showcase = data.showcase;
+        projectPayload.showcase = this.sanitizeForFirestore(data.showcase);
       }
 
       // Include other top-level fields that should be persisted
       const enhancedPayload: any = {
-        wizardData: data.wizardData,
-        project: projectPayload,
-        capturedData: data.capturedData
+        wizardData: this.sanitizeForFirestore(data.wizardData),
+        project: this.sanitizeForFirestore(projectPayload),
+        capturedData: this.sanitizeForFirestore(data.capturedData)
       };
 
-      await saveProjectDraft(userId, enhancedPayload, {
-        draftId: id,
-        source: data.source || 'chat',
-        metadata: {
-          title: data.title,
-          description: data.description,
-          tagline: data.tagline,
-          stage: data.stage,
-          status: data.status,
-          completedAt: data.completedAt ? data.completedAt.toISOString() : undefined,
-          gradeLevel: data.gradeLevel,
-          subject: data.subject,
-          subjects: data.subjects,
-          duration: data.duration
-        }
-      });
+      // Check payload size before sending
+      const payloadSize = JSON.stringify(enhancedPayload).length;
+      console.log(`[UnifiedStorageManager] Firestore payload size: ${(payloadSize / 1024).toFixed(2)} KB`);
 
-      console.log(`[UnifiedStorageManager] Background Firebase sync successful: ${id}`, {
-        hasShowcase: !!data.showcase,
-        hasCapturedData: !!data.capturedData,
-        hasWizardData: !!data.wizardData,
-        status: data.status
-      });
+      if (payloadSize > 900000) { // Warn if approaching 1MB limit
+        console.warn(`[UnifiedStorageManager] Payload size approaching Firestore limit (${(payloadSize / 1024).toFixed(2)} KB / 1000 KB)`);
+      }
+
+      try {
+        await saveProjectDraft(userId, enhancedPayload, {
+          draftId: id,
+          source: data.source || 'chat',
+          metadata: this.sanitizeForFirestore({
+            title: data.title,
+            description: data.description,
+            tagline: data.tagline,
+            stage: data.stage,
+            status: data.status,
+            completedAt: data.completedAt ? data.completedAt.toISOString() : undefined,
+            gradeLevel: data.gradeLevel,
+            subject: data.subject,
+            subjects: data.subjects,
+            duration: data.duration
+          })
+        });
+
+        console.log(`[UnifiedStorageManager] Background Firebase sync successful: ${id}`, {
+          hasShowcase: !!data.showcase,
+          hasCapturedData: !!data.capturedData,
+          hasWizardData: !!data.wizardData,
+          status: data.status,
+          payloadSize: `${(payloadSize / 1024).toFixed(2)} KB`
+        });
+      } catch (firestoreError: any) {
+        console.error(`[UnifiedStorageManager] Firestore save failed (non-critical):`, {
+          id,
+          error: firestoreError.message,
+          code: firestoreError.code,
+          payloadSize: `${(payloadSize / 1024).toFixed(2)} KB`
+        });
+        // Don't throw - localStorage already has the data
+      }
 
       // Update sync status
       data.syncStatus = 'synced';
