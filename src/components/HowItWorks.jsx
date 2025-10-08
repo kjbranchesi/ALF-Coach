@@ -207,21 +207,35 @@ export default function HowItWorks() {
 
                     {stage.projectExample && (
                       <Card
-                        className="squircle-card p-6 brand-card cursor-pointer hover:shadow-lg transition-shadow"
+                        className="squircle-card overflow-hidden brand-card cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                         onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
                       >
-                        <div className="flex items-start gap-3 mb-3">
-                          <Sparkles className="w-5 h-5 text-primary-500 mt-1" />
-                          <div>
-                            <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400 mb-1">
-                              See Example Project
-                            </Text>
-                            <h4 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
-                              {stage.projectExample.title}
-                            </h4>
-                            <Text size="sm" color="secondary" className="mt-1">
-                              {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
-                            </Text>
+                        {/* Project Image */}
+                        {stage.projectExample.image && (
+                          <div className="aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                            <img
+                              src={stage.projectExample.image}
+                              alt={stage.projectExample.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+
+                        {/* Card Content */}
+                        <div className="p-6">
+                          <div className="flex items-start gap-3">
+                            <Sparkles className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                            <div className="flex-1">
+                              <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400 mb-2">
+                                See Example Project
+                              </Text>
+                              <h4 className="font-semibold text-lg text-slate-900 dark:text-slate-100 mb-2 leading-snug">
+                                {stage.projectExample.title}
+                              </h4>
+                              <Text size="sm" color="secondary">
+                                {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
+                              </Text>
+                            </div>
                           </div>
                         </div>
                       </Card>
@@ -265,18 +279,32 @@ export default function HowItWorks() {
                     {/* Example project link */}
                     {stage.projectExample && (
                       <Card
-                        className="squircle-card p-4 brand-card cursor-pointer"
+                        className="squircle-card overflow-hidden brand-card cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                         onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
                       >
-                        <div className="flex items-start gap-3">
-                          <Sparkles className="w-4 h-4 text-primary-500 mt-1" />
-                          <div>
-                            <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400">
-                              Example: {stage.projectExample.title}
-                            </Text>
-                            <Text size="xs" color="secondary" className="mt-1">
-                              {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
-                            </Text>
+                        {/* Project Image */}
+                        {stage.projectExample.image && (
+                          <div className="aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                            <img
+                              src={stage.projectExample.image}
+                              alt={stage.projectExample.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+
+                        {/* Card Content */}
+                        <div className="p-4">
+                          <div className="flex items-start gap-3">
+                            <Sparkles className="w-4 h-4 text-primary-500 mt-1 flex-shrink-0" />
+                            <div className="flex-1">
+                              <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400 mb-1">
+                                Example: {stage.projectExample.title}
+                              </Text>
+                              <Text size="xs" color="secondary">
+                                {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
+                              </Text>
+                            </div>
                           </div>
                         </div>
                       </Card>
