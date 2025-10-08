@@ -15,7 +15,7 @@ import {
 } from './animations/ScrollAnimations';
 
 // Custom animated components
-import IdeationAnimation from './ui/IdeationAnimation';
+import BigIdeaAnimation from './ui/BigIdeaAnimation';
 import JourneyAnimation from './ui/JourneyAnimation';
 import DeliverablesAnimation from './ui/DeliverablesAnimation';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
@@ -27,47 +27,47 @@ export default function HowItWorks() {
   // Get example projects
   const exampleProjects = getHeroProjectsMetadata().slice(0, 3);
 
-  // ALF Process stages using design system
+  // ALF Process stages - aligned with video script
   const alfProcess = [
     {
-      title: 'Ideation',
-      summary: 'Transform standards into big ideas, essential questions, and learner-centered challenges.',
-      description: 'Start with your curriculum standards and transform them into compelling questions that connect to students\' lives and the wider world.',
-      animation: IdeationAnimation,
-      gradient: 'from-amber-400 to-orange-500',
-      bgColor: 'bg-gradient-to-br from-amber-50 to-orange-50',
+      title: 'Define Your Challenge',
+      summary: 'Teachers share an idea; ALF helps refine it into a compelling essential question students can explore.',
+      description: 'Start with any topic or challenge—from your curriculum, student interests, or community needs. ALF guides you to transform it into a learner-centered question that connects to real-world contexts.',
+      animation: BigIdeaAnimation,
+      gradient: 'from-blue-400 to-indigo-500',
+      bgColor: 'bg-gradient-to-br from-blue-50 to-indigo-50',
       examples: [
-        'Turn "photosynthesis" into "How can we solve our school\'s carbon footprint?"',
-        'Transform "civil rights" into "What would justice look like in our community?"',
-        'Convert "geometry" into "How do architects design earthquake-safe buildings?"'
+        'Turn "acoustic design" into "How does sound shape the way we learn and work?"',
+        'Transform "water quality" into "Is our local water safe for the community?"',
+        'Convert "street safety" into "How can we make our neighborhood safer to navigate?"'
       ],
       projectExample: exampleProjects[0]
     },
     {
-      title: 'Journey',
-      summary: 'Sequence inquiry arcs, formative feedback moments, and scaffolds that meet every learner where they are.',
-      description: 'Design learning pathways that build skills systematically while maintaining student engagement and autonomy.',
+      title: 'Map the Journey',
+      summary: 'Build a week-by-week learning plan with milestones, scaffolds, and activities tailored to your timeline.',
+      description: 'ALF helps sequence your project into phases—clarifying learning goals, suggesting collaborative activities, and creating checkpoints that keep students engaged and progressing.',
       animation: JourneyAnimation,
       gradient: 'from-teal-400 to-cyan-500',
       bgColor: 'bg-gradient-to-br from-teal-50 to-cyan-50',
       examples: [
-        'Map prerequisite skills and create just-in-time learning moments',
-        'Design collaborative activities that build on individual strengths',
-        'Create formative assessment touchpoints that guide, don\'t grade'
+        'Structure 4-6 week projects with clear milestones and pacing',
+        'Design collaborative moments that build on student strengths',
+        'Create formative touchpoints that guide learning without over-grading'
       ],
       projectExample: exampleProjects[1]
     },
     {
-      title: 'Deliverables',
-      summary: 'Craft rubrics, exemplars, and reflective prompts that make growth visible to students and stakeholders.',
-      description: 'Develop authentic assessment strategies that value both process and product while preparing students for real-world evaluation.',
+      title: 'Build Deliverables & Overview',
+      summary: 'Generate assignments, rubrics, and a polished course overview you can share or adapt.',
+      description: 'ALF assembles everything into a ready-to-use project plan—complete with student deliverables, assessment criteria, and a professional overview you can present to colleagues or administrators.',
       animation: DeliverablesAnimation,
       gradient: 'from-coral-400 to-pink-500',
       bgColor: 'bg-gradient-to-br from-coral-50 to-pink-50',
       examples: [
-        'Design rubrics that students can use for self-assessment',
-        'Create exemplars that inspire rather than intimidate',
-        'Build reflection protocols that deepen learning'
+        'Create rubrics aligned to learning goals and real-world performance',
+        'Generate polished project overviews ready to share with stakeholders',
+        'Design reflection prompts that deepen understanding and growth'
       ],
       projectExample: exampleProjects[2]
     }
@@ -117,13 +117,12 @@ export default function HowItWorks() {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <ScrollReveal variant="fadeUp" delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
-                How <span className="font-sans font-bold text-primary-600 dark:text-primary-400">Alf Studio</span> Transforms STEAM Teaching
+                Design Real-World Projects <span className="text-primary-600 dark:text-primary-400">in Minutes</span>
               </h1>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <Text size="xl" color="secondary" className="max-w-3xl mx-auto">
-                Discover why Project-Based Learning works for STEAM education, how <span className="font-sans font-bold">Alf Studio</span> makes it accessible, and what you gain
-                when you transform your classroom into a space for authentic STEAM learning experiences.
+                <span className="font-sans font-bold">ALF Studio</span> is an AI-powered project builder that helps teachers design meaningful learning experiences step by step—clarifying goals, mapping a week-by-week plan, and generating a polished course overview they can share or adapt.
               </Text>
             </ScrollReveal>
           </div>
@@ -153,28 +152,31 @@ export default function HowItWorks() {
             <div className="text-center mb-16">
               <div className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-6">
                 <Sparkles className="h-4 w-4" />
-                How <span className="font-sans font-bold">Alf Studio</span> Works
+                How <span className="font-sans font-bold">ALF Studio</span> Works
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-                Three Stages to Transform STEAM Learning
+                From Challenge to Complete Plan—Step by Step
               </h2>
               <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-                <span className="font-sans font-bold">Alf Studio</span> guides you through a systematic process that transforms STEAM learning goals into
-                meaningful, accessible Project-Based Learning experiences.
+                Teachers define a challenge; <span className="font-sans font-bold">ALF</span> guides them through each phase—clarifying goals, mapping milestones, and creating a polished overview ready to share.
               </Text>
             </div>
           </ScrollReveal>
 
-          {alfProcess.map((stage, index) => (
+          {alfProcess.map((stage, index) => {
+            // Make first (BigIdea) and last (Deliverables) stages full-width
+            const isFullWidth = index === 0 || index === 2;
+
+            return (
             <ScrollReveal
               key={stage.title}
               variant="slideLeft"
               delay={0.2 + (index * 0.2)}
               className="mb-20 last:mb-0"
             >
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                {/* Content */}
-                <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
+              {isFullWidth ? (
+                // Full-width layout for BigIdea and Deliverables
+                <div className="space-y-8">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 bg-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">
                       {index + 1}
@@ -185,48 +187,105 @@ export default function HowItWorks() {
                     </div>
                   </div>
 
-                  <Text className="mb-6 leading-relaxed">{stage.description}</Text>
+                  <Text className="mb-6 leading-relaxed max-w-3xl">{stage.description}</Text>
 
-                  <Card className="squircle-card p-6 brand-surface">
-                    <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-200">Examples in Action:</h4>
-                    <div className="space-y-3">
-                      {stage.examples.map((example, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
-                          <Text size="sm" className="text-slate-700 dark:text-slate-300">{example}</Text>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                </div>
-
-                {/* Animated Visual */}
-                <div className={`flex flex-col gap-4 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  {/* Full-width animation */}
                   <stage.animation />
 
-                  {/* Example project link */}
-                  {stage.projectExample && (
-                    <Card
-                      className="squircle-card p-4 brand-card cursor-pointer"
-                      onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <Sparkles className="w-4 h-4 text-primary-500 mt-1" />
-                        <div>
-                          <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400">
-                            Example: {stage.projectExample.title}
-                          </Text>
-                          <Text size="xs" color="secondary" className="mt-1">
-                            {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
-                          </Text>
-                        </div>
+                  <div className="grid md:grid-cols-2 gap-6 mt-8">
+                    <Card className="squircle-card p-6 brand-surface">
+                      <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-200">{index === 0 ? 'Examples in Action:' : 'What You\'ll Create:'}</h4>
+                      <div className="space-y-3">
+                        {stage.examples.map((example, i) => (
+                          <div key={i} className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
+                            <Text size="sm" className="text-slate-700 dark:text-slate-300">{example}</Text>
+                          </div>
+                        ))}
                       </div>
                     </Card>
-                  )}
+
+                    {stage.projectExample && (
+                      <Card
+                        className="squircle-card p-6 brand-card cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <Sparkles className="w-5 h-5 text-primary-500 mt-1" />
+                          <div>
+                            <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400 mb-1">
+                              See Example Project
+                            </Text>
+                            <h4 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
+                              {stage.projectExample.title}
+                            </h4>
+                            <Text size="sm" color="secondary" className="mt-1">
+                              {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
+                            </Text>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                // Two-column layout for other stages
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  {/* Content */}
+                  <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stage.title}</h3>
+                        <Text color="secondary">{stage.summary}</Text>
+                      </div>
+                    </div>
+
+                    <Text className="mb-6 leading-relaxed">{stage.description}</Text>
+
+                    <Card className="squircle-card p-6 brand-surface">
+                      <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-200">Examples in Action:</h4>
+                      <div className="space-y-3">
+                        {stage.examples.map((example, i) => (
+                          <div key={i} className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
+                            <Text size="sm" className="text-slate-700 dark:text-slate-300">{example}</Text>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+
+                  {/* Animated Visual */}
+                  <div className={`flex flex-col gap-4 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <stage.animation />
+
+                    {/* Example project link */}
+                    {stage.projectExample && (
+                      <Card
+                        className="squircle-card p-4 brand-card cursor-pointer"
+                        onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="w-4 h-4 text-primary-500 mt-1" />
+                          <div>
+                            <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400">
+                              Example: {stage.projectExample.title}
+                            </Text>
+                            <Text size="xs" color="secondary" className="mt-1">
+                              {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
+                            </Text>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              )}
             </ScrollReveal>
-          ))}
+          )})}
         </Container>
       </section>
 

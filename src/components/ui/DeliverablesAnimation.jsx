@@ -43,7 +43,7 @@ const DeliverablesAnimation = () => {
   const floatingIcons = [Check, Star, BarChart3, Lightbulb, Target];
 
   return (
-    <div className="relative w-full h-64 overflow-hidden rounded-2xl bg-gradient-to-br from-coral-50 to-pink-50 dark:from-coral-900/20 dark:to-pink-900/20 p-6">
+    <div className="relative w-full min-h-[20rem] md:min-h-[28rem] overflow-visible rounded-2xl bg-gradient-to-br from-coral-50 to-pink-50 dark:from-coral-900/20 dark:to-pink-900/20 p-6 md:p-8 pb-12">
       {/* Floating assessment elements */}
       {floatingIcons.map((Icon, i) => (
         <motion.div
@@ -55,7 +55,7 @@ const DeliverablesAnimation = () => {
             opacity: 0
           }}
           animate={{
-            y: [null, 250],
+            y: [null, 350],
             opacity: [0, 0.3, 0]
           }}
           transition={{
@@ -71,15 +71,15 @@ const DeliverablesAnimation = () => {
 
       {/* Rubric Grid */}
       <div className="relative z-10">
-        <div className="grid grid-cols-5 gap-1 text-xs">
+        <div className="grid grid-cols-5 gap-2 text-xs md:text-sm">
           {/* Header row */}
-          <div className="p-1 text-center font-semibold text-slate-600 dark:text-slate-400">
+          <div className="p-2 text-center font-semibold text-slate-700 dark:text-slate-300">
             Criteria
           </div>
           {levels.map((level) => (
             <motion.div
               key={level.id}
-              className="p-1 text-center font-semibold text-slate-600 dark:text-slate-400"
+              className="p-2 text-center font-semibold text-slate-700 dark:text-slate-300"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: level.id * 0.1 }}
@@ -93,13 +93,13 @@ const DeliverablesAnimation = () => {
             <React.Fragment key={criterion.id}>
               {/* Criterion label */}
               <motion.div
-                className="p-2 text-center font-medium text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1"
+                className="p-3 text-center font-medium text-slate-700 dark:text-slate-300 flex items-center justify-center gap-2"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: rowIndex * 0.2 + 0.5 }}
               >
-                <criterion.Icon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                <span className="hidden sm:inline">{criterion.name}</span>
+                <criterion.Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                <span className="hidden md:inline">{criterion.name}</span>
               </motion.div>
 
               {/* Level cells */}
@@ -110,12 +110,12 @@ const DeliverablesAnimation = () => {
                 return (
                   <motion.div
                     key={cellId}
-                    className="relative p-1 cursor-pointer overflow-hidden"
+                    className="relative p-2 md:p-3 cursor-pointer overflow-hidden min-h-[60px] md:min-h-[80px] flex items-center justify-center"
                     style={{
-                      backgroundColor: isSelected ? level.color : 'transparent',
-                      borderWidth: '1px',
+                      backgroundColor: isSelected ? level.color : 'rgba(255,255,255,0.6)',
+                      borderWidth: '2px',
                       borderColor: isSelected ? level.borderColor : 'rgba(0,0,0,0.1)',
-                      borderRadius: '4px'
+                      borderRadius: '8px'
                     }}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{
@@ -133,13 +133,13 @@ const DeliverablesAnimation = () => {
                     <AnimatePresence>
                       {isSelected && (
                         <motion.div
-                          className="text-xs text-slate-600 dark:text-slate-300 text-center"
+                          className="text-xs md:text-sm text-slate-700 dark:text-slate-200 text-center font-medium px-1"
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.9 }}
                           transition={{ duration: 0.2 }}
                         >
-                          {descriptors[cellId]?.substring(0, 15)}...
+                          {descriptors[cellId]}
                         </motion.div>
                       )}
                     </AnimatePresence>
