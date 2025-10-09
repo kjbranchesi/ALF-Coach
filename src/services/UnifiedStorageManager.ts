@@ -6,6 +6,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { HeroProjectTransformer, EnhancedHeroProjectData, TransformationLevel, TransformationContext } from './HeroProjectTransformer';
+import type { LargeRef } from './LargeObjectStore';
+import { LargeObjectStore } from './LargeObjectStore';
 
 // Unified project data interface
 export interface UnifiedProjectData {
@@ -26,6 +28,8 @@ export interface UnifiedProjectData {
   // Project data (structured format)
   projectData?: Record<string, any>;
   showcase?: Record<string, any>;
+  // Pointer to IDB when showcase is offloaded
+  showcaseRef?: LargeRef;
 
   // Chat captured data
   capturedData?: Record<string, any>;
@@ -63,6 +67,12 @@ export interface StorageOptions {
   enableHeroTransformation?: boolean;
   heroTransformationLevel?: TransformationLevel;
   transformationContext?: TransformationContext;
+  storeShowcaseInIDB?: boolean; // offload large showcase payloads to IndexedDB
+  // Cloud sync throttling
+  idleCloudSyncDelayMs?: number; // idle delay before cloud sync when dirty
+  minCloudSyncIntervalMs?: number; // minimum interval between cloud syncs while dirty
+  snapshotIntervalMs?: number; // interval for snapshotting large blobs
+  maxSnapshots?: number; // number of snapshots to retain in Storage
 }
 
 const DEFAULT_OPTIONS: StorageOptions = {
@@ -72,7 +82,8 @@ const DEFAULT_OPTIONS: StorageOptions = {
   validateData: true,
   enableHeroTransformation: true,
   heroTransformationLevel: 'standard',
-  transformationContext: {}
+  transformationContext: {},
+  storeShowcaseInIDB: true
 };
 
 export class UnifiedStorageManager {
@@ -83,8 +94,30 @@ export class UnifiedStorageManager {
   private readonly INDEX_KEY = 'alf_project_index';
   private readonly LEGACY_PREFIXES = ['blueprint_', 'journey-v5-'];
   private heroTransformerPromise: Promise<HeroProjectTransformer> | null = null;
+  // Cloud sync state
+  private dirtyProjects = new Map<string, number>(); // projectId -> dirtySince timestamp
+  private lastCloudSyncAt = new Map<string, number>();
+  private idleTimers = new Map<string, number>();
+  private periodicTimers = new Map<string, number>();
+  private snapshotLastAt = new Map<string, number>();
 
-  private constructor(private options: StorageOptions = DEFAULT_OPTIONS) {}
+  private constructor(private options: StorageOptions = DEFAULT_OPTIONS) {
+    // Fill defaults for new options
+    this.options.idleCloudSyncDelayMs = this.options.idleCloudSyncDelayMs ?? 5000;
+    this.options.minCloudSyncIntervalMs = this.options.minCloudSyncIntervalMs ?? 20000;
+    this.options.snapshotIntervalMs = this.options.snapshotIntervalMs ?? 120000;
+    this.options.maxSnapshots = this.options.maxSnapshots ?? 10;
+
+    // Global listeners to flush when we can
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => {
+        // Attempt to sync all dirty projects
+        for (const projectId of this.dirtyProjects.keys()) {
+          void this.syncNowIfDue(projectId, { force: true, reason: 'online' });
+        }
+      });
+    }
+  }
 
   private async getHeroTransformer(): Promise<HeroProjectTransformer> {
     if (!this.heroTransformerPromise) {
@@ -137,7 +170,7 @@ export class UnifiedStorageManager {
             syncStatus: projectData.syncStatus || 'local'
           } as UnifiedProjectData;
 
-      const unifiedData: UnifiedProjectData = {
+      let unifiedData: UnifiedProjectData = {
         ...base,
         ...projectData,
         id,
@@ -158,6 +191,18 @@ export class UnifiedStorageManager {
         chatHistory: projectData.chatHistory || base.chatHistory || [],
         provisional: typeof projectData.provisional === 'boolean' ? projectData.provisional : base.provisional
       };
+
+      // Offload large showcase to IDB (keeps localStorage lean and reliable)
+      if (this.options.storeShowcaseInIDB && unifiedData.showcase) {
+        try {
+          const ref = await LargeObjectStore.saveShowcase(id, unifiedData.showcase);
+          unifiedData.showcaseRef = ref;
+          // Strip heavy payload from what we persist in localStorage
+          delete (unifiedData as any).showcase;
+        } catch (e: any) {
+          console.warn(`[UnifiedStorageManager] Failed to offload showcase to IDB: ${e?.message || e}`);
+        }
+      }
 
       const metadataOnlyUpdate =
         typeof projectData.deletedAt !== 'undefined' ||
@@ -192,6 +237,9 @@ export class UnifiedStorageManager {
 
       console.log(`[UnifiedStorageManager] Project saved: ${id}`);
 
+      // Mark dirty and schedule cloud sync
+      this.notifyLocalChange(id);
+
       // Background hero transformation (if enabled)
       if (this.options.enableHeroTransformation) {
         this.backgroundHeroTransformation(id, unifiedData).catch(error => {
@@ -210,6 +258,88 @@ export class UnifiedStorageManager {
     } catch (error) {
       console.error('[UnifiedStorageManager] Save failed:', error);
       throw new Error(`Failed to save project: ${error.message}`);
+    }
+  }
+
+  /**
+   * Mark project as dirty and schedule idle/periodic cloud sync
+   */
+  notifyLocalChange(projectId: string): void {
+    const now = Date.now();
+    if (!this.dirtyProjects.has(projectId)) {
+      this.dirtyProjects.set(projectId, now);
+    }
+
+    // Idle timer
+    const idleDelay = this.options.idleCloudSyncDelayMs || 5000;
+    const prevIdle = this.idleTimers.get(projectId);
+    if (prevIdle) { window.clearTimeout(prevIdle); }
+    const idleId = window.setTimeout(() => {
+      void this.syncNowIfDue(projectId, { reason: 'idle' });
+    }, idleDelay);
+    this.idleTimers.set(projectId, idleId);
+
+    // Periodic timer (fires every minCloudSyncInterval while dirty)
+    if (!this.periodicTimers.get(projectId)) {
+      const interval = this.options.minCloudSyncIntervalMs || 20000;
+      const periodicId = window.setInterval(() => {
+        if (this.dirtyProjects.has(projectId)) {
+          void this.syncNowIfDue(projectId, { reason: 'periodic' });
+        } else {
+          // No longer dirty → stop interval
+          const pid = this.periodicTimers.get(projectId);
+          if (pid) { window.clearInterval(pid); this.periodicTimers.delete(projectId); }
+        }
+      }, interval);
+      this.periodicTimers.set(projectId, periodicId);
+    }
+  }
+
+  /**
+   * Attempt cloud sync if due (throttled). Force overrides intervals.
+   */
+  async syncNowIfDue(projectId: string, opts?: { force?: boolean; reason?: string }): Promise<void> {
+    try {
+      const now = Date.now();
+      const last = this.lastCloudSyncAt.get(projectId) || 0;
+      const minInterval = this.options.minCloudSyncIntervalMs || 20000;
+      const due = opts?.force || now - last >= minInterval;
+      if (!due) { return; }
+
+      const data = await this.loadProject(projectId);
+      if (!data) { return; }
+
+      await this.backgroundFirebaseSync(projectId, data);
+      this.lastCloudSyncAt.set(projectId, Date.now());
+      // Clear dirty if sync succeeded
+      this.dirtyProjects.delete(projectId);
+
+      // Consider snapshotting large blob periodically
+      const snapInterval = this.options.snapshotIntervalMs || 120000;
+      const lastSnap = this.snapshotLastAt.get(projectId) || 0;
+      if (Date.now() - lastSnap >= snapInterval) {
+        this.snapshotLastAt.set(projectId, Date.now());
+        const { auth } = await import('../firebase/firebase');
+        if (auth?.currentUser?.uid) {
+          // Try to snapshot showcase (if present or retrievable)
+          let showcaseObj: any = (data as any).showcase;
+          if (!showcaseObj && data.showcaseRef) {
+            try { showcaseObj = await LargeObjectStore.loadShowcase(data.showcaseRef); } catch {}
+          }
+          if (showcaseObj) {
+            try {
+              const { CloudBlobService } = await import('./CloudBlobService');
+              await CloudBlobService.uploadSnapshotJSON(auth.currentUser.uid, projectId, 'showcase', showcaseObj);
+              await CloudBlobService.trimSnapshots(auth.currentUser.uid, projectId, 'showcase', this.options.maxSnapshots || 10);
+            } catch (e) {
+              console.warn('[UnifiedStorageManager] Snapshot attempt failed', (e as Error).message);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Non-fatal; will try again later
+      console.warn('[UnifiedStorageManager] syncNowIfDue failed', (e as Error).message, opts);
     }
   }
 
@@ -291,7 +421,8 @@ export class UnifiedStorageManager {
       gradeLevel,
       duration,
       projectTopic,
-      provisional: typeof data.provisional === 'boolean' ? data.provisional : false
+      provisional: typeof data.provisional === 'boolean' ? data.provisional : false,
+      hasShowcase: Boolean((data as any).showcase || data.showcaseRef)
     };
   }
 
@@ -303,6 +434,17 @@ export class UnifiedStorageManager {
       // Try primary storage
       const data = await this.loadFromLocalStorage(projectId);
       if (data) {
+        // Rehydrate showcase from IDB if needed
+        if (!data.showcase && data.showcaseRef) {
+          try {
+            const loaded = await LargeObjectStore.loadShowcase(data.showcaseRef);
+            if (loaded) {
+              (data as any).showcase = loaded;
+            }
+          } catch (e: any) {
+            console.warn(`[UnifiedStorageManager] Failed to rehydrate showcase for ${projectId}: ${e?.message || e}`);
+          }
+        }
         console.log(`[UnifiedStorageManager] Project loaded from primary storage: ${projectId}`);
         return data;
       }
@@ -623,6 +765,30 @@ export class UnifiedStorageManager {
     }
   }
 
+  /**
+   * Lightweight sync state for debugging/status chips.
+   */
+  async getSyncState(projectId: string): Promise<{
+    dirty: boolean;
+    lastLocalUpdate?: Date | null;
+    lastCloudSyncAt?: Date | null;
+    status?: UnifiedProjectData['syncStatus'];
+  }> {
+    try {
+      const data = await this.loadFromLocalStorage(projectId);
+      const dirty = this.dirtyProjects.has(projectId);
+      const lastCloud = data?.lastSyncAt || (this.lastCloudSyncAt.get(projectId) ? new Date(this.lastCloudSyncAt.get(projectId)!) : null);
+      return {
+        dirty,
+        lastLocalUpdate: data?.updatedAt || null,
+        lastCloudSyncAt: lastCloud || null,
+        status: data?.syncStatus
+      };
+    } catch {
+      return { dirty: false, lastLocalUpdate: null, lastCloudSyncAt: null, status: undefined };
+    }
+  }
+
   private async loadFromLegacyStorage(id: string): Promise<any | null> {
     // Try blueprint_ format
     const blueprintKey = `blueprint_${id}`;
@@ -673,6 +839,11 @@ export class UnifiedStorageManager {
     try {
       const existingData = await this.loadFromLocalStorage(id);
       if (!existingData) {return;}
+
+      // Ensure backups do not include heavy showcase payloads
+      if ((existingData as any).showcase) {
+        delete (existingData as any).showcase;
+      }
 
       // Rotate backups
       const maxBackups = this.options.maxBackups || 5;
@@ -759,12 +930,27 @@ export class UnifiedStorageManager {
 
   private async cleanupOldBackups(): Promise<void> {
     try {
-      const keys = Object.keys(localStorage);
-      const backupKeys = keys.filter(key => key.startsWith(this.BACKUP_PREFIX));
-
-      // Remove oldest backups to free space
-      const toRemove = backupKeys.slice(-10); // Keep only recent backups
-      toRemove.forEach(key => localStorage.removeItem(key));
+      const keys = Object.keys(localStorage).filter(k => k.startsWith(this.BACKUP_PREFIX));
+      // Group by project id
+      const map = new Map<string, Array<{ key: string; idx: number }>>();
+      for (const k of keys) {
+        // Format: alf_backup_{id}_{n}
+        const parts = k.substring(this.BACKUP_PREFIX.length).split('_');
+        if (parts.length < 2) { continue; }
+        const projId = parts.slice(0, -1).join('_');
+        const idx = Number(parts[parts.length - 1]);
+        if (Number.isNaN(idx)) { continue; }
+        const arr = map.get(projId) || [];
+        arr.push({ key: k, idx });
+        map.set(projId, arr);
+      }
+      // Keep only the newest N per project
+      const maxBackups = this.options.maxBackups || 5;
+      for (const [, arr] of map) {
+        arr.sort((a, b) => b.idx - a.idx);
+        const toDelete = arr.slice(maxBackups);
+        toDelete.forEach(({ key }) => localStorage.removeItem(key));
+      }
     } catch (error) {
       console.warn(`[UnifiedStorageManager] Cleanup failed: ${error.message}`);
     }
@@ -828,15 +1014,48 @@ export class UnifiedStorageManager {
       // Use project persistence service which now has proper error handling
       const { saveProjectDraft } = await import('./projectPersistence');
 
-      const userId = auth.currentUser.isAnonymous ? 'anonymous' : auth.currentUser.uid;
+      const userId = auth.currentUser.uid;
 
-      // Prepare project data with showcase included
-      const projectPayload = data.projectData || {};
+      // Prepare project data with optional showcase inclusion
+      const projectPayload: any = { ...(data.projectData || {}) };
 
-      // Include showcase data if it exists (critical for preview functionality)
-      // Sanitize to remove any undefined values that Firestore rejects
-      if (data.showcase) {
-        projectPayload.showcase = this.sanitizeForFirestore(data.showcase);
+      // Decide how to include showcase for Firestore (split/omit if too large)
+      let showcaseObj: any = (data as any).showcase;
+      if (!showcaseObj && data.showcaseRef) {
+        try { showcaseObj = await LargeObjectStore.loadShowcase(data.showcaseRef); } catch {}
+      }
+      if (showcaseObj) {
+        const sanitized = this.sanitizeForFirestore(showcaseObj);
+        const estimatedSize = JSON.stringify(sanitized).length;
+        // Avoid pushing very large payloads into a single doc; include pointer metadata instead
+        if (estimatedSize < 700_000) { // ~700KB threshold to stay well under 1MB
+          projectPayload.showcase = sanitized;
+        } else {
+          // Upload to Cloud Storage (best-effort) and include pointer metadata
+          try {
+            const { CloudBlobService } = await import('./CloudBlobService');
+            const cloudPtr = await CloudBlobService.uploadJSON(userId, id, 'showcase', sanitized);
+            if (cloudPtr) {
+              projectPayload.showcase = null;
+              projectPayload.showcaseRef = cloudPtr;
+            } else {
+              // Fallback to local IDB pointer only
+              projectPayload.showcase = null;
+              projectPayload.showcaseRef = {
+                storage: 'idb',
+                key: data.showcaseRef?.key || `alf_showcase_${id}`,
+                sizeKB: Math.round(estimatedSize / 1024)
+              };
+            }
+          } catch {
+            projectPayload.showcase = null;
+            projectPayload.showcaseRef = {
+              storage: 'idb',
+              key: data.showcaseRef?.key || `alf_showcase_${id}`,
+              sizeKB: Math.round(estimatedSize / 1024)
+            };
+          }
+        }
       }
 
       // Include other top-level fields that should be persisted

@@ -169,70 +169,78 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
 
         // Try Firestore with retry logic for authenticated users
         console.log(`[useBlueprintDoc] Trying Firebase for authenticated user: ${blueprintId}`);
-        const docRef = doc(db, 'blueprints', blueprintId);
 
-        // Set up real-time listener
-        unsubscribe = onSnapshot(
-          docRef,
+        const currentUserUid = auth.currentUser?.uid;
+
+        // Prefer user-scoped drafts path used by saveProjectDraft();
+        // fallback to legacy blueprints collection if not found.
+        const draftsRef = currentUserUid
+          ? doc(db, 'users', currentUserUid, 'projectDrafts', blueprintId)
+          : null;
+        const legacyRef = doc(db, 'blueprints', blueprintId);
+
+        const attachListener = (refToUse: any, label: string) => onSnapshot(
+          refToUse,
           async (snapshot) => {
             if (snapshot.exists()) {
               const data = snapshot.data();
               const blueprintData: BlueprintDoc = {
                 id: snapshot.id,
                 wizardData: data.wizardData,
-                createdAt: data.createdAt?.toDate() || new Date(),
-                updatedAt: data.updatedAt?.toDate() || new Date(),
-                userId: data.userId || '',
+                createdAt: data.createdAt?.toDate?.() || new Date(),
+                updatedAt: data.updatedAt?.toDate?.() || new Date(),
+                userId: data.userId || currentUserUid || '',
                 chatHistory: data.chatHistory || [],
                 journey: data.journey,
                 ideation: data.ideation,
                 deliverables: data.deliverables,
                 journeyData: transformLegacyJourney(data.journey || data.journeyData),
                 capturedData: data.capturedData,
-                projectData: data.projectData
-              };
+                projectData: data.project || data.projectData,
+                // surface showcase if it was inlined
+                showcase: data.project?.showcase || data.showcase
+              } as any;
               setBlueprint(blueprintData);
 
-              // Save to unified storage as backup
               const unifiedData = convertBlueprintToUnified(blueprintData);
               await unifiedStorage.saveProject(unifiedData);
 
-              // Report successful Firebase operation
               connectionStatus.reportFirebaseSuccess();
-              console.log(`[useBlueprintDoc] Blueprint loaded from Firebase: ${blueprintId}`);
+              console.log(`[useBlueprintDoc] Blueprint loaded from Firebase (${label}): ${blueprintId}`);
+              setLoading(false);
             } else {
-              console.warn(`[useBlueprintDoc] Blueprint not found in Firebase: ${blueprintId}`);
-              // Try unified storage fallback again
-              const unifiedData = await unifiedStorage.loadProject(blueprintId);
-              if (unifiedData) {
-                const blueprintData = convertUnifiedToBlueprint(unifiedData);
-                setBlueprint(blueprintData);
-                console.log(`[useBlueprintDoc] Blueprint found in unified storage fallback: ${blueprintId}`);
+              if (label === 'drafts' && legacyRef) {
+                console.warn(`[useBlueprintDoc] Draft not found; trying legacy blueprints: ${blueprintId}`);
+                unsubscribe = attachListener(legacyRef, 'legacy');
               } else {
-                setBlueprint(null);
+                console.warn(`[useBlueprintDoc] Document not found in Firebase (${label}): ${blueprintId}`);
+                const unifiedData = await unifiedStorage.loadProject(blueprintId);
+                if (unifiedData) {
+                  const blueprintData = convertUnifiedToBlueprint(unifiedData);
+                  setBlueprint(blueprintData);
+                } else {
+                  setBlueprint(null);
+                }
                 setError(null);
+                setLoading(false);
               }
             }
-            setLoading(false);
           },
           async (err) => {
-            console.warn(`[useBlueprintDoc] Firebase error: ${err.message}`);
-            // Report Firebase error to connection status
+            console.warn(`[useBlueprintDoc] Firebase error (${label}): ${err.message}`);
             connectionStatus.reportFirebaseError(err as Error);
-
-            // Try unified storage fallback
             try {
               const unifiedData = await unifiedStorage.loadProject(blueprintId);
               if (unifiedData) {
                 const blueprintData = convertUnifiedToBlueprint(unifiedData);
                 setBlueprint(blueprintData);
                 setError(null);
-                console.log(`[useBlueprintDoc] Blueprint recovered from unified storage after Firebase error: ${blueprintId}`);
-              } else {
-                // Only set error if no fallback and it's not a permission error
-                if (err.code !== 'permission-denied') {
-                  setError(err as Error);
-                }
+              } else if (label === 'drafts' && legacyRef) {
+                console.warn('[useBlueprintDoc] Trying legacy listener after error on drafts');
+                unsubscribe = attachListener(legacyRef, 'legacy');
+                return;
+              } else if (err.code !== 'permission-denied') {
+                setError(err as Error);
               }
             } catch (fallbackError) {
               console.error(`[useBlueprintDoc] All fallbacks failed: ${fallbackError.message}`);
@@ -243,6 +251,8 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
             setLoading(false);
           }
         );
+
+        unsubscribe = draftsRef ? attachListener(draftsRef, 'drafts') : attachListener(legacyRef, 'legacy');
       } catch (err) {
         console.error(`[useBlueprintDoc] Setup failed: ${err.message}`);
         setError(err as Error);

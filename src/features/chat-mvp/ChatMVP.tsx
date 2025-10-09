@@ -11,6 +11,7 @@ import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
 import { ResponsiveSidebar, StatusIndicator, type SystemStatus, type ResponsiveSidebarControls } from './components/minimal';
+import { SyncStatusChip } from './components/SyncStatusChip';
 import { CompactStageStepper } from './components/CompactStageStepper';
 import { useResponsiveLayout } from './hooks';
 import { trackEvent } from '../../utils/analytics';
@@ -566,6 +567,22 @@ export function ChatMVP({
     return () => clearTimeout(t);
   }, [persist, initialized, autosaveEnabled, captured, stage]);
 
+  // Cloud sync on page hide/close and when coming back online
+  useEffect(() => {
+    if (!projectId) {return;}
+    const handleHidden = () => { void unifiedStorage.syncNowIfDue(projectId, { force: true, reason: 'visibilitychange' }); };
+    const handleBeforeUnload = () => { void unifiedStorage.syncNowIfDue(projectId, { force: true, reason: 'beforeunload' }); };
+    const handleOnline = () => { void unifiedStorage.syncNowIfDue(projectId, { force: true, reason: 'online' }); };
+    document.addEventListener('visibilitychange', handleHidden);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('online', handleOnline);
+    return () => {
+      document.removeEventListener('visibilitychange', handleHidden);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [projectId]);
+
   const fallbackSuggestions = useMemo(() => {
     const base = stageSuggestions(stage);
     const dyn = dynamicSuggestions(stage, { subjects: wizard.subjects, projectTopic: wizard.projectTopic }, captured);
@@ -907,16 +924,19 @@ export function ChatMVP({
           const rawKey = `alf_project_${projectId}`;
           const hasHero = !!localStorage.getItem(heroKey);
           let hasRawShowcase = false;
+          let hasShowcaseRef = false;
           const raw = localStorage.getItem(rawKey);
           if (raw) {
             try {
               const parsed = JSON.parse(raw);
               hasRawShowcase = !!parsed?.showcase;
+              hasShowcaseRef = !!parsed?.showcaseRef;
             } catch {
               // ignore parse error
             }
           }
-          return hasHero || hasRawShowcase;
+          // Consider presence of a showcaseRef (IDB offload) as preview-ready
+          return hasHero || hasRawShowcase || hasShowcaseRef;
         } catch {
           return false;
         }
@@ -924,10 +944,16 @@ export function ChatMVP({
 
       let isReady = checkPreviewReady();
       if (!isReady) {
-        // Small bounded wait to let storage/transform finish
-        for (let i = 0; i < 6; i++) {
-          await new Promise(resolve => setTimeout(resolve, 250));
+        // Longer, incremental wait to allow IDB offload and hero transform
+        const intervals = [300, 300, 300, 300, 400, 400, 500, 500, 600, 700];
+        for (const ms of intervals) {
+          await new Promise(resolve => setTimeout(resolve, ms));
           if (checkPreviewReady()) { isReady = true; break; }
+        }
+        // Last-mile recheck
+        if (!isReady) {
+          await new Promise(resolve => setTimeout(resolve, 800));
+          isReady = checkPreviewReady();
         }
       }
 
@@ -953,7 +979,7 @@ export function ChatMVP({
       engine.appendMessage({
         id: String(Date.now() + 10),
         role: 'assistant',
-        content: 'I encountered an issue finalizing your project. Don\'t worry—all your work is safely autosaved. Let me try saving it again, or you can view your draft on the dashboard.',
+        content: 'I hit a storage snag while finalizing your project. Your work is autosaved. If preview is unavailable, try freeing some browser storage (clear large items) and tap “Retry finalization.”',
         timestamp: new Date()
       } as any);
     }
@@ -1608,6 +1634,7 @@ Your project structure is ready!`,
                   <FirebaseStatus />
                 </div>
                 {/* New consolidated status indicator */}
+                <SyncStatusChip projectId={projectId} />
                 <StatusIndicator status={systemStatus} />
               </div>
             </div>

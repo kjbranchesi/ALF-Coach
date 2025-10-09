@@ -295,7 +295,7 @@ export async function saveProjectDraft(
       }
 
       // Use the actual authenticated user ID for Firestore path
-      const authenticatedUserId = currentUser.isAnonymous ? 'anonymous' : currentUser.uid;
+      const authenticatedUserId = currentUser.uid;
 
       const ref = doc(collection(db, 'users', authenticatedUserId, 'projectDrafts'), draftId);
       await setDoc(ref, {

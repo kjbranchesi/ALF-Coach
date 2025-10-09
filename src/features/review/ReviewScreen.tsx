@@ -440,6 +440,36 @@ export function ReviewScreen() {
             console.log(`[ReviewScreen] ✅ Hero data loaded successfully: ${id}`);
           } else {
             console.warn(`[ReviewScreen] ⚠️ No hero data returned, using raw project data`);
+            // If raw has an IDB pointer, rehydrate from unified loader
+            try {
+              const rawParsed = rawData ? JSON.parse(rawData) : null;
+              if (rawParsed?.showcaseRef) {
+                const hydrated = await unifiedStorage.loadProject(id);
+                if (hydrated) {
+                  setRawProjectData(hydrated);
+                  console.log('[ReviewScreen] Rehydrated raw project from IDB');
+                }
+              }
+            } catch (e) {
+              // ignore
+            }
+
+            // Cloud fallback: if Firestore blueprint has a Storage pointer, fetch it now
+            try {
+              const projectShowcaseRef = (firestoreBlueprint as any)?.projectData?.showcaseRef
+                || (firestoreBlueprint as any)?.showcaseRef
+                || (firestoreBlueprint as any)?.project?.showcaseRef;
+              if (projectShowcaseRef?.storage === 'cloud') {
+                const { CloudBlobService } = await import('../../services/CloudBlobService');
+                const json = await CloudBlobService.downloadJSON(projectShowcaseRef);
+                if (json) {
+                  setRawProjectData((prev: any) => ({ ...(prev || {}), showcase: json }));
+                  console.log('[ReviewScreen] Loaded showcase from Cloud Storage');
+                }
+              }
+            } catch (e) {
+              console.warn('[ReviewScreen] Cloud fallback failed', (e as Error)?.message);
+            }
           }
         } catch (heroErr) {
           console.warn(`[ReviewScreen] Hero transformation failed, using raw data:`, heroErr);
@@ -489,11 +519,11 @@ export function ReviewScreen() {
 
   // Include raw local project showcase as a valid source to render
   const persistedShowcase = useMemo(() => {
-    const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const rawShowcase = (rawProjectData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
+    const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const blueprintShowcase = (blueprint as unknown as { showcase?: ProjectShowcaseV2; projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.showcase;
     const legacyShowcase = (blueprint as unknown as { projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.projectData?.showcase;
-    return heroShowcase || rawShowcase || blueprintShowcase || legacyShowcase || null;
+    return rawShowcase || heroShowcase || blueprintShowcase || legacyShowcase || null;
   }, [heroData, rawProjectData, blueprint]);
 
   // Dev observability: which data source is used
