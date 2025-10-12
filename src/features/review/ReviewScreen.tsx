@@ -623,31 +623,31 @@ export function ReviewScreen() {
   const isEnhancedHero = heroData !== null;
 
   const projectTitle = persistedShowcase?.hero?.title
-    || (isEnhancedHero ? heroData.title : (displayData?.wizardData?.projectTopic || `${displayData?.wizardData?.subject || ''} Project`))
+    || (isEnhancedHero ? heroData?.title : (displayData?.wizardData?.projectTopic || `${displayData?.wizardData?.subject || ''} Project`))
     || 'Untitled Project';
 
   const projectDescription = persistedShowcase?.fullOverview
-    || (isEnhancedHero ? heroData.hero.description : displayData?.wizardData?.motivation)
+    || (isEnhancedHero ? heroData?.hero?.description : displayData?.wizardData?.motivation)
     || '';
 
   const projectScope = persistedShowcase?.microOverview?.[0]
-    || (isEnhancedHero ? (heroData.context?.realWorld || heroData.overview?.description) : displayData?.wizardData?.scope)
+    || (isEnhancedHero ? (heroData?.context?.realWorld || heroData?.overview?.description) : displayData?.wizardData?.scope)
     || '';
 
   const projectLocation = persistedShowcase?.outcomes?.audiences?.join(', ')
-    || (isEnhancedHero ? heroData.impact?.audience?.primary?.join(', ') : displayData?.wizardData?.location)
+    || (isEnhancedHero ? heroData?.impact?.audience?.primary?.join(', ') : displayData?.wizardData?.location)
     || 'Global Impact';
 
   const baseWizardData = (displayData?.wizardData || {}) as Partial<WizardData>;
   const wizardData = isEnhancedHero
     ? {
         ...baseWizardData,
-        subject: persistedShowcase?.hero?.subjects?.[0] || heroData.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
+        subject: persistedShowcase?.hero?.subjects?.[0] || heroData?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
         motivation: projectDescription || baseWizardData.motivation || '',
         scope: projectScope || baseWizardData.scope || '',
         location: projectLocation || baseWizardData.location || 'Global Impact',
-        ageGroup: persistedShowcase?.hero?.gradeBand || heroData.gradeLevel || baseWizardData.ageGroup,
-        duration: persistedShowcase?.hero?.timeframe || heroData.duration || baseWizardData.duration
+        ageGroup: persistedShowcase?.hero?.gradeBand || heroData?.gradeLevel || baseWizardData.ageGroup,
+        duration: persistedShowcase?.hero?.timeframe || heroData?.duration || baseWizardData.duration
       }
     : {
         ...baseWizardData,
@@ -666,21 +666,21 @@ export function ReviewScreen() {
 
     if (isEnhancedHero && heroData) {
       return {
-        phases: heroData.journey?.phases || [],
-        activities: heroData.journey?.phases?.flatMap(p => p.activities) || [],
-        resources: heroData.resources?.required?.map(r => ({
+        phases: heroData?.journey?.phases || [],
+        activities: heroData?.journey?.phases?.flatMap(p => p.activities) || [],
+        resources: heroData?.resources?.required?.map(r => ({
           name: r.name,
           type: r.type,
           description: r.source || ''
         })) || [],
         deliverables: {
-          milestones: heroData.journey?.milestones || [],
+          milestones: heroData?.journey?.milestones || [],
           rubric: {
-            criteria: heroData.assessment?.rubric || []
+            criteria: heroData?.assessment?.rubric || []
           },
           impact: {
-            audience: heroData.impact?.audience?.primary?.join(', ') || '',
-            method: heroData.impact?.methods?.[0]?.method || ''
+            audience: heroData?.impact?.audience?.primary?.join(', ') || '',
+            method: heroData?.impact?.methods?.[0]?.method || ''
           }
         }
       };
