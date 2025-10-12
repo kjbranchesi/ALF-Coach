@@ -313,12 +313,13 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
     await firestoreOperationWithRetry(
       async () => {
         const currentUser = auth.currentUser;
-        const userId = currentUser?.isAnonymous ? 'anonymous' : (currentUser?.uid || 'anonymous');
-        
-        const docRef = doc(db, 'blueprints', blueprintId);
+        const userId = currentUser?.uid || 'anonymous';
+
+        // Write to user-scoped drafts path to avoid legacy duplication
+        const docRef = doc(db, 'users', userId, 'projectDrafts', blueprintId);
         await setDoc(docRef, {
           ...updatedData,
-          userId: userId, // Ensure anonymous users get 'anonymous' userId
+          userId,
           createdAt: updatedData.createdAt,
           updatedAt: updatedData.updatedAt,
           chatHistory: updatedData.chatHistory?.map(msg => ({
