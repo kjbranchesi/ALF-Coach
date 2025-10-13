@@ -20,8 +20,8 @@ const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
 const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
-// TEMPORARY: Using diagnostic version to debug
-const ReviewScreen = lazy(() => import('./features/review/ReviewScreenDiagnostic'));
+// TEMPORARY: Using diagnostic V2 (displays on page, console logs stripped in prod)
+const ReviewScreen = lazy(() => import('./features/review/ReviewScreenDiagnosticV2'));
 const ProjectShowcasePage = lazy(() => import('./features/showcase/ProjectShowcasePage'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
