@@ -41,21 +41,25 @@ exports.handler = async function handler(event) {
     }
 
     // Map friendly/alias model names to valid Google Gemini API model IDs
+    // Using -latest aliases to always get newest versions (recommended by Google)
     const MODEL_ALIASES = {
-      // Prefer 2.x generation models only; no 1.5 fallbacks
-      'gemini-2.5-flash-lite': 'gemini-2.5-flash-lite',
-      'flash-2.5-lite': 'gemini-2.5-flash-lite',
-      'flash2.5-lite': 'gemini-2.5-flash-lite',
-      'flash-lite': 'gemini-2.5-flash-lite',
-      'gemini-2.5-flash': 'gemini-2.5-flash',
-      'gemini-2.0-flash': 'gemini-2.0-flash-exp',
-      'gemini-2.0-flash-exp': 'gemini-2.0-flash-exp',
-      'flash-2.5': 'gemini-2.5-flash',
-      'flash2.5': 'gemini-2.5-flash'
+      // Latest aliases (auto-update to newest versions)
+      'gemini-2.5-flash-lite': 'gemini-flash-lite-latest',
+      'flash-2.5-lite': 'gemini-flash-lite-latest',
+      'flash2.5-lite': 'gemini-flash-lite-latest',
+      'flash-lite': 'gemini-flash-lite-latest',
+      'gemini-2.5-flash': 'gemini-flash-latest',
+      'gemini-2.0-flash': 'gemini-flash-latest',
+      'flash-2.5': 'gemini-flash-latest',
+      'flash2.5': 'gemini-flash-latest',
+      'flash': 'gemini-flash-latest',
+      // Direct latest aliases
+      'gemini-flash-latest': 'gemini-flash-latest',
+      'gemini-flash-lite-latest': 'gemini-flash-lite-latest'
     };
 
     const envDefault = process.env.GEMINI_MODEL && String(process.env.GEMINI_MODEL);
-    const requested = (typeof model === 'string' && model) ? model : (envDefault || 'gemini-2.5-flash-lite');
+    const requested = (typeof model === 'string' && model) ? model : (envDefault || 'gemini-flash-lite-latest');
     const selectedModel = MODEL_ALIASES[requested] || requested;
 
     const url = new URL(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${API_KEY}`);

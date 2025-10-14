@@ -20,8 +20,8 @@ export async function generateAI(prompt: string, opts?: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt,
-        // Prefer explicit option, then env, default to 2.5-lite.
-        model: opts?.model || envModel || 'gemini-2.5-flash-lite',
+        // Use -latest aliases to auto-update to newest versions (recommended by Google)
+        model: opts?.model || envModel || 'gemini-flash-lite-latest',
         history: toGeminiHistory(opts?.history || []),
         systemPrompt: opts?.systemPrompt,
         generationConfig: {

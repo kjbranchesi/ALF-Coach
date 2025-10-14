@@ -117,7 +117,7 @@ Write ONLY the 3 sentences, one per line, no numbering:`;
 
   try {
     const result = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.7,
       maxTokens: 200
     });
@@ -217,7 +217,7 @@ Format as JSON:
 
   try {
     const result = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
       maxTokens: 400
     });
@@ -339,7 +339,7 @@ Format as JSON:
 
   try {
     const result = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
       maxTokens: 500
     });
@@ -424,7 +424,7 @@ Format as JSON:
 
   try {
     const result = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
       maxTokens: 300
     });

@@ -60,7 +60,7 @@ export async function generateCourseDescription(
 
   try {
     const description = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
       maxTokens: 300,
       systemPrompt: 'You are an expert at writing clear, professional course descriptions for project-based learning experiences. Write descriptions that are engaging yet professional, specific yet accessible.'
@@ -143,7 +143,7 @@ export async function generateTagline(
 
   try {
     const tagline = await generateAI(prompt, {
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.7,
       maxTokens: 50,
       systemPrompt: 'You are an expert at writing concise, compelling taglines for educational projects. Write taglines that capture the essence and impact of project-based learning.'
