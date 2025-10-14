@@ -412,11 +412,33 @@ export function ReviewScreen() {
               hasShowcase: !!parsed.showcase,
               hasWizardData: !!parsed.wizardData,
               hasCapturedData: !!parsed.capturedData,
+              hasShowcaseRef: !!parsed.showcaseRef,
               status: parsed.status,
               stage: parsed.stage,
               keys: Object.keys(parsed)
             });
-            setRawProjectData(parsed);
+
+            // CRITICAL FIX: If showcaseRef exists, rehydrate from IDB immediately
+            // This happens BEFORE we check heroData, because showcase might be offloaded
+            if (parsed.showcaseRef) {
+              console.log(`[ReviewScreen] ShowcaseRef detected, rehydrating from IDB:`, parsed.showcaseRef);
+              try {
+                const hydrated = await unifiedStorage.loadProject(id);
+                if (hydrated && hydrated.showcase) {
+                  console.log(`[ReviewScreen] ✅ Rehydrated showcase from IDB`);
+                  setRawProjectData(hydrated);
+                } else {
+                  console.warn(`[ReviewScreen] ⚠️ IDB rehydration returned no showcase, using localStorage version`);
+                  setRawProjectData(parsed);
+                }
+              } catch (idbError) {
+                console.error(`[ReviewScreen] IDB rehydration failed:`, idbError);
+                setRawProjectData(parsed);
+              }
+            } else {
+              // No showcaseRef, use parsed data directly
+              setRawProjectData(parsed);
+            }
           } catch (parseError) {
             console.error(`[ReviewScreen] Failed to parse raw data:`, parseError);
           }
