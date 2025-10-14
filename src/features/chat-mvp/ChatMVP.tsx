@@ -812,6 +812,30 @@ export function ChatMVP({
         weeks: showcase.runOfShow.length
       });
 
+      // CRITICAL: Validate showcase structure before saving
+      const isValidShowcase = showcase &&
+        showcase.assignments &&
+        showcase.assignments.length > 0 &&
+        showcase.runOfShow &&
+        showcase.runOfShow.length > 0 &&
+        showcase.hero &&
+        showcase.hero.title;
+
+      if (!isValidShowcase) {
+        console.error('[ChatMVP] CRITICAL: Showcase validation failed', {
+          hasShowcase: !!showcase,
+          hasAssignments: !!showcase?.assignments,
+          assignmentsLength: showcase?.assignments?.length || 0,
+          hasRunOfShow: !!showcase?.runOfShow,
+          runOfShowLength: showcase?.runOfShow?.length || 0,
+          hasHero: !!showcase?.hero,
+          hasTitle: !!showcase?.hero?.title
+        });
+
+        // Throw error to trigger catch block and inform user
+        throw new Error('Showcase generation failed - AI services may be experiencing issues. Please try again in a moment.');
+      }
+
       // Extract display metadata
       const gradeLevel = wizard.gradeLevel || 'K-12';
       const subjects = wizard.subjects || [];
@@ -976,10 +1000,32 @@ export function ChatMVP({
       console.error('[ChatMVP] Project completion failed', error);
       setCompletionState('error');
 
+      // Determine if this is a showcase generation failure
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isShowcaseError = errorMessage.includes('Showcase generation failed') ||
+                              errorMessage.includes('AI services');
+
+      const userMessage = isShowcaseError
+        ? `**Unable to Complete Project Showcase**
+
+The AI service encountered an issue while generating your professional showcase materials (assignments, lesson plans, and materials list).
+
+**What happened:**
+- Your core project data (Big Idea, Learning Journey, Deliverables) is saved
+- The AI-generated showcase materials could not be created
+
+**What you can do:**
+1. Wait 1-2 minutes for AI services to recover
+2. Click "Retry Finalization" below
+3. If the issue persists, your project data is safe - contact support
+
+**Your work is not lost.** All your conversations and project design are autosaved.`
+        : 'I hit a storage snag while finalizing your project. Your work is autosaved. If preview is unavailable, try freeing some browser storage (clear large items) and tap "Retry finalization."';
+
       engine.appendMessage({
         id: String(Date.now() + 10),
         role: 'assistant',
-        content: 'I hit a storage snag while finalizing your project. Your work is autosaved. If preview is unavailable, try freeing some browser storage (clear large items) and tap “Retry finalization.”',
+        content: userMessage,
         timestamp: new Date()
       } as any);
     }

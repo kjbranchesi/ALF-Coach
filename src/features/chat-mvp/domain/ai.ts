@@ -32,12 +32,29 @@ export async function generateAI(prompt: string, opts?: {
       signal: controller.signal,
     });
     if (!res.ok) {
+      // Log detailed error info before returning empty string
+      console.error('[AI] HTTP error:', {
+        status: res.status,
+        statusText: res.statusText,
+        url: String(url)
+      });
+
+      // Try to get error details from response
+      try {
+        const errorData = await res.json();
+        console.error('[AI] Error response:', errorData);
+      } catch {
+        // Response not JSON, ignore
+      }
+
       throw new Error(`AI HTTP ${res.status}`);
     }
     const data = await res.json();
     const text = extractText(data);
     return sanitizeAI(text);
   } catch (e) {
+    // Log the actual error instead of silently returning empty
+    console.error('[AI] Generation failed:', e instanceof Error ? e.message : String(e));
     return '';
   } finally {
     clearTimeout(timeout);
