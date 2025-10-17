@@ -8,6 +8,16 @@ import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { type EnhancedHeroProjectData } from '../../services/HeroProjectTransformer';
 import type { HeroProjectData } from '../../utils/hero/types';
+// SECURITY: XSS prevention with DOMPurify sanitization
+import {
+  sanitizeStrict,
+  sanitizeBasicText,
+  sanitizeRichContent,
+  sanitizeShowcase
+} from '../../utils/sanitize';
+// PHASE A: Cloud-first reads
+import { projectLoadService } from '../../services/ProjectLoadService';
+import { featureFlags } from '../../config/featureFlags';
 // Export functionality removed as requested
 import { 
   ChevronDown,
@@ -63,16 +73,17 @@ interface NavigationItem {
 }
 
 function convertShowcaseToJourneyData(showcase: ProjectShowcaseV2): JourneyData {
+  // SECURITY: Sanitize all content from showcase (already sanitized in parent, but defensive)
   const phases = (showcase.runOfShow || []).map((week, index) => {
-    const name = week.weekLabel || week.kind || `Week ${index + 1}`;
-    const primaryDeliverable = week.deliverables?.[0] || '';
-    const primaryActivity = week.students?.[0] || week.teacher?.[0] || '';
+    const name = sanitizeStrict(week.weekLabel || week.kind || `Week ${index + 1}`);
+    const primaryDeliverable = sanitizeBasicText(week.deliverables?.[0] || '');
+    const primaryActivity = sanitizeBasicText(week.students?.[0] || week.teacher?.[0] || '');
 
     return {
       id: `phase-${index + 1}`,
       name,
-      description: week.focus || '',
-      goal: week.focus || '',
+      description: sanitizeBasicText(week.focus || ''),
+      goal: sanitizeBasicText(week.focus || ''),
       activity: primaryActivity,
       output: primaryDeliverable,
       duration: week.repeatable ? 'Multi-week' : '1 week',
@@ -84,17 +95,17 @@ function convertShowcaseToJourneyData(showcase: ProjectShowcaseV2): JourneyData 
     const phaseId = `phase-${index + 1}`;
     const studentActivities = (week.students || []).map((entry, activityIndex) => ({
       id: `${phaseId}-student-${activityIndex + 1}`,
-      name: entry,
+      name: sanitizeBasicText(entry),
       phaseId,
-      description: entry,
+      description: sanitizeBasicText(entry),
       duration: ''
     }));
 
     const teacherActivities = (week.teacher || []).map((entry, activityIndex) => ({
       id: `${phaseId}-teacher-${activityIndex + 1}`,
-      name: entry,
+      name: sanitizeBasicText(entry),
       phaseId,
-      description: entry,
+      description: sanitizeBasicText(entry),
       duration: ''
     }));
 
@@ -103,12 +114,12 @@ function convertShowcaseToJourneyData(showcase: ProjectShowcaseV2): JourneyData 
 
   const resources = [
     ...(showcase.materialsPrep?.coreKit || []).map(item => ({
-      name: item,
+      name: sanitizeStrict(item),
       type: 'material',
       description: 'Core kit material'
     })),
     ...(showcase.materialsPrep?.noTechFallback || []).map(item => ({
-      name: item,
+      name: sanitizeStrict(item),
       type: 'material',
       description: 'No-tech fallback'
     }))
@@ -116,16 +127,16 @@ function convertShowcaseToJourneyData(showcase: ProjectShowcaseV2): JourneyData 
 
   const rubricCriteria = (showcase.polish?.microRubric || []).map((criterion, index) => ({
     id: `criterion-${index + 1}`,
-    name: criterion,
-    description: criterion,
+    name: sanitizeBasicText(criterion),
+    description: sanitizeBasicText(criterion),
     levels: []
   }));
 
   const milestones = (showcase.runOfShow || []).flatMap((week, index) =>
     (week.deliverables || []).map((deliverable, deliverableIndex) => ({
       id: `milestone-${index + 1}-${deliverableIndex + 1}`,
-      name: deliverable,
-      description: week.focus || '',
+      name: sanitizeBasicText(deliverable),
+      description: sanitizeBasicText(week.focus || ''),
       dueDate: ''
     }))
   );
@@ -540,12 +551,16 @@ export function ReviewScreen() {
   const displayData = heroData || rawProjectData || blueprint;
 
   // Include raw local project showcase as a valid source to render
+  // SECURITY: Sanitize showcase content to prevent XSS attacks
   const persistedShowcase = useMemo(() => {
     const rawShowcase = (rawProjectData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const heroShowcase = (heroData as unknown as { showcase?: ProjectShowcaseV2 } | null)?.showcase;
     const blueprintShowcase = (blueprint as unknown as { showcase?: ProjectShowcaseV2; projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.showcase;
     const legacyShowcase = (blueprint as unknown as { projectData?: { showcase?: ProjectShowcaseV2 } } | null)?.projectData?.showcase;
-    return rawShowcase || heroShowcase || blueprintShowcase || legacyShowcase || null;
+    const unsanitizedShowcase = rawShowcase || heroShowcase || blueprintShowcase || legacyShowcase || null;
+
+    // Sanitize the showcase to prevent XSS attacks
+    return unsanitizedShowcase ? sanitizeShowcase(unsanitizedShowcase) : null;
   }, [heroData, rawProjectData, blueprint]);
 
   // Dev observability: which data source is used
@@ -642,43 +657,55 @@ export function ReviewScreen() {
   }
 
   // Extract data based on whether we have enhanced hero data or legacy blueprint
+  // SECURITY: All user-facing content is sanitized to prevent XSS attacks
   const isEnhancedHero = heroData !== null;
 
-  const projectTitle = persistedShowcase?.hero?.title
+  const projectTitle = sanitizeStrict(
+    persistedShowcase?.hero?.title
     || (isEnhancedHero ? heroData?.title : (displayData?.wizardData?.projectTopic || `${displayData?.wizardData?.subject || ''} Project`))
-    || 'Untitled Project';
+    || 'Untitled Project'
+  );
 
-  const projectDescription = persistedShowcase?.fullOverview
+  const projectDescription = sanitizeBasicText(
+    persistedShowcase?.fullOverview
     || (isEnhancedHero ? heroData?.hero?.description : displayData?.wizardData?.motivation)
-    || '';
+    || ''
+  );
 
-  const projectScope = persistedShowcase?.microOverview?.[0]
+  const projectScope = sanitizeBasicText(
+    persistedShowcase?.microOverview?.[0]
     || (isEnhancedHero ? (heroData?.context?.realWorld || heroData?.overview?.description) : displayData?.wizardData?.scope)
-    || '';
+    || ''
+  );
 
-  const projectLocation = persistedShowcase?.outcomes?.audiences?.join(', ')
+  const projectLocation = sanitizeStrict(
+    persistedShowcase?.outcomes?.audiences?.join(', ')
     || (isEnhancedHero ? heroData?.impact?.audience?.primary?.join(', ') : displayData?.wizardData?.location)
-    || 'Global Impact';
+    || 'Global Impact'
+  );
 
   const baseWizardData = (displayData?.wizardData || {}) as Partial<WizardData>;
+  // SECURITY: Sanitize all wizard data fields
   const wizardData = isEnhancedHero
     ? {
         ...baseWizardData,
-        subject: persistedShowcase?.hero?.subjects?.[0] || heroData?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
-        motivation: projectDescription || baseWizardData.motivation || '',
-        scope: projectScope || baseWizardData.scope || '',
-        location: projectLocation || baseWizardData.location || 'Global Impact',
-        ageGroup: persistedShowcase?.hero?.gradeBand || heroData?.gradeLevel || baseWizardData.ageGroup,
-        duration: persistedShowcase?.hero?.timeframe || heroData?.duration || baseWizardData.duration
+        subject: sanitizeStrict(persistedShowcase?.hero?.subjects?.[0] || heroData?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary'),
+        motivation: projectDescription || sanitizeBasicText(baseWizardData.motivation) || '',
+        scope: projectScope || sanitizeBasicText(baseWizardData.scope) || '',
+        location: projectLocation || sanitizeStrict(baseWizardData.location) || 'Global Impact',
+        ageGroup: sanitizeStrict(persistedShowcase?.hero?.gradeBand || heroData?.gradeLevel || baseWizardData.ageGroup),
+        duration: sanitizeStrict(persistedShowcase?.hero?.timeframe || heroData?.duration || baseWizardData.duration),
+        materials: baseWizardData.materials ? sanitizeBasicText(baseWizardData.materials) : undefined
       }
     : {
         ...baseWizardData,
-        subject: persistedShowcase?.hero?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary',
-        motivation: projectDescription || baseWizardData.motivation || '',
-        scope: projectScope || baseWizardData.scope || '',
-        location: projectLocation || baseWizardData.location || 'Global Impact',
-        ageGroup: persistedShowcase?.hero?.gradeBand || baseWizardData.ageGroup,
-        duration: persistedShowcase?.hero?.timeframe || baseWizardData.duration
+        subject: sanitizeStrict(persistedShowcase?.hero?.subjects?.[0] || baseWizardData.subject || 'Interdisciplinary'),
+        motivation: projectDescription || sanitizeBasicText(baseWizardData.motivation) || '',
+        scope: projectScope || sanitizeBasicText(baseWizardData.scope) || '',
+        location: projectLocation || sanitizeStrict(baseWizardData.location) || 'Global Impact',
+        ageGroup: sanitizeStrict(persistedShowcase?.hero?.gradeBand || baseWizardData.ageGroup),
+        duration: sanitizeStrict(persistedShowcase?.hero?.timeframe || baseWizardData.duration),
+        materials: baseWizardData.materials ? sanitizeBasicText(baseWizardData.materials) : undefined
       };
 
   const journeyData = useMemo(() => {

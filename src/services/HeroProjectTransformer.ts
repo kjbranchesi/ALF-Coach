@@ -118,11 +118,26 @@ export class HeroProjectTransformer {
       // Execute transformation
       const heroData = await this.executeTransformation(projectData, pipeline, context);
 
+      // Rehydrate showcase for metadata if needed (createBaseHeroStructure already did this for hero creation)
+      let showcaseForMeta = (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+        (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined);
+
+      if (!showcaseForMeta && projectData.showcaseRef) {
+        try {
+          const { LargeObjectStore } = await import('./LargeObjectStore');
+          const rehydrated = await LargeObjectStore.loadShowcase(projectData.showcaseRef);
+          if (rehydrated) {
+            showcaseForMeta = rehydrated as ProjectShowcaseV2;
+          }
+        } catch (error: any) {
+          console.warn(`[HeroTransformer] Failed to rehydrate showcase for metadata:`, error.message);
+        }
+      }
+
       // Add transformation metadata
       const enhancedData: EnhancedHeroProjectData = {
         ...heroData,
-        showcase: (projectData.showcase as ProjectShowcaseV2 | undefined) ||
-          (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined),
+        showcase: showcaseForMeta,
         transformationMeta: {
           level: targetLevel,
           context,
@@ -144,7 +159,7 @@ export class HeroProjectTransformer {
       console.error(`[HeroTransformer] Transformation failed for ${projectData.id}:`, error);
 
       // Return fallback transformation
-      return this.createFallbackTransformation(projectData, context, targetLevel);
+      return await this.createFallbackTransformation(projectData, context, targetLevel);
     }
   }
 
@@ -272,7 +287,7 @@ export class HeroProjectTransformer {
     context: TransformationContext
   ): Promise<HeroProjectData> {
     // Start with basic structure from template
-    let heroData = this.createBaseHeroStructure(projectData);
+    let heroData = await this.createBaseHeroStructure(projectData);
 
     // Execute each pipeline step
     for (const step of pipeline) {
@@ -323,12 +338,37 @@ export class HeroProjectTransformer {
 
   /**
    * Create base hero structure from wizard/chat data
+   * ASYNC: Rehydrates showcase from IDB if needed
    */
-  private createBaseHeroStructure(projectData: UnifiedProjectData): HeroProjectData {
+  private async createBaseHeroStructure(projectData: UnifiedProjectData): Promise<HeroProjectData> {
     const wizardData = projectData.wizardData || {};
     const capturedData = projectData.capturedData || {};
-    const storedShowcase = (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+
+    // CRITICAL: Rehydrate showcase from IDB if it was offloaded
+    let storedShowcase = (projectData.showcase as ProjectShowcaseV2 | undefined) ||
       (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined);
+
+    // If showcase is missing but we have a showcaseRef, load from IDB
+    if (!storedShowcase && projectData.showcaseRef) {
+      try {
+        console.log(`[HeroTransformer] Rehydrating showcase from IDB for project ${projectData.id}`);
+        const { LargeObjectStore } = await import('./LargeObjectStore');
+        const rehydrated = await LargeObjectStore.loadShowcase(projectData.showcaseRef);
+        if (rehydrated) {
+          storedShowcase = rehydrated as ProjectShowcaseV2;
+          console.log(`[HeroTransformer] Successfully rehydrated showcase (${projectData.showcaseRef.sizeKB || '?'}KB)`);
+        } else {
+          console.warn(`[HeroTransformer] Failed to rehydrate showcase - IDB returned null`);
+        }
+      } catch (error: any) {
+        console.error(`[HeroTransformer] Failed to rehydrate showcase from IDB:`, {
+          projectId: projectData.id,
+          showcaseRef: projectData.showcaseRef,
+          error: error.message
+        });
+        // Continue without showcase - hero will have base structure only
+      }
+    }
 
     const baseHero: HeroProjectData = {
       id: projectData.id,
@@ -1068,17 +1108,32 @@ export class HeroProjectTransformer {
     };
   }
 
-  private createFallbackTransformation(
+  private async createFallbackTransformation(
     projectData: UnifiedProjectData,
     context: TransformationContext,
     targetLevel: TransformationLevel
-  ): EnhancedHeroProjectData {
-    const baseHero = this.createBaseHeroStructure(projectData);
+  ): Promise<EnhancedHeroProjectData> {
+    const baseHero = await this.createBaseHeroStructure(projectData);
+
+    // Rehydrate showcase if needed
+    let showcaseForFallback = (projectData.showcase as ProjectShowcaseV2 | undefined) ||
+      (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined);
+
+    if (!showcaseForFallback && projectData.showcaseRef) {
+      try {
+        const { LargeObjectStore } = await import('./LargeObjectStore');
+        const rehydrated = await LargeObjectStore.loadShowcase(projectData.showcaseRef);
+        if (rehydrated) {
+          showcaseForFallback = rehydrated as ProjectShowcaseV2;
+        }
+      } catch (error: any) {
+        console.warn(`[HeroTransformer] Failed to rehydrate showcase for fallback:`, error.message);
+      }
+    }
 
     return {
       ...baseHero,
-      showcase: (projectData.showcase as ProjectShowcaseV2 | undefined) ||
-        (projectData.projectData?.showcase as ProjectShowcaseV2 | undefined),
+      showcase: showcaseForFallback,
       transformationMeta: {
         level: 'basic',
         context,
