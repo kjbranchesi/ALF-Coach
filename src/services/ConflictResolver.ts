@@ -18,7 +18,7 @@
 
 import { getDoc, doc } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { db, storage, auth } from '../firebase';
+import { db, storage, auth } from '../firebase/firebase';
 import { telemetry } from './telemetry';
 import type { ProjectShowcaseV2 } from '../types/showcaseV2';
 

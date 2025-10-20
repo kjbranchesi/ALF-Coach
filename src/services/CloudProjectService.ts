@@ -39,7 +39,7 @@ import {
   serverTimestamp,
   type Timestamp
 } from 'firebase/firestore';
-import { storage, db, auth } from '../firebase';
+import { storage, db, auth } from '../firebase/firebase';
 import { telemetry, measureAsync } from './telemetry';
 import { syncStatusManager } from './SyncStatusManager';
 import { syncMutex } from '../utils/AsyncMutex';
