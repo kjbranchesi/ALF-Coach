@@ -410,7 +410,58 @@ export function ReviewScreen() {
 
         console.log(`[ReviewScreen] =========== LOADING PROJECT DATA ===========`);
         console.log(`[ReviewScreen] Project ID: ${id}`);
+        console.log(`[ReviewScreen] Cloud-first enabled: ${featureFlags.cloudFirstReads}`);
 
+        // PHASE A: Cloud-first load with automatic fallbacks
+        if (featureFlags.cloudFirstReads) {
+          const loadResult = await projectLoadService.loadProject(id);
+
+          if (loadResult.success && loadResult.showcase) {
+            console.log(
+              `[ReviewScreen] ✅ Loaded from ${loadResult.source} ` +
+              `(rev ${loadResult.rev || 'unknown'})`
+            );
+
+            // Set showcase as raw project data
+            setRawProjectData({
+              showcase: loadResult.showcase,
+              wizardData: displayData?.wizardData || {},
+              status: 'completed',
+              stage: 'review'
+            });
+
+            // Try hero transformation (optional enhancement)
+            try {
+              const enhanced = await unifiedStorage.loadHeroProject(id);
+              if (enhanced) {
+                setHeroData(enhanced);
+                console.log(`[ReviewScreen] ✅ Hero transformation successful`);
+              }
+            } catch (heroErr) {
+              console.warn(`[ReviewScreen] Hero transformation failed (non-fatal):`, heroErr);
+              // Continue without hero data - we have showcase
+            }
+
+            setIsLoadingHero(false);
+            return; // Success - exit early!
+          } else {
+            // Cloud-first load failed
+            console.error(
+              `[ReviewScreen] ❌ Cloud-first load failed:`,
+              loadResult.error
+            );
+
+            setHeroError(
+              new Error(
+                loadResult.error?.message || 'Failed to load project from cloud'
+              )
+            );
+            setIsLoadingHero(false);
+            return;
+          }
+        }
+
+        // LEGACY PATH: Original load logic continues below
         // EMERGENCY FIX: Load raw project data directly from localStorage
         const rawKey = `alf_project_${id}`;
         const rawData = localStorage.getItem(rawKey);
