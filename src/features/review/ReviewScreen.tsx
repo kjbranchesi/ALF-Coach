@@ -364,7 +364,7 @@ function QualityBadge() {
   );
 }
 
-export function ReviewScreen() {
+export default function ReviewScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 

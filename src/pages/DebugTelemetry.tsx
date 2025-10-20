@@ -31,7 +31,7 @@ import {
   WifiOff
 } from 'lucide-react';
 
-export function DebugTelemetry() {
+export default function DebugTelemetry() {
   const navigate = useNavigate();
   const [stats, setStats] = useState(telemetry.getStats());
   const [events, setEvents] = useState<TelemetryEvent[]>(telemetry.getRecentEvents(20));
