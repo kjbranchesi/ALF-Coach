@@ -20,8 +20,8 @@ const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
 const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
-// KEEP DIAGNOSTIC VERSION until issue is resolved
-const ReviewScreen = lazy(() => import('./features/review/ReviewScreenDiagnosticV2'));
+// Phase A: Using actual ReviewScreen with cloud-first reads
+const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const ProjectShowcasePage = lazy(() => import('./features/showcase/ProjectShowcasePage'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
