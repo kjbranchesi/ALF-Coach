@@ -915,6 +915,34 @@ export function ChatMVP({
         qualityCheck: quality
       });
 
+      // PHASE A: Save showcase to cloud immediately for cloud-first reads
+      try {
+        console.log('[ChatMVP] 🌥️ Saving showcase to cloud...');
+        const { cloudProjectService } = await import('../../services/CloudProjectService');
+        const { featureFlags } = await import('../../config/featureFlags');
+
+        if (featureFlags.cloudFirstReads && completeProject.showcase) {
+          const saveResult = await cloudProjectService.saveShowcase(
+            projectId,
+            completeProject.showcase
+          );
+
+          if (saveResult.success) {
+            console.log(
+              `[ChatMVP] ✅ Showcase saved to cloud (rev ${saveResult.rev})`,
+              saveResult.showcasePath
+            );
+          } else {
+            console.warn('[ChatMVP] ⚠️ Cloud save failed:', saveResult.error);
+          }
+        } else {
+          console.log('[ChatMVP] Skipping cloud save (cloudFirstReads=false or no showcase)');
+        }
+      } catch (cloudError) {
+        console.error('[ChatMVP] ❌ Cloud save error (non-fatal):', cloudError);
+        // Continue anyway - local storage has the data
+      }
+
       // Trigger hero transformation for showcase view
       // This is CRITICAL for the preview page to work properly
       console.log('[ChatMVP] Triggering hero transformation...');

@@ -414,6 +414,7 @@ export default function ReviewScreen() {
 
         // PHASE A: Cloud-first load with automatic fallbacks
         if (featureFlags.cloudFirstReads) {
+          console.log(`[ReviewScreen] 🌥️ Attempting cloud-first load...`);
           const loadResult = await projectLoadService.loadProject(id);
 
           if (loadResult.success && loadResult.showcase) {
@@ -422,10 +423,11 @@ export default function ReviewScreen() {
               `(rev ${loadResult.rev || 'unknown'})`
             );
 
-            // Set showcase as raw project data
+            // BUG FIX: Don't reference displayData (doesn't exist yet)
+            // Just use the showcase data we got from cloud
             setRawProjectData({
               showcase: loadResult.showcase,
-              wizardData: displayData?.wizardData || {},
+              wizardData: {}, // Will be populated from showcase if needed
               status: 'completed',
               stage: 'review'
             });
@@ -445,19 +447,12 @@ export default function ReviewScreen() {
             setIsLoadingHero(false);
             return; // Success - exit early!
           } else {
-            // Cloud-first load failed
-            console.error(
-              `[ReviewScreen] ❌ Cloud-first load failed:`,
+            // BUG FIX: Cloud-first load failed - DON'T return, fall through to local!
+            console.warn(
+              `[ReviewScreen] ⚠️ Cloud-first load failed, falling back to local storage:`,
               loadResult.error
             );
-
-            setHeroError(
-              new Error(
-                loadResult.error?.message || 'Failed to load project from cloud'
-              )
-            );
-            setIsLoadingHero(false);
-            return;
+            // Continue to legacy path below instead of returning
           }
         }
 
