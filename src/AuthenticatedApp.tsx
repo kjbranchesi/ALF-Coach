@@ -26,6 +26,7 @@ const ProjectShowcasePage = lazy(() => import('./features/showcase/ProjectShowca
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
 const IntakeWizardMinimal = lazy(() => import('./features/wizard/IntakeWizardMinimal'));
+const DebugTelemetry = lazy(() => import('./pages/DebugTelemetry'));
 
 const dashboardErrorFallback = (
   <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
@@ -291,6 +292,17 @@ export default function AuthenticatedApp() {
             <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
             <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
             
+            {/* Debug routes */}
+            <Route path="/app/debug/telemetry" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading telemetry…</div></div>}>
+                    <DebugTelemetry />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+
             {/* Test routes */}
             <Route path="/test/chat" element={<div>Chat test route - component needs fixing</div>} />
             <Route path="/test/chat-smoke" element={
