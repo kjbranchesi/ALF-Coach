@@ -8,6 +8,11 @@
   VITE_PDF_EXPORT_ENABLED = "false"
   VITE_ENABLE_DOWNLOADS = "false"
 
+  # Phase A: Cloud-first architecture
+  VITE_CLOUD_FIRST_READS = "true"
+  VITE_ENABLE_OFFLINE_SNAPSHOT = "true"
+  VITE_ENABLE_IDB_FALLBACK = "true"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
