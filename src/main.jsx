@@ -6,7 +6,7 @@ import './styles/soft-ui.css'
 import App from './App'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
 import { globalErrorHandler } from './utils/global-error-handler'
-import { featureFlags, getFeatureFlags } from './config/featureFlags'
+import { featureFlags } from './config/featureFlags'
 // ThemeProvider is already applied inside App.tsx via providers/ThemeProvider
 
 // Early startup diagnostics (not suppressed)
@@ -30,7 +30,7 @@ try {
 
   // Log feature flags snapshot
   // eslint-disable-next-line no-console
-  console.log('[BOOT] FeatureFlags:', getFeatureFlags());
+  console.log('[BOOT] FeatureFlags:', featureFlags);
 } catch {}
 
 // Set up error suppression for browser extension errors (honors env + query overrides)
