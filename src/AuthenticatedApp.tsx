@@ -136,15 +136,13 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function AuthenticatedApp() {
-  const { 
-    user, 
-    isLoading, 
+  const {
+    user,
+    isLoading,
     signUpWithEmail,
     signInWithEmail,
     signInWithGoogle,
-    signInWithApple,
-    signInWithMicrosoft,
-    continueAsGuest 
+    continueAsGuest
   } = useAuth();
 
   if (isLoading) {
@@ -174,8 +172,6 @@ export default function AuthenticatedApp() {
                     onSignUpWithEmail={signUpWithEmail}
                     onSignInWithEmail={signInWithEmail}
                     onSignInWithGoogle={signInWithGoogle}
-                    onSignInWithApple={signInWithApple}
-                    onSignInWithMicrosoft={signInWithMicrosoft}
                     onSignInAnonymously={continueAsGuest}
                     onBackToHome={() => window.location.href = '/'}
                   />

@@ -7,16 +7,12 @@ import { ArrowLeft } from 'lucide-react';
 
 // --- Icon Components for each Auth Provider ---
 const GoogleIcon = () => ( <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C39.712,34.464,44,28.756,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg> );
-const AppleIcon = () => ( <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z"/></svg> );
-const MicrosoftIcon = () => ( <svg className="w-5 h-5" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg> );
 const UserCircleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg> );
 
-export default function SignIn({ 
-    onSignInWithEmail, 
-    onSignUpWithEmail, 
-    onSignInWithGoogle, 
-    onSignInWithApple,
-    onSignInWithMicrosoft,
+export default function SignIn({
+    onSignInWithEmail,
+    onSignUpWithEmail,
+    onSignInWithGoogle,
     onSignInAnonymously,
     onBackToHome
 }) {
@@ -147,41 +143,23 @@ export default function SignIn({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-            <button 
-              onClick={() => handleSocialSignIn(onSignInWithGoogle)} 
-              className="flex items-center justify-center w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md group"
+            <button
+              onClick={() => handleSocialSignIn(onSignInWithGoogle)}
+              className="flex items-center justify-center gap-2 w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md group"
               disabled={isLoading}
               title="Sign in with Google"
             >
               <GoogleIcon />
-              <span className="sr-only">Sign in with Google</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Google</span>
             </button>
-            <button 
-              onClick={() => handleSocialSignIn(onSignInWithApple)} 
-              className="flex items-center justify-center w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md text-black dark:text-white group"
-              disabled={isLoading}
-              title="Sign in with Apple"
-            >
-              <AppleIcon />
-              <span className="sr-only">Sign in with Apple</span>
-            </button>
-            <button 
-              onClick={() => handleSocialSignIn(onSignInWithMicrosoft)} 
-              className="flex items-center justify-center w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md group"
-              disabled={isLoading}
-              title="Sign in with Microsoft"
-            >
-              <MicrosoftIcon />
-              <span className="sr-only">Sign in with Microsoft</span>
-            </button>
-            <button 
-              onClick={() => handleSocialSignIn(onSignInAnonymously)} 
-              className="flex items-center justify-center w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md text-gray-600 dark:text-gray-400 group"
+            <button
+              onClick={() => handleSocialSignIn(onSignInAnonymously)}
+              className="flex items-center justify-center gap-2 w-full py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md text-gray-600 dark:text-gray-400 group"
               disabled={isLoading}
               title="Continue as Guest"
             >
               <UserCircleIcon />
-              <span className="sr-only">Continue as Guest</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Guest</span>
             </button>
         </div>
 
@@ -206,16 +184,6 @@ export default function SignIn({
           </p>
         </div>
       </div>
-      
-        {/* Note about Apple Sign In */}
-        {error && error.includes('Apple') && (
-          <div className="max-w-md mx-auto mt-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-xl">
-            <p className="text-sm text-primary-800 dark:text-primary-300">
-              <strong>Note:</strong> Apple Sign In requires proper configuration in Firebase Console. 
-              Please ensure Apple Sign In is enabled in your Firebase Authentication settings.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
