@@ -9,6 +9,53 @@ import type { ProjectShowcaseV2, WeekCard, AssignmentCard, GradeBand, Timeframe 
 import { generateAI } from './ai';
 
 /**
+ * Safely parse JSON with validation and detailed error logging
+ */
+function safeJSONParse<T = any>(text: string, context: string): T | null {
+  const trimmed = text.trim();
+
+  // Validate JSON structure
+  if (!trimmed) {
+    console.error(`[${context}] Empty response from AI`);
+    return null;
+  }
+
+  // Check if it looks like JSON
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+    console.error(`[${context}] Response doesn't look like JSON:`, trimmed.substring(0, 100));
+    return null;
+  }
+
+  // Check if JSON is complete (basic check)
+  const openBraces = (trimmed.match(/\{/g) || []).length;
+  const closeBraces = (trimmed.match(/\}/g) || []).length;
+  const openBrackets = (trimmed.match(/\[/g) || []).length;
+  const closeBrackets = (trimmed.match(/\]/g) || []).length;
+
+  if (openBraces !== closeBraces || openBrackets !== closeBrackets) {
+    console.error(`[${context}] Incomplete JSON - braces/brackets mismatch:`, {
+      openBraces,
+      closeBraces,
+      openBrackets,
+      closeBrackets,
+      preview: trimmed.substring(0, 200)
+    });
+    return null;
+  }
+
+  try {
+    return JSON.parse(trimmed) as T;
+  } catch (error) {
+    console.error(`[${context}] JSON parse failed:`, {
+      error: error instanceof Error ? error.message : String(error),
+      textLength: trimmed.length,
+      preview: trimmed.substring(0, 200)
+    });
+    return null;
+  }
+}
+
+/**
  * Generate complete project showcase from captured data
  */
 export async function generateProjectShowcase(
@@ -222,7 +269,12 @@ Format as JSON:
       maxTokens: 400
     });
 
-    const parsed = JSON.parse(result);
+    const parsed = safeJSONParse(result, 'projectShowcaseGenerator:weekCard');
+
+    if (!parsed) {
+      console.warn('[projectShowcaseGenerator] Week card: Using fallback due to parse failure');
+      return generateFallbackWeekCard(phase, weekLabel, kind, assignmentId, milestone);
+    }
 
     return {
       weekLabel,
@@ -344,7 +396,12 @@ Format as JSON:
       maxTokens: 500
     });
 
-    const parsed = JSON.parse(result);
+    const parsed = safeJSONParse(result, 'projectShowcaseGenerator:assignment');
+
+    if (!parsed) {
+      console.warn('[projectShowcaseGenerator] Assignment: Using fallback due to parse failure');
+      return generateFallbackAssignment(id, phase, artifactName, successCriteria);
+    }
 
     return {
       id,
@@ -429,7 +486,24 @@ Format as JSON:
       maxTokens: 300
     });
 
-    const parsed = JSON.parse(result);
+    const parsed = safeJSONParse(result, 'projectShowcaseGenerator:outcomes');
+
+    if (!parsed) {
+      console.warn('[projectShowcaseGenerator] Outcomes: Using fallback due to parse failure');
+      return {
+        core: [
+          `Design solutions that address ${challenge}`,
+          `Create ${artifacts[0]?.name || 'authentic artifacts'}`,
+          'Communicate findings to real audiences'
+        ],
+        extras: [
+          'Extend project to broader contexts',
+          'Collaborate with community partners',
+          'Publish results beyond classroom'
+        ],
+        audiences: ['Teachers', 'Peers', 'Community members', 'School leadership']
+      };
+    }
 
     return {
       core: Array.isArray(parsed.core) ? parsed.core : [parsed.core],

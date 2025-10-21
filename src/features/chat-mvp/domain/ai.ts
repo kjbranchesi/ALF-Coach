@@ -82,8 +82,19 @@ function extractText(data: any): string {
 }
 
 function sanitizeAI(text: string): string {
-  return String(text)
-    .replace(/```[\s\S]*?```/g, '') // strip fenced code blocks
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-    .trim();
+  let result = String(text);
+
+  // Extract JSON from code fences (e.g., ```json...```)
+  const jsonFenceMatch = result.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (jsonFenceMatch) {
+    result = jsonFenceMatch[1].trim();
+  } else {
+    // If no JSON fence found, strip other code fences but keep content
+    result = result.replace(/```[\w]*\n?/g, '').replace(/```/g, '');
+  }
+
+  // Remove script tags
+  result = result.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+
+  return result.trim();
 }

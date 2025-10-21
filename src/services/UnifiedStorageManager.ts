@@ -757,6 +757,12 @@ export class UnifiedStorageManager {
       if (parsed.lastSyncAt) {
         parsed.lastSyncAt = new Date(parsed.lastSyncAt);
       }
+      if (parsed.completedAt) {
+        parsed.completedAt = new Date(parsed.completedAt);
+      }
+      if (parsed.deletedAt) {
+        parsed.deletedAt = new Date(parsed.deletedAt);
+      }
 
       return parsed;
     } catch (error) {
@@ -890,7 +896,9 @@ export class UnifiedStorageManager {
         title: metadata.title,
         description: metadata.description || '',
         tagline: metadata.tagline || '',
-        updatedAt: metadata.updatedAt.toISOString(),
+        updatedAt: metadata.updatedAt instanceof Date
+          ? metadata.updatedAt.toISOString()
+          : new Date(metadata.updatedAt).toISOString(),
         stage: metadata.stage,
         syncStatus: metadata.syncStatus,
         status: metadata.status || 'draft',
@@ -1083,7 +1091,11 @@ export class UnifiedStorageManager {
             tagline: data.tagline,
             stage: data.stage,
             status: data.status,
-            completedAt: data.completedAt ? data.completedAt.toISOString() : undefined,
+            completedAt: data.completedAt
+              ? (data.completedAt instanceof Date
+                  ? data.completedAt.toISOString()
+                  : new Date(data.completedAt).toISOString())
+              : undefined,
             gradeLevel: data.gradeLevel,
             subject: data.subject,
             subjects: data.subjects,

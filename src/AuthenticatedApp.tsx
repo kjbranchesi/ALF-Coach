@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
 import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
@@ -8,6 +8,17 @@ import { useBackspaceNavigation } from './hooks/useBackspaceNavigation';
 import { SkipToMainContent } from './components/AccessibilityComponents';
 import { ConnectionStatus } from './components/ConnectionStatus';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+// Redirect components that properly extract route params
+const WorkspaceRedirect = () => {
+  const { projectId } = useParams<{ projectId: string }>();
+  return <Navigate to={`/app/project/${projectId}`} replace />;
+};
+
+const BlueprintChatRedirect = () => {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/app/blueprint/${id}`} replace />;
+};
 
 // Components that need auth
 import Header from './components/Header';
@@ -289,8 +300,8 @@ export default function AuthenticatedApp() {
             } />
 
             {/* Legacy routes - redirect to new architecture */}
-            <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
-            <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
+            <Route path="/app/workspace/:projectId" element={<WorkspaceRedirect />} />
+            <Route path="/app/blueprint/:id/chat" element={<BlueprintChatRedirect />} />
             
             {/* Debug routes */}
             <Route path="/app/debug/telemetry" element={
