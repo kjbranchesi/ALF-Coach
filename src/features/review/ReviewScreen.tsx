@@ -648,7 +648,8 @@ export default function ReviewScreen() {
       };
     }
 
-    return getJourneyData(displayData);
+    // Safe fallback: if displayData is null, return empty journey data
+    return displayData ? getJourneyData(displayData) : {};
   }, [persistedShowcase, isEnhancedHero, heroData, displayData]);
 
   if (loading) {
