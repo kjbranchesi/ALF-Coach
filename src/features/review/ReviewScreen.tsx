@@ -615,6 +615,10 @@ export default function ReviewScreen() {
     console.log('[ReviewScreen] Selected data source:', { id, source, hasShowcase: !!persistedShowcase });
   }, [id, heroData, rawProjectData, blueprint, persistedShowcase]);
 
+  // CRITICAL FIX: Define isEnhancedHero BEFORE journeyData useMemo to avoid TDZ error
+  // Extract data based on whether we have enhanced hero data or legacy blueprint
+  const isEnhancedHero = heroData !== null;
+
   // IMPORTANT: Hooks must always run in the same order on every render.
   // Define all hooks (useMemo/useEffect) before any early return.
   const journeyData = useMemo(() => {
@@ -734,10 +738,7 @@ export default function ReviewScreen() {
     );
   }
 
-  // Extract data based on whether we have enhanced hero data or legacy blueprint
   // SECURITY: All user-facing content is sanitized to prevent XSS attacks
-  const isEnhancedHero = heroData !== null;
-
   const projectTitle = sanitizeStrict(
     persistedShowcase?.hero?.title
     || (isEnhancedHero ? heroData?.title : (displayData?.wizardData?.projectTopic || `${displayData?.wizardData?.subject || ''} Project`))
