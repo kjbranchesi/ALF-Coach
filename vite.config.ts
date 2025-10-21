@@ -34,7 +34,9 @@ export default defineConfig({
     minify: process.env.DEBUG_BUNDLE === 'true' ? false : 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        // Keep console.error and console.warn in production to aid debugging.
+        // You can force full removal by setting DROP_CONSOLE=true at build time.
+        drop_console: process.env.DROP_CONSOLE === 'true',
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug'],
         passes: 2
