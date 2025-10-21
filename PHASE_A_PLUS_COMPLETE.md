@@ -78,13 +78,14 @@ This completes the foundation work needed before tackling chatbot generation iss
 
 ### Already Deployed
 - ✅ Firestore rules (deployed via `npx firebase deploy --only firestore:rules`)
+- ✅ Storage rules (deployed via `npx firebase deploy --only storage`)
 
 ### Ready to Deploy
 - ✅ All code fixes committed
 - ⏳ **Action needed**: `git push origin main` to trigger Netlify
 
 ### Manual Configuration
-- ⏳ **Action needed**: Add `GEMINI_API_KEY` to Netlify environment variables
+- ✅ `GEMINI_API_KEY` already configured in Netlify (confirmed working)
 
 ---
 
@@ -227,13 +228,14 @@ Phase A+ is complete when:
 - [x] All 5 fixes implemented
 - [x] Code builds without errors
 - [x] Firestore rules deployed
+- [x] Storage rules deployed
 - [x] Changes committed
+- [x] Gemini API key configured (already in Netlify)
 - [ ] Code pushed to GitHub
 - [ ] Netlify deployment successful
-- [ ] Gemini API key configured
 - [ ] End-to-end test passes
 
-**Current status**: 6/8 complete - pending deployment + testing
+**Current status**: 7/9 complete - pending git push + production testing
 
 ---
 
