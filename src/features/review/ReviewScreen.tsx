@@ -615,6 +615,38 @@ export default function ReviewScreen() {
     console.log('[ReviewScreen] Selected data source:', { id, source, hasShowcase: !!persistedShowcase });
   }, [id, heroData, rawProjectData, blueprint, persistedShowcase]);
 
+  // IMPORTANT: Hooks must always run in the same order on every render.
+  // Define all hooks (useMemo/useEffect) before any early return.
+  const journeyData = useMemo(() => {
+    if (persistedShowcase) {
+      return convertShowcaseToJourneyData(persistedShowcase);
+    }
+
+    if (isEnhancedHero && heroData) {
+      return {
+        phases: heroData?.journey?.phases || [],
+        activities: heroData?.journey?.phases?.flatMap(p => p.activities) || [],
+        resources: heroData?.resources?.required?.map(r => ({
+          name: r.name,
+          type: r.type,
+          description: r.source || ''
+        })) || [],
+        deliverables: {
+          milestones: heroData?.journey?.milestones || [],
+          rubric: {
+            criteria: heroData?.assessment?.rubric || []
+          },
+          impact: {
+            audience: heroData?.impact?.audience?.primary?.join(', ') || '',
+            method: heroData?.impact?.methods?.[0]?.method || ''
+          }
+        }
+      };
+    }
+
+    return getJourneyData(displayData);
+  }, [persistedShowcase, isEnhancedHero, heroData, displayData]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20 p-6 flex items-center justify-center">
@@ -754,35 +786,7 @@ export default function ReviewScreen() {
         materials: baseWizardData.materials ? sanitizeBasicText(baseWizardData.materials) : undefined
       };
 
-  const journeyData = useMemo(() => {
-    if (persistedShowcase) {
-      return convertShowcaseToJourneyData(persistedShowcase);
-    }
-
-    if (isEnhancedHero && heroData) {
-      return {
-        phases: heroData?.journey?.phases || [],
-        activities: heroData?.journey?.phases?.flatMap(p => p.activities) || [],
-        resources: heroData?.resources?.required?.map(r => ({
-          name: r.name,
-          type: r.type,
-          description: r.source || ''
-        })) || [],
-        deliverables: {
-          milestones: heroData?.journey?.milestones || [],
-          rubric: {
-            criteria: heroData?.assessment?.rubric || []
-          },
-          impact: {
-            audience: heroData?.impact?.audience?.primary?.join(', ') || '',
-            method: heroData?.impact?.methods?.[0]?.method || ''
-          }
-        }
-      };
-    }
-
-    return getJourneyData(displayData);
-  }, [persistedShowcase, isEnhancedHero, heroData, displayData]);
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20">
