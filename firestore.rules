@@ -97,8 +97,14 @@ service cloud.firestore {
         request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isOwner(userId);
       
-      // Subcollection: User's blueprints metadata
+      // Subcollection: User's blueprints metadata (legacy)
       match /blueprints/{blueprintId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Subcollection: User's project drafts (Phase A cloud-first architecture)
+      match /projectDrafts/{draftId} {
+        // Users (including anonymous) can read/write their own drafts
         allow read, write: if isOwner(userId);
       }
     }
