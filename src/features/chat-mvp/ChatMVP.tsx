@@ -919,7 +919,7 @@ export function ChatMVP({
       try {
         console.log('[ChatMVP] 🌥️ Saving showcase to cloud...');
         const { cloudProjectService } = await import('../../services/CloudProjectService');
-        const { featureFlags } = await import('../../config/featureFlags');
+        const { featureFlags } = await import('../../config/featureFlags.ts');
 
         if (featureFlags.cloudFirstReads && completeProject.showcase) {
           const saveResult = await cloudProjectService.saveShowcase(

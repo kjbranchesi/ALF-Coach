@@ -6,7 +6,7 @@ import './styles/soft-ui.css'
 import App from './App'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
 import { globalErrorHandler } from './utils/global-error-handler'
-import { featureFlags } from './config/featureFlags'
+import { featureFlags } from './config/featureFlags.ts'
 // ThemeProvider is already applied inside App.tsx via providers/ThemeProvider
 
 // Early startup diagnostics (not suppressed)
