@@ -399,7 +399,7 @@ export function ChatMVP({
         setJourneyEditingPhaseId(null);
       }
     }
-  }, [journeyV2Enabled, stage, captured.journey.phases, buildSuggestedPhases, normalizePhaseDraft]);
+  }, [journeyV2Enabled, stage, captured, wizard, buildSuggestedPhases, normalizePhaseDraft]);
 
   useEffect(() => {
     if (journeyV2Enabled && stage === 'JOURNEY') {
