@@ -28,11 +28,8 @@ interface JourneyTemplatePhase {
 }
 
 /**
- * Generate smart default journey based on context
+ * Helper functions - defined before exports to avoid hoisting issues
  */
-import { generateAI } from './ai';
-import { telemetry } from '../../../services/telemetry';
-import { resolveGradeBand, buildGradeBandPrompt } from '../../../ai/gradeBandRules';
 
 // Synchronous template generator (used as immediate fallback)
 function generateTemplateJourney(
