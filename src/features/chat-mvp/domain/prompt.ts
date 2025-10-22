@@ -2,6 +2,48 @@ import type { Stage, CapturedData } from './stages';
 import { stageGuide, stageOrder, summarizeCaptured, estimateDurationWeeks, recommendedPhaseCount, allocateWeekRanges } from './stages';
 import { buildGradeBandPrompt, resolveGradeBand } from '../../../ai/gradeBandRules';
 
+// Define structured context helper before exports to avoid hoisting/minifier reordering issues
+export function buildStructuredContext(captured: CapturedData | undefined, wizard: {
+  subjects?: string[];
+  gradeLevel?: string;
+  duration?: string;
+  location?: string;
+  projectTopic?: string;
+  materials?: string;
+}): string {
+  const bigIdea = captured?.ideation?.bigIdea || '(not yet set)';
+  const eq = captured?.ideation?.essentialQuestion || '(not yet set)';
+  const challenge = captured?.ideation?.challenge || '(not yet set)';
+  const subjects = wizard.subjects?.length ? wizard.subjects.join(', ') : 'Not specified';
+  const duration = wizard.duration || 'Not specified';
+  const gradeLevel = wizard.gradeLevel || 'Not specified';
+  const location = wizard.location || 'Not specified';
+  const topic = wizard.projectTopic || 'Not specified';
+
+  const phases = captured?.journey?.phases || [];
+  const phaseLines = phases.map((p, i) => `  ${i + 1}. ${p.name} — activities: ${(p.activities || []).join('; ')}`).join('\n');
+
+  const resolved = resolveGradeBand(wizard.gradeLevel);
+  const gradeLines = resolved ? buildGradeBandPrompt(resolved) : null;
+
+  return [
+    'PROJECT CONTEXT',
+    `Subjects: ${subjects} | Grade: ${gradeLevel} | Duration: ${duration} | Setting: ${location}`,
+    `Topic: ${topic}`,
+    '',
+    'FOUNDATION',
+    `Big Idea: ${bigIdea}`,
+    `Essential Question: ${eq}`,
+    `Challenge: ${challenge}`,
+    '',
+    phases.length ? 'LEARNING JOURNEY' : null,
+    phases.length ? phaseLines : null,
+    '',
+    gradeLines ? 'GRADE-BAND GUARDRAILS' : null,
+    gradeLines
+  ].filter(Boolean).join('\n');
+}
+
 interface BuildStagePromptArgs {
   stage: Stage;
   wizard: {
