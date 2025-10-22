@@ -356,9 +356,13 @@ export function ChatMVP({
 
     // Background AI refinement of deliverables (replace template with AI when ready)
     (async () => {
+      setDeliverablesAIStatus('refining');
       const ai = await generateSmartDeliverablesAI(updatedCaptured, wizard);
       if (ai) {
         setDeliverablesMicroState(prev => prev ? { ...prev, suggestedMilestones: ai.suggestedMilestones, suggestedArtifacts: ai.suggestedArtifacts, suggestedCriteria: ai.suggestedCriteria } : prev);
+        setDeliverablesAIStatus('enhanced');
+      } else {
+        setDeliverablesAIStatus('idle');
       }
     })().catch(() => {});
   }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel, updateDeliverablesChips]);
@@ -376,10 +380,14 @@ export function ChatMVP({
             setJourneyDraft(drafts);
             // Background AI refinement
             (async () => {
+              setJourneyAIStatus('refining');
               const ai = await generateSmartJourneyAI(captured, wizard);
               if (ai && ai.length) {
                 const refined = ai.map((p, index) => normalizePhaseDraft({ id: `suggest-${index + 1}`, name: p.name, focus: p.summary, activities: p.activities, checkpoint: '' }, index));
                 setJourneyDraft(refined);
+                setJourneyAIStatus('enhanced');
+              } else {
+                setJourneyAIStatus('idle');
               }
             })().catch(() => {});
           }
@@ -1884,16 +1892,25 @@ Your project structure is ready!`,
               latestAssistantId={latestAssistantId}
             />
             {journeyV2Enabled && stage === 'JOURNEY' ? (
-              <JourneyBoard
-                phases={journeyDraft}
-                selectedId={journeyEditingPhaseId}
-                onSelect={handleJourneySelectPhase}
-                onExpandAI={(id) => { setJourneyEditingPhaseId(id); setShowPhaseAI(true); }}
-                onRename={handleJourneyRename}
-                onReorder={handleJourneyReorder}
-                onAdd={handleJourneyAddPhase}
-                onRemove={handleJourneyRemovePhase}
-              />
+              <>
+                {journeyAIStatus !== 'idle' && (
+                  <div className="mb-2">
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${journeyAIStatus==='refining' ? 'bg-ai-100 text-ai-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      {journeyAIStatus === 'refining' ? 'AI refining… ✨' : 'AI Enhanced ✓'}
+                    </span>
+                  </div>
+                )}
+                <JourneyBoard
+                  phases={journeyDraft}
+                  selectedId={journeyEditingPhaseId}
+                  onSelect={handleJourneySelectPhase}
+                  onExpandAI={(id) => { setJourneyEditingPhaseId(id); setShowPhaseAI(true); }}
+                  onRename={handleJourneyRename}
+                  onReorder={handleJourneyReorder}
+                  onAdd={handleJourneyAddPhase}
+                  onRemove={handleJourneyRemovePhase}
+                />
+              </>
             ) : null}
 
             {journeyV2Enabled && stage === 'JOURNEY' ? (
@@ -1948,6 +1965,15 @@ Your project structure is ready!`,
                 onReorder={handleDeliverablesReorder}
                 hideFooter={journeyV2Enabled}
               />
+            )}
+            {deliverablesMicroState && (
+              <div className="mt-2">
+                {deliverablesAIStatus !== 'idle' && (
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${deliverablesAIStatus==='refining' ? 'bg-ai-100 text-ai-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    {deliverablesAIStatus === 'refining' ? 'AI refining… ✨' : 'AI Enhanced ✓'}
+                  </span>
+                )}
+              </div>
             )}
             {journeyV2Enabled && stage === 'DELIVERABLES' && deliverablesMicroState ? (
               <DecisionBar
