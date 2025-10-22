@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../../../lib/design-utils';
+import { cn } from '../../../utils/cn';
 
 export function SuggestionChips({ items, onSelect }: { items: string[]; onSelect: (t: string, index: number) => void }) {
   if (!items?.length) {return null;}
