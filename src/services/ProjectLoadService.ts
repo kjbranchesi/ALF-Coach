@@ -18,7 +18,7 @@
  * ```
  */
 
-import { featureFlags } from '../config/featureFlags.ts';
+import { featureFlags } from '../config/featureFlags';
 import { cloudProjectService } from './CloudProjectService';
 import { offlineSnapshotService } from './OfflineSnapshotService';
 import { unifiedStorage } from './UnifiedStorageManager';

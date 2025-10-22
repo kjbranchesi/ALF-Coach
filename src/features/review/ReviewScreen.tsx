@@ -17,7 +17,7 @@ import {
 } from '../../utils/sanitize';
 // PHASE A: Cloud-first reads
 import { projectLoadService } from '../../services/ProjectLoadService';
-import { featureFlags } from '../../config/featureFlags.ts';
+import { featureFlags } from '../../config/featureFlags';
 // Export functionality removed as requested
 import { 
   ChevronDown,

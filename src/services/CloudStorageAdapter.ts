@@ -26,7 +26,7 @@
  * ```
  */
 
-import { featureFlags } from '../config/featureFlags.ts';
+import { featureFlags } from '../config/featureFlags';
 import { cloudProjectService } from './CloudProjectService';
 import { offlineQueue } from './OfflineQueue';
 import { offlineSnapshotService } from './OfflineSnapshotService';

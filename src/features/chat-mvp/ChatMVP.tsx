@@ -44,13 +44,12 @@ import {
 import { assessStageInput } from './domain/inputQuality';
 import { detectIntent, getImmediateAcknowledgment, extractFromConversationalWrapper, type UserIntent } from './domain/intentDetection';
 import { suggestionTracker } from './domain/suggestionTracking';
-import { generateSmartJourney, generateSmartJourneyAI } from './domain/journeyMicroFlow';
+import { generateSmartJourney } from './domain/journeyMicroFlow';
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
   handleDeliverablesChoice,
   getDeliverablesActionChips,
-  generateSmartDeliverablesAI,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription, generateTagline, verifyDescriptionQuality } from './domain/courseDescriptionGenerator';
@@ -271,13 +270,14 @@ export function ChatMVP({
     setJourneyDraft(drafts);
     // Background AI refinement: replace template with AI-specific journey when available
     (async () => {
+      const { generateSmartJourneyAI } = await import('./domain/journeyMicroFlow');
       const ai = await generateSmartJourneyAI(captured, wizard);
       if (ai && ai.length) {
         const refined = ai.map((p, index) => normalizePhaseDraft({ id: `suggest-${index + 1}`, name: p.name, focus: p.summary, activities: p.activities, checkpoint: '' }, index));
         setJourneyDraft(refined);
       }
     })().catch(() => {});
-  }, [buildSuggestedPhases]);
+  }, [buildSuggestedPhases, captured, wizard, normalizePhaseDraft]);
 
   const handleJourneyCustomize = useCallback(() => {
     const first = journeyDraft[0];
@@ -357,6 +357,7 @@ export function ChatMVP({
     // Background AI refinement of deliverables (replace template with AI when ready)
     (async () => {
       setDeliverablesAIStatus('refining');
+      const { generateSmartDeliverablesAI } = await import('./domain/deliverablesMicroFlow');
       const ai = await generateSmartDeliverablesAI(updatedCaptured, wizard);
       if (ai) {
         setDeliverablesMicroState(prev => prev ? { ...prev, suggestedMilestones: ai.suggestedMilestones, suggestedArtifacts: ai.suggestedArtifacts, suggestedCriteria: ai.suggestedCriteria } : prev);
@@ -378,9 +379,10 @@ export function ChatMVP({
           } else {
             const drafts = buildSuggestedPhases();
             setJourneyDraft(drafts);
-            // Background AI refinement
+            // Background AI refinement (dynamic import to avoid cycles)
             (async () => {
               setJourneyAIStatus('refining');
+              const { generateSmartJourneyAI } = await import('./domain/journeyMicroFlow');
               const ai = await generateSmartJourneyAI(captured, wizard);
               if (ai && ai.length) {
                 const refined = ai.map((p, index) => normalizePhaseDraft({ id: `suggest-${index + 1}`, name: p.name, focus: p.summary, activities: p.activities, checkpoint: '' }, index));
@@ -999,7 +1001,7 @@ export function ChatMVP({
       try {
         console.log('[ChatMVP] 🌥️ Saving showcase to cloud...');
         const { cloudProjectService } = await import('../../services/CloudProjectService');
-        const { featureFlags } = await import('../../config/featureFlags.ts');
+        const { featureFlags } = await import('../../config/featureFlags');
 
         if (featureFlags.cloudFirstReads && completeProject.showcase) {
           const saveResult = await cloudProjectService.saveShowcase(

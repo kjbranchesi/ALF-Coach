@@ -14,7 +14,7 @@ import { telemetry, type TelemetryEvent } from '../services/telemetry';
 import { syncStatusManager } from '../services/SyncStatusManager';
 import { offlineSnapshotService } from '../services/OfflineSnapshotService';
 import { cloudProjectService } from '../services/CloudProjectService';
-import { featureFlags } from '../config/featureFlags.ts';
+import { featureFlags } from '../config/featureFlags';
 import {
   Activity,
   TrendingUp,
