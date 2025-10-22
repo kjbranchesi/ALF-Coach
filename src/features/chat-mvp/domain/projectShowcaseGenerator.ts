@@ -8,6 +8,8 @@ import type { CapturedData, WizardContext } from './stages';
 import { resolveGradeBand, buildGradeBandPrompt } from '../../../ai/gradeBandRules';
 import type { ProjectShowcaseV2, WeekCard, AssignmentCard, GradeBand, Timeframe } from '../../../types/showcaseV2';
 import { generateAI } from './ai';
+import { telemetry } from '../../../services/telemetry';
+import type { AnalyticRubric } from '../../../types/showcaseV2';
 
 /**
  * Safely parse JSON with validation and detailed error logging
@@ -170,13 +172,15 @@ Write ONLY the 3 sentences, one per line, no numbering:`;
     const result = await generateAI(prompt, {
       model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.7,
-      maxTokens: 200
+      maxTokens: 200,
+      label: 'micro_overview'
     });
 
     const sentences = result.split('\n').filter(s => s.trim()).slice(0, 3);
     return sentences.length === 3 ? sentences : generateFallbackMicroOverview(bigIdea, challenge);
   } catch (error) {
     console.error('[projectShowcaseGenerator] Micro-overview generation failed:', error);
+    telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'micro_overview', errorCode: 'PARSE_FAIL', errorMessage: (error as any)?.message, source: undefined });
     return generateFallbackMicroOverview(bigIdea, challenge);
   }
 }
@@ -284,13 +288,15 @@ Format as JSON:
     const result = await generateAI(prompt, {
       model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
-      maxTokens: 400
+      maxTokens: 400,
+      label: 'week_card'
     });
 
     const parsed = safeJSONParse(result, 'projectShowcaseGenerator:weekCard');
 
     if (!parsed) {
       console.warn('[projectShowcaseGenerator] Week card: Using fallback due to parse failure');
+      telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'week_card', errorCode: 'PARSE_FAIL', source: undefined });
       return generateFallbackWeekCard(phase, weekLabel, kind, assignmentId, milestone);
     }
 
@@ -306,6 +312,7 @@ Format as JSON:
     };
   } catch (error) {
     console.error('[projectShowcaseGenerator] Week card generation failed:', error);
+    telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'week_card', errorCode: 'ERROR', errorMessage: (error as any)?.message, source: undefined });
     return generateFallbackWeekCard(phase, weekLabel, kind, assignmentId, milestone);
   }
 }
@@ -425,17 +432,19 @@ Format as JSON:
     const result = await generateAI(prompt, {
       model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
-      maxTokens: 500
+      maxTokens: 500,
+      label: 'assignment'
     });
 
     const parsed = safeJSONParse(result, 'projectShowcaseGenerator:assignment');
 
     if (!parsed) {
       console.warn('[projectShowcaseGenerator] Assignment: Using fallback due to parse failure');
+      telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'assignment', errorCode: 'PARSE_FAIL', source: undefined });
       return generateFallbackAssignment(id, phase, artifactName, successCriteria);
     }
 
-    return {
+    const assignment: AssignmentCard = {
       id,
       title: parsed.title || phase.name,
       summary: parsed.summary || `Students engage in ${phase.name} activities`,
@@ -445,8 +454,20 @@ Format as JSON:
       successCriteria: Array.isArray(parsed.successCriteria) ? parsed.successCriteria : successCriteria,
       checkpoint: parsed.checkpoint || 'Teacher reviews student work'
     };
+
+    // Optionally add detailed analytic rubric (admin toggle)
+    try {
+      const fullRubric = typeof window !== 'undefined' && localStorage.getItem('alf_ai_full_rubric') === 'true';
+      if (fullRubric) {
+        assignment.rubric = await generateDetailedRubric(phase, assignment, wizard, narrative);
+      }
+    } catch (e) {
+      console.warn('[projectShowcaseGenerator] Rubric generation failed:', (e as any)?.message);
+    }
+    return assignment;
   } catch (error) {
     console.error('[projectShowcaseGenerator] Assignment generation failed:', error);
+    telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'assignment', errorCode: 'ERROR', errorMessage: (error as any)?.message, source: undefined });
     return generateFallbackAssignment(id, phase, artifactName, successCriteria);
   }
 }
@@ -515,13 +536,15 @@ Format as JSON:
     const result = await generateAI(prompt, {
       model: 'gemini-flash-latest', // Use latest with thinking mode for better quality
       temperature: 0.6,
-      maxTokens: 300
+      maxTokens: 300,
+      label: 'outcomes'
     });
 
     const parsed = safeJSONParse(result, 'projectShowcaseGenerator:outcomes');
 
     if (!parsed) {
       console.warn('[projectShowcaseGenerator] Outcomes: Using fallback due to parse failure');
+      telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'outcomes', errorCode: 'PARSE_FAIL', source: undefined });
       return {
         core: [
           `Design solutions that address ${challenge}`,
@@ -544,6 +567,7 @@ Format as JSON:
     };
   } catch (error) {
     console.error('[projectShowcaseGenerator] Outcomes generation failed:', error);
+    telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'outcomes', errorCode: 'ERROR', errorMessage: (error as any)?.message, source: undefined });
     return {
       core: [
         `Design solutions that address ${challenge}`,
@@ -630,6 +654,69 @@ function generateTags(subjects: string[]): string[] {
   if (subjects.some(s => s.toLowerCase().includes('english') || s.toLowerCase().includes('ela'))) tags.push('Literacy');
   if (subjects.length > 2) tags.push('Interdisciplinary');
   return tags.slice(0, 4);
+}
+
+// Generate detailed 4-level analytic rubric for an assignment
+async function generateDetailedRubric(
+  phase: { name: string; activities: string[] },
+  assignment: AssignmentCard,
+  wizard: WizardContext,
+  narrative?: ProjectNarrative
+): Promise<AnalyticRubric> {
+  const prompt = `Generate an analytic rubric with 3–5 criteria and 4 performance levels for this PBL assignment.
+
+PROJECT FOUNDATION:
+- Big Idea: ${narrative?.bigIdea || ''}
+- Essential Question: ${narrative?.essentialQuestion || ''}
+- Challenge: ${narrative?.challenge || ''}
+
+ASSIGNMENT CONTEXT:
+- Phase: ${phase.name}
+- Evidence: ${assignment.evidence.join(', ')}
+- Success Criteria: ${assignment.successCriteria.join('; ')}
+
+GRADE-BAND GUARDRAILS:
+${narrative?.gradeBandPrompt || ''}
+
+Format rubric as JSON with this shape:
+{
+  "criteria": [
+    {
+      "name": "...",
+      "weight": 25,
+      "levels": {
+        "exemplary": "...",
+        "proficient": "...",
+        "developing": "...",
+        "beginning": "..."
+      }
+    }
+  ]
+}`;
+
+  try {
+    const res = await generateAI(prompt, { model: 'gemini-flash-latest', temperature: 0.5, maxTokens: 500, label: 'rubric' });
+    const parsed = safeJSONParse(res, 'projectShowcaseGenerator:rubric');
+    if (parsed && Array.isArray(parsed.criteria)) {
+      return parsed as AnalyticRubric;
+    }
+  } catch (e) {
+    console.warn('[projectShowcaseGenerator] Rubric parse failed, using heuristic fallback');
+  }
+  // Fallback: build levels from success criteria
+  const baseCriteria = assignment.successCriteria.slice(0, 4).map((c) => ({
+    name: c.replace(/^I can\s+/i, '').replace(/\.$/, ''),
+    weight: Math.round(100 / Math.max(1, Math.min(4, assignment.successCriteria.length)))
+  }));
+  const levels = {
+    exemplary: 'Consistently exceeds expectations with clear evidence and impact.',
+    proficient: 'Meets expectations with complete, accurate work.',
+    developing: 'Partially meets expectations; needs revision in key areas.',
+    beginning: 'Beginning to demonstrate skills; major supports required.'
+  };
+  return {
+    criteria: baseCriteria.map(c => ({ name: c.name, weight: c.weight, levels }))
+  };
 }
 
 // Narrative: rich, structured context to guide AI generations

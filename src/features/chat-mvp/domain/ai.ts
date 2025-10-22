@@ -1,4 +1,5 @@
 // Minimal AI wrapper for ChatMVP
+import { telemetry, measureAsync } from '../../../services/telemetry';
 
 export async function generateAI(prompt: string, opts?: {
   model?: string;
@@ -6,6 +7,7 @@ export async function generateAI(prompt: string, opts?: {
   systemPrompt?: string;
   temperature?: number;
   maxTokens?: number;
+  label?: string; // for telemetry grouping
 }): Promise<string> {
   const enabledFlag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
   const url = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
@@ -15,7 +17,7 @@ export async function generateAI(prompt: string, opts?: {
   const timeout = setTimeout(() => controller.abort(), 20000); // 20s
 
   try {
-    const res = await fetch(String(url), {
+    const { result: res, latencyMs } = await measureAsync(async () => fetch(String(url), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -30,7 +32,7 @@ export async function generateAI(prompt: string, opts?: {
         }
       }),
       signal: controller.signal,
-    });
+    }));
     if (!res.ok) {
       // Log detailed error info before returning empty string
       console.error('[AI] HTTP error:', {
@@ -46,15 +48,43 @@ export async function generateAI(prompt: string, opts?: {
       } catch {
         // Response not JSON, ignore
       }
-
+      telemetry.track({
+        event: 'ai_prompt',
+        success: false,
+        latencyMs,
+        projectId: opts?.label || 'ai',
+        errorCode: `HTTP_${res.status}`,
+        errorMessage: res.statusText,
+        source: undefined,
+        metadata: { model: opts?.model || envModel }
+      });
       throw new Error(`AI HTTP ${res.status}`);
     }
     const data = await res.json();
     const text = extractText(data);
-    return sanitizeAI(text);
+    const cleaned = sanitizeAI(text);
+    telemetry.track({
+      event: 'ai_prompt',
+      success: Boolean(cleaned),
+      latencyMs,
+      projectId: opts?.label || 'ai',
+      source: undefined,
+      metadata: { model: opts?.model || envModel }
+    });
+    return cleaned;
   } catch (e) {
     // Log the actual error instead of silently returning empty
     console.error('[AI] Generation failed:', e instanceof Error ? e.message : String(e));
+    telemetry.track({
+      event: 'ai_prompt',
+      success: false,
+      latencyMs: 0,
+      projectId: opts?.label || 'ai',
+      errorCode: (e as any)?.name || 'ERROR',
+      errorMessage: (e as any)?.message || String(e),
+      source: undefined,
+      metadata: { model: opts?.model || envModel }
+    });
     return '';
   } finally {
     clearTimeout(timeout);

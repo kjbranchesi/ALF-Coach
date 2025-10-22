@@ -1110,6 +1110,74 @@ export default function ReviewScreen() {
                 </div>
               )}
 
+              {/* Assignments & Rubrics */}
+              {persistedShowcase?.assignments && persistedShowcase.assignments.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-success-600" />
+                    Assignments & Rubrics
+                  </h4>
+                  <div className="space-y-4">
+                    {persistedShowcase.assignments.map((a, idx) => (
+                      <div key={a.id || idx} className="bg-white/60 rounded-xl p-4 border border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <h5 className="text-gray-900 font-semibold">{a.title}</h5>
+                          {a.checkpoint && <span className="text-[11px] text-gray-500">Checkpoint: {a.checkpoint}</span>}
+                        </div>
+                        {a.summary && <p className="text-gray-700 mt-1">{a.summary}</p>}
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                          <div>
+                            <p className="font-semibold text-gray-800">Student directions</p>
+                            <ul className="mt-1 list-disc ml-5 space-y-1 text-gray-700">
+                              {(a.studentDirections || []).slice(0,6).map((s, i) => <li key={i}>{s}</li>)}
+                            </ul>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800">Evidence</p>
+                            <ul className="mt-1 list-disc ml-5 space-y-1 text-gray-700">
+                              {(a.evidence || []).slice(0,3).map((s, i) => <li key={i}>{s}</li>)}
+                            </ul>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800">Success criteria</p>
+                            <ul className="mt-1 list-disc ml-5 space-y-1 text-gray-700">
+                              {(a.successCriteria || []).slice(0,5).map((s, i) => <li key={i}>{s}</li>)}
+                            </ul>
+                          </div>
+                        </div>
+
+                        {a.rubric && a.rubric.criteria && a.rubric.criteria.length > 0 && (
+                          <div className="mt-4 overflow-x-auto">
+                            <table className="min-w-full text-xs border border-gray-200">
+                              <thead className="bg-gray-50">
+                                <tr>
+                                  <th className="p-2 text-left border-b">Criterion</th>
+                                  <th className="p-2 text-left border-b">Exemplary</th>
+                                  <th className="p-2 text-left border-b">Proficient</th>
+                                  <th className="p-2 text-left border-b">Developing</th>
+                                  <th className="p-2 text-left border-b">Beginning</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {a.rubric.criteria.map((c, i) => (
+                                  <tr key={i} className="align-top">
+                                    <td className="p-2 border-t font-medium text-gray-900">{c.name}</td>
+                                    <td className="p-2 border-t text-gray-700">{c.levels?.exemplary || ''}</td>
+                                    <td className="p-2 border-t text-gray-700">{c.levels?.proficient || ''}</td>
+                                    <td className="p-2 border-t text-gray-700">{c.levels?.developing || ''}</td>
+                                    <td className="p-2 border-t text-gray-700">{c.levels?.beginning || ''}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Real-World Impact */}
               {journeyData?.deliverables?.impact?.audience && (
                 <div className="bg-gradient-to-r from-success-50 to-ai-50 rounded-2xl p-6 border border-success-100">

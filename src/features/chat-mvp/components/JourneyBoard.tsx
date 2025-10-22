@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDown, ArrowUp, PenLine, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, PenLine, Plus, Trash2, Zap } from 'lucide-react';
 
 export type JourneyPhaseDraft = {
   id: string;
@@ -13,6 +13,7 @@ type JourneyBoardProps = {
   phases: JourneyPhaseDraft[];
   selectedId: string | null;
   onSelect(id: string): void;
+  onExpandAI?: (id: string) => void;
   onRename(id: string, nextName: string): void;
   onReorder(from: number, to: number): void;
   onAdd(): void;
@@ -23,6 +24,7 @@ export function JourneyBoard({
   phases,
   selectedId,
   onSelect,
+  onExpandAI,
   onRename,
   onReorder,
   onAdd,
@@ -141,22 +143,32 @@ export function JourneyBoard({
               </div>
 
               <footer className="flex items-center justify-between gap-2 border-t border-gray-200/60 dark:border-gray-800/60 px-4 py-3">
-                <div className="flex gap-2">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => onSelect(phase.id)}
+                  className="inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:border-gray-400"
+                >
+                  <PenLine className="w-3 h-3" />
+                  Zoom in
+                </button>
+                {onExpandAI && (
                   <button
                     type="button"
-                    onClick={() => onSelect(phase.id)}
-                    className="inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:border-gray-400"
+                    onClick={() => onExpandAI(phase.id)}
+                    className="inline-flex items-center gap-1 rounded-full border border-primary-300 px-3 py-1 text-[11px] font-semibold text-primary-700 hover:border-primary-400"
                   >
-                    <PenLine className="w-3 h-3" />
-                    Zoom in
+                    <Zap className="w-3 h-3" />
+                    AI expand
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRename(phase)}
-                    className="inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:border-gray-400"
-                  >
-                    Rename
-                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRename(phase)}
+                  className="inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:border-gray-400"
+                >
+                  Rename
+                </button>
                 </div>
                 <button
                   type="button"
@@ -174,4 +186,3 @@ export function JourneyBoard({
     </section>
   );
 }
-

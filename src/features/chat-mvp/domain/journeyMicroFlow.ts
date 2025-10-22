@@ -27,35 +27,106 @@ interface JourneyTemplatePhase {
 /**
  * Generate smart default journey based on context
  */
+import { generateAI } from './ai';
+import { telemetry } from '../../../services/telemetry';
+import { resolveGradeBand, buildGradeBandPrompt } from '../../../ai/gradeBandRules';
+
+// Synchronous template generator (used as immediate fallback)
 export function generateSmartJourney(
   captured: CapturedData,
-  wizard: WizardContext
+  wizard: WizardContext,
 ): JourneyMicroState['suggestedPhases'] {
   const weeks = estimateDurationWeeks(wizard.duration);
   const phaseCount = recommendedPhaseCount(weeks);
   const ranges = allocateWeekRanges(weeks, phaseCount);
+  return generateTemplateJourney(captured, wizard, phaseCount, ranges);
+}
 
-  // Use the actual project topic, not the full challenge statement
+// Async AI generator (call from UI after initial template shows)
+export async function generateSmartJourneyAI(
+  captured: CapturedData,
+  wizard: WizardContext
+): Promise<JourneyMicroState['suggestedPhases'] | null> {
+  const weeks = estimateDurationWeeks(wizard.duration);
+  const phaseCount = recommendedPhaseCount(weeks);
+  const ranges = allocateWeekRanges(weeks, phaseCount);
+  const band = resolveGradeBand(wizard.gradeLevel);
+  const guardrails = band ? buildGradeBandPrompt(band) : '';
+
+  const prompt = `Generate a ${phaseCount}-phase learning journey for this PBL project.
+
+PROJECT FOUNDATION:
+- Big Idea: ${captured.ideation.bigIdea || ''}
+- Essential Question: ${captured.ideation.essentialQuestion || ''}
+- Challenge: ${captured.ideation.challenge || ''}
+
+CONTEXT:
+- Grade Level: ${wizard.gradeLevel || ''}
+- Subjects: ${(wizard.subjects || []).join(', ')}
+- Duration: ${weeks} weeks (${phaseCount} phases)
+- Topic: ${wizard.projectTopic || ''}
+
+GRADE-BAND GUARDRAILS:
+${guardrails}
+
+REQUIREMENTS:
+Generate ${phaseCount} learning phases that:
+1. Build progressively toward answering the Essential Question
+2. Develop understanding of the Big Idea
+3. Enable students to complete the Challenge
+4. Include 2-3 SPECIFIC activities per phase (not generic "research")
+5. Activities must reference the actual project topic/subject
+
+OUTPUT FORMAT (JSON):
+[
+  {
+    "name": "Phase title (3-6 words)",
+    "duration": "${ranges[0] || 'Week 1'}",
+    "summary": "One sentence: how this phase advances Big Idea + EQ",
+    "activities": [
+      "Specific activity 1 for [topic]",
+      "Specific activity 2 for [topic]",
+      "Specific activity 3 for [topic]"
+    ]
+  }
+]
+
+Return ONLY valid JSON.`;
+
+  try {
+    const response = await generateAI(prompt, { model: 'gemini-flash-latest', temperature: 0.7, maxTokens: 800, label: 'journey_generation' });
+    const parsed = JSON.parse(response);
+    if (Array.isArray(parsed) && parsed.length === phaseCount) {
+      return parsed.map((p: any, i: number) => ({
+        name: p.name || `Phase ${i + 1}`,
+        duration: ranges[i] || '',
+        summary: p.summary || '',
+        activities: Array.isArray(p.activities) ? p.activities : []
+      }));
+    }
+  } catch (error: any) {
+    console.error('[journeyMicroFlow] AI generation failed, using fallback', error);
+    telemetry.track({ event: 'ai_fallback', success: false, latencyMs: 0, projectId: 'journey', errorCode: 'PARSE_FAIL', errorMessage: error?.message, source: undefined });
+  }
+  return null;
+}
+
+function generateTemplateJourney(
+  captured: CapturedData,
+  wizard: WizardContext,
+  phaseCount: number,
+  ranges: string[]
+): JourneyMicroState['suggestedPhases'] {
   const topic = wizard.projectTopic || captured.ideation.bigIdea || captured.ideation.essentialQuestion || 'this topic';
   const deliverable = inferDeliverableType(captured, wizard);
   const audience = inferAudience(captured, wizard);
-
-  // Context-aware template selection
   const template = selectTemplate(wizard.subjects, deliverable);
-
-  return template.slice(0, phaseCount).map((phase, index) => {
-    const contextualSummary = phase.summary
-      .replace('{topic}', topic)
-      .replace('{deliverable}', deliverable)
-      .replace('{audience}', audience);
-
-    return {
-      name: phase.title,
-      duration: ranges[index] || '',
-      summary: contextualSummary,
-      activities: phase.defaultActivities
-    };
-  });
+  return template.slice(0, phaseCount).map((phase, index) => ({
+    name: phase.title,
+    duration: ranges[index] || '',
+    summary: phase.summary.replace('{topic}', topic).replace('{deliverable}', deliverable).replace('{audience}', audience),
+    activities: phase.defaultActivities
+  }));
 }
 
 function inferDeliverableType(captured: CapturedData, wizard: WizardContext): string {

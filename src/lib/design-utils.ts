@@ -453,12 +453,5 @@ export const hapticUtils = {
   },
 };
 
-export {
-  colorUtils,
-  motionUtils,
-  responsiveUtils,
-  a11yUtils,
-  themeUtils,
-  educationUtils,
-  hapticUtils,
-};
+// Note: individual utilities above are already named exports.
+// Avoid re-exporting them here to prevent duplicate export errors.

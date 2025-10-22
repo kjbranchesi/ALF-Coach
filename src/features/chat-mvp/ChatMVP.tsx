@@ -19,6 +19,7 @@ import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { JourneyBoard, type JourneyPhaseDraft } from './components/JourneyBoard';
 import { PhaseEditorDrawer } from './components/PhaseEditorDrawer';
 import { DecisionBar } from './components/DecisionBar';
+import { PhaseDetailExpander } from './components/PhaseDetailExpander';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { scoreIdeationSpecificity, nextQuestionFor } from './domain/specificityScorer';
 import { generateAI } from './domain/ai';
@@ -43,12 +44,13 @@ import {
 import { assessStageInput } from './domain/inputQuality';
 import { detectIntent, getImmediateAcknowledgment, extractFromConversationalWrapper, type UserIntent } from './domain/intentDetection';
 import { suggestionTracker } from './domain/suggestionTracking';
-import { generateSmartJourney } from './domain/journeyMicroFlow';
+import { generateSmartJourney, generateSmartJourneyAI } from './domain/journeyMicroFlow';
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
   handleDeliverablesChoice,
   getDeliverablesActionChips,
+  generateSmartDeliverablesAI,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription, generateTagline, verifyDescriptionQuality } from './domain/courseDescriptionGenerator';
@@ -109,6 +111,7 @@ export function ChatMVP({
   const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
   const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
+  const [showPhaseAI, setShowPhaseAI] = useState(false);
   const [completionState, setCompletionState] = useState<'idle' | 'processing' | 'ready' | 'error'>(() => {
     const meta = (projectData?.projectData as any)?.status ?? (projectData as any)?.status;
     return meta === 'ready' ? 'ready' : 'idle';
@@ -266,6 +269,14 @@ export function ChatMVP({
     }
     const drafts = buildSuggestedPhases();
     setJourneyDraft(drafts);
+    // Background AI refinement: replace template with AI-specific journey when available
+    (async () => {
+      const ai = await generateSmartJourneyAI(captured, wizard);
+      if (ai && ai.length) {
+        const refined = ai.map((p, index) => normalizePhaseDraft({ id: `suggest-${index + 1}`, name: p.name, focus: p.summary, activities: p.activities, checkpoint: '' }, index));
+        setJourneyDraft(refined);
+      }
+    })().catch(() => {});
   }, [buildSuggestedPhases]);
 
   const handleJourneyCustomize = useCallback(() => {
@@ -342,6 +353,14 @@ export function ChatMVP({
     setMode('drafting');
     setFocus('deliverables');
     setShowKickoffPanel(false);
+
+    // Background AI refinement of deliverables (replace template with AI when ready)
+    (async () => {
+      const ai = await generateSmartDeliverablesAI(updatedCaptured, wizard);
+      if (ai) {
+        setDeliverablesMicroState(prev => prev ? { ...prev, suggestedMilestones: ai.suggestedMilestones, suggestedArtifacts: ai.suggestedArtifacts, suggestedCriteria: ai.suggestedCriteria } : prev);
+      }
+    })().catch(() => {});
   }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel, updateDeliverablesChips]);
 
   useEffect(() => {
@@ -355,6 +374,14 @@ export function ChatMVP({
           } else {
             const drafts = buildSuggestedPhases();
             setJourneyDraft(drafts);
+            // Background AI refinement
+            (async () => {
+              const ai = await generateSmartJourneyAI(captured, wizard);
+              if (ai && ai.length) {
+                const refined = ai.map((p, index) => normalizePhaseDraft({ id: `suggest-${index + 1}`, name: p.name, focus: p.summary, activities: p.activities, checkpoint: '' }, index));
+                setJourneyDraft(refined);
+              }
+            })().catch(() => {});
           }
         }
       } else {
@@ -1861,6 +1888,7 @@ Your project structure is ready!`,
                 phases={journeyDraft}
                 selectedId={journeyEditingPhaseId}
                 onSelect={handleJourneySelectPhase}
+                onExpandAI={(id) => { setJourneyEditingPhaseId(id); setShowPhaseAI(true); }}
                 onRename={handleJourneyRename}
                 onReorder={handleJourneyReorder}
                 onAdd={handleJourneyAddPhase}
@@ -1875,6 +1903,23 @@ Your project structure is ready!`,
                   phase={editingPhase}
                   onClose={() => setJourneyEditingPhaseId(null)}
                   onSave={handleJourneySavePhase}
+                />
+                <PhaseDetailExpander
+                  open={showPhaseAI}
+                  phase={editingPhase || null}
+                  wizard={wizard}
+                  onClose={() => setShowPhaseAI(false)}
+                  onApply={(detail) => {
+                    if (!editingPhase) { return; }
+                    const cleanedTasks = (detail.studentTasks || []).map(t => String(t).replace(/\s*—\s*\d+\s*min\s*$/i, '').trim()).slice(0, 8);
+                    const next: JourneyPhaseDraft = {
+                      ...editingPhase,
+                      activities: cleanedTasks.length ? cleanedTasks : editingPhase.activities,
+                      checkpoint: (detail.checkpoints && detail.checkpoints[0]) ? detail.checkpoints[0] : editingPhase.checkpoint
+                    };
+                    handleJourneySavePhase(next);
+                    setShowPhaseAI(false);
+                  }}
                 />
                 <DecisionBar
                   primaryLabel="Accept journey map"

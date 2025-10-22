@@ -38,6 +38,9 @@ export default function DebugTelemetry() {
   const [syncCounts, setSyncCounts] = useState(syncStatusManager.getStatusCounts());
   const [snapshotStats, setSnapshotStats] = useState(offlineSnapshotService.getStats());
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [narrativeOnly, setNarrativeOnly] = useState<boolean>(() => typeof localStorage !== 'undefined' && localStorage.getItem('alf_ai_narrative_only') === 'true');
+  const [fullRubric, setFullRubric] = useState<boolean>(() => typeof localStorage !== 'undefined' && localStorage.getItem('alf_ai_full_rubric') === 'true');
+  const [aiMetrics, setAIMetrics] = useState(telemetry.getAIMetrics());
 
   // Auto-refresh every 2 seconds
   useEffect(() => {
@@ -48,6 +51,7 @@ export default function DebugTelemetry() {
       setEvents(telemetry.getRecentEvents(20));
       setSyncCounts(syncStatusManager.getStatusCounts());
       setSnapshotStats(offlineSnapshotService.getStats());
+      setAIMetrics(telemetry.getAIMetrics());
     }, 2000);
 
     return () => clearInterval(interval);
@@ -109,6 +113,31 @@ export default function DebugTelemetry() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Admin toggles for AI generation modes */}
+            <div className="flex items-center gap-4 mr-4">
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="checkbox"
+                  checked={narrativeOnly}
+                  onChange={(e) => {
+                    setNarrativeOnly(e.target.checked);
+                    if (e.target.checked) { localStorage.setItem('alf_ai_narrative_only', 'true'); } else { localStorage.removeItem('alf_ai_narrative_only'); }
+                  }}
+                />
+                <span>Narrative‑only prompts</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="checkbox"
+                  checked={fullRubric}
+                  onChange={(e) => {
+                    setFullRubric(e.target.checked);
+                    if (e.target.checked) { localStorage.setItem('alf_ai_full_rubric', 'true'); } else { localStorage.removeItem('alf_ai_full_rubric'); }
+                  }}
+                />
+                <span>Generate full rubric</span>
+              </label>
+            </div>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -218,6 +247,31 @@ export default function DebugTelemetry() {
             <div className="text-xs text-gray-500 mt-1">
               Target: {'<'}500ms
             </div>
+          </div>
+        </div>
+
+        {/* AI Prompt Metrics */}
+        <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">AI Prompts</span>
+            </div>
+            <div className="text-3xl font-bold text-primary-600">{aiMetrics.total}</div>
+            <div className="text-xs text-gray-500 mt-1">Total prompts</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">AI Success</span>
+            </div>
+            <div className="text-3xl font-bold text-success-600">{aiMetrics.successRate}%</div>
+            <div className="text-xs text-gray-500 mt-1">Response parse/use success</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Fallbacks</span>
+            </div>
+            <div className="text-3xl font-bold text-warning-600">{aiMetrics.fallbacks}</div>
+            <div className="text-xs text-gray-500 mt-1">Times we used fallbacks</div>
           </div>
         </div>
 

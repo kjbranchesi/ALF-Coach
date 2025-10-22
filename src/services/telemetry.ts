@@ -12,13 +12,13 @@
  */
 
 export interface TelemetryEvent {
-  event: 'save_project' | 'load_project' | 'sync_error' | 'conflict_detected' | 'cache_hit' | 'cache_miss';
+  event: 'save_project' | 'load_project' | 'sync_error' | 'conflict_detected' | 'cache_hit' | 'cache_miss' | 'ai_prompt' | 'ai_fallback';
   success: boolean;
   latencyMs: number;
   source?: 'cache' | 'cloud' | 'offline_snapshot' | 'idb' | 'firestore';
   errorCode?: string;
   errorMessage?: string;
-  projectId: string;
+  projectId: string; // for AI events, use a label or 'ai'
   timestamp: number;
   metadata?: Record<string, any>;
 }
@@ -103,6 +103,19 @@ class SimpleTelemetry {
       errorCodes: this.errorCodeCounts(),
       totalEvents: this.events.length
     };
+  }
+
+  /**
+   * Aggregate AI prompt metrics
+   */
+  getAIMetrics(): { total: number; successRate: number; avgLatency: number; fallbacks: number } {
+    const ai = this.events.filter(e => e.event === 'ai_prompt');
+    const fb = this.events.filter(e => e.event === 'ai_fallback');
+    const total = ai.length;
+    const success = ai.filter(e => e.success).length;
+    const successRate = total ? Math.round((success / total) * 100) : 100;
+    const avgLatency = total ? Math.round(ai.reduce((s, e) => s + e.latencyMs, 0) / total) : 0;
+    return { total, successRate, avgLatency, fallbacks: fb.length };
   }
 
   /**

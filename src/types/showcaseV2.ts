@@ -82,4 +82,18 @@ export interface AssignmentCard {
     noAIAlt: string; // ≤ 12 words
   };
   safety?: string[]; // 1–3 only if essential
+  rubric?: AnalyticRubric; // optional analytic rubric (4 levels)
+}
+
+export interface AnalyticRubric {
+  criteria: Array<{
+    name: string;
+    weight?: number;
+    levels: {
+      exemplary: string;
+      proficient: string;
+      developing: string;
+      beginning: string;
+    };
+  }>;
 }
