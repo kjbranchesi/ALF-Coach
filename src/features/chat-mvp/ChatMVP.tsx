@@ -366,7 +366,7 @@ export function ChatMVP({
         setDeliverablesAIStatus('idle');
       }
     })().catch(() => {});
-  }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel, updateDeliverablesChips]);
+  }, [journeyDraft, normalizePhaseDraft, captured, wizard, engine, setStage, setStageTurns, setHasInput, setMode, setFocus, setShowKickoffPanel, updateDeliverablesChips, journeyV2Enabled]);
 
   useEffect(() => {
     if (journeyV2Enabled) {
