@@ -5,6 +5,7 @@
  */
 
 import type { CapturedData, WizardContext } from './stages';
+import { resolveGradeBand, buildGradeBandPrompt } from '../../../ai/gradeBandRules';
 import type { ProjectShowcaseV2, WeekCard, AssignmentCard, GradeBand, Timeframe } from '../../../types/showcaseV2';
 import { generateAI } from './ai';
 
@@ -84,11 +85,14 @@ export async function generateProjectShowcase(
   const totalWeeks = parseTotalWeeks(duration);
   const gradeBand = mapGradeBand(wizard.gradeLevel || 'MS');
 
+  // Build narrative (rich context for downstream prompts)
+  const narrative = buildProjectNarrative(captured, wizard);
+
   // Generate components in parallel
   const [microOverview, runOfShow, assignments, outcomes, materials] = await Promise.all([
     generateMicroOverview(bigIdea, challenge, phases, wizard),
-    generateRunOfShow(phases, milestones, totalWeeks, wizard, captured),
-    generateAssignments(phases, artifacts, rubricCriteria, wizard, captured),
+    generateRunOfShow(phases, milestones, totalWeeks, wizard, captured, narrative),
+    generateAssignments(phases, artifacts, rubricCriteria, wizard, captured, narrative),
     generateOutcomes(challenge, artifacts, wizard),
     generateMaterials(phases, artifacts, wizard)
   ]);
@@ -193,7 +197,8 @@ async function generateRunOfShow(
   milestones: Array<{ name: string }>,
   totalWeeks: number,
   wizard: WizardContext,
-  captured: CapturedData
+  captured: CapturedData,
+  narrative: ProjectNarrative
 ): Promise<WeekCard[]> {
   console.log('[projectShowcaseGenerator] Generating run-of-show for', phases.length, 'phases');
 
@@ -216,7 +221,8 @@ async function generateRunOfShow(
       phases.length,
       `A${assignmentCounter}`,
       wizard,
-      milestones[i]?.name
+      milestones[i]?.name,
+      narrative
     );
 
     weekCards.push(card);
@@ -233,12 +239,24 @@ async function generateWeekCard(
   totalPhases: number,
   assignmentId: string,
   wizard: WizardContext,
-  milestone?: string
+  milestone?: string,
+  narrative?: ProjectNarrative
 ): Promise<WeekCard> {
   const kind = mapPhaseKind(phaseIndex, totalPhases);
   const activities = phase.activities?.join(', ') || 'hands-on learning activities';
 
-  const prompt = `Generate a week card for this project-based learning phase.
+  const prompt = `Generate a week card for this project-based learning phase. Use the project foundation and guardrails below.
+
+PROJECT FOUNDATION:
+- Big Idea: ${narrative?.bigIdea || bigIdea}
+- Essential Question: ${narrative?.essentialQuestion || essentialQuestion}
+- Challenge: ${narrative?.challenge || challenge}
+- Audience hint: ${narrative?.audienceHint || 'N/A'}
+- Deliverable hint: ${narrative?.deliverableHint || 'N/A'}
+- Success metric hint: ${narrative?.metricHint || 'N/A'}
+
+GRADE-BAND GUARDRAILS:
+${narrative?.gradeBandPrompt || ''}
 
 **Phase:** ${phase.name}
 **Activities:** ${activities}
@@ -327,7 +345,8 @@ async function generateAssignments(
   artifacts: Array<{ name: string }>,
   rubricCriteria: string[],
   wizard: WizardContext,
-  captured: CapturedData
+  captured: CapturedData,
+  narrative: ProjectNarrative
 ): Promise<AssignmentCard[]> {
   console.log('[projectShowcaseGenerator] Generating', phases.length, 'assignments');
 
@@ -343,7 +362,8 @@ async function generateAssignments(
       phase,
       artifact?.name,
       criteria,
-      wizard
+      wizard,
+      narrative
     );
 
     assignments.push(assignment);
@@ -357,11 +377,23 @@ async function generateAssignment(
   phase: { name: string; activities: string[] },
   artifactName: string | undefined,
   successCriteria: string[],
-  wizard: WizardContext
+  wizard: WizardContext,
+  narrative?: ProjectNarrative
 ): Promise<AssignmentCard> {
   const activities = phase.activities?.join(', ') || 'learning activities';
 
   const prompt = `Generate a detailed assignment card for this learning phase.
+Tie it to the Big Idea, Essential Question, and Challenge. Respect grade-band guardrails.
+
+PROJECT FOUNDATION:
+- Big Idea: ${narrative?.bigIdea || ''}
+- Essential Question: ${narrative?.essentialQuestion || ''}
+- Challenge: ${narrative?.challenge || ''}
+- Audience hint: ${narrative?.audienceHint || 'N/A'}
+- Deliverable hint: ${narrative?.deliverableHint || 'N/A'}
+
+GRADE-BAND GUARDRAILS:
+${narrative?.gradeBandPrompt || ''}
 
 **Phase:** ${phase.name}
 **Activities:** ${activities}
@@ -598,4 +630,49 @@ function generateTags(subjects: string[]): string[] {
   if (subjects.some(s => s.toLowerCase().includes('english') || s.toLowerCase().includes('ela'))) tags.push('Literacy');
   if (subjects.length > 2) tags.push('Interdisciplinary');
   return tags.slice(0, 4);
+}
+
+// Narrative: rich, structured context to guide AI generations
+export interface ProjectNarrative {
+  bigIdea: string;
+  essentialQuestion: string;
+  challenge: string;
+  audienceHint?: string;
+  deliverableHint?: string;
+  metricHint?: string;
+  gradeBandLabel?: string;
+  gradeBandPrompt?: string;
+  phaseSummaries: Array<{ name: string; activities: string[] }>;
+}
+
+function buildProjectNarrative(captured: CapturedData, wizard: WizardContext): ProjectNarrative {
+  const bigIdea = captured.ideation?.bigIdea || '';
+  const essentialQuestion = captured.ideation?.essentialQuestion || '';
+  const challenge = captured.ideation?.challenge || '';
+
+  const lower = challenge.toLowerCase();
+  const deliverableHint = ((): string | undefined => {
+    const nouns = ['campaign','proposal','prototype','exhibit','plan','podcast','documentary','toolkit','portfolio','video','poster','letter','report','pitch','app','model','storybook'];
+    return nouns.find(n => lower.includes(n));
+  })();
+  const audienceHint = ((): string | undefined => {
+    const roles = ['director','manager','council','board','families','students','classmates','principal','librarian','custodian','coordinator','club','committee','agency','department'];
+    return roles.find(r => lower.includes(r));
+  })();
+  const metricHint = /(\d+\s*%|per\s*(week|month)|reduce|increase|by\s*\d+|target|baseline|goal)/i.test(challenge) ? 'Quantified goal present' : undefined;
+
+  const band = resolveGradeBand(wizard.gradeLevel);
+  const gradeBandPrompt = band ? buildGradeBandPrompt(band) : undefined;
+
+  return {
+    bigIdea,
+    essentialQuestion,
+    challenge,
+    audienceHint,
+    deliverableHint,
+    metricHint,
+    gradeBandLabel: band || undefined,
+    gradeBandPrompt,
+    phaseSummaries: (captured.journey?.phases || []).map(p => ({ name: p.name, activities: p.activities || [] }))
+  };
 }

@@ -21,7 +21,7 @@ describe('buildStagePrompt grade-band integration', () => {
   };
 
   it('includes guardrails when grade level is known', () => {
-    const prompt = buildStagePrompt(baseArgs);
+    const prompt = buildStagePrompt({ ...baseArgs, captured: { ideation: { bigIdea: '', essentialQuestion: '', challenge: '' }, journey: { phases: [], resources: [] }, deliverables: { milestones: [], artifacts: [], rubric: { criteria: [] } } } as any });
     expect(prompt).toContain('GRADE-BAND GUARDRAILS');
     expect(prompt).toContain('Grade-band focus:');
     expect(prompt).toContain('Plan 30-45 minute work blocks');
@@ -30,7 +30,8 @@ describe('buildStagePrompt grade-band integration', () => {
   it('omits guardrails when grade level is missing', () => {
     const prompt = buildStagePrompt({
       ...baseArgs,
-      wizard: { ...baseArgs.wizard, gradeLevel: undefined }
+      wizard: { ...baseArgs.wizard, gradeLevel: undefined },
+      captured: { ideation: { bigIdea: '', essentialQuestion: '', challenge: '' }, journey: { phases: [], resources: [] }, deliverables: { milestones: [], artifacts: [], rubric: { criteria: [] } } } as any
     });
     expect(prompt).not.toContain('GRADE-BAND GUARDRAILS');
   });

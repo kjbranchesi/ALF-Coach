@@ -12,6 +12,7 @@ interface BuildStagePromptArgs {
     projectTopic?: string;
     materials?: string;
   };
+  captured?: CapturedData;
   userInput: string;
   snapshot: string;
   gatingReason?: string | null;
@@ -148,6 +149,7 @@ const STAGE_COACHING: Record<Stage, {
 export function buildStagePrompt({
   stage,
   wizard,
+  captured,
   userInput,
   snapshot,
   gatingReason,
@@ -215,8 +217,12 @@ export function buildStagePrompt({
 
   const teacherInput = userInput.trim() || '(Teacher has not added details yet—prompt them constructively.)';
 
+  // Structured context block (rich detail)
+  const structured = buildStructuredContext(captured || ({} as any), wizard);
+
   return [
     `ROLE: You are ALF Coach—an expert project-based learning coach. Your voice respects educator expertise, stays grounded, and is never generic. Always follow acknowledge → educate → enhance → advance. Stay under 110 words.`,
+    structured,
     `CRITICAL CONTEXT (reference at least one item in your opening sentence):\n${contextTable}`,
     `STAGE FOCUS: ${stage} — ${guide.what}`,
     `WHY THIS MATTERS: ${guide.why}`,
@@ -288,13 +294,57 @@ export function buildSuggestionPrompt({
   const snapshot = summarizeCaptured({ wizard, captured, stage });
   const resolvedGradeBand = resolveGradeBand(wizard.gradeLevel);
   const gradeBandGuidance = resolvedGradeBand ? buildGradeBandPrompt(resolvedGradeBand) : null;
+  const structured = buildStructuredContext(captured, wizard);
 
   return [
     'You are ALF Coach generating quick idea starters for an educator. Return only the ideas—no numbering, no extra commentary.',
     `Stage: ${stage}.`,
     `Subject(s): ${subjects}. Grade band: ${grade}. Project topic: ${topic}.`,
     gradeBandGuidance ? `Grade-band guardrails:\n${gradeBandGuidance}` : null,
+    structured,
     `Captured snapshot:\n${snapshot}`,
     config.suggestionBrief
   ].join('\n\n');
+}
+
+// Build a rich, structured context block so AI uses full project details
+export function buildStructuredContext(captured: CapturedData, wizard: {
+  subjects?: string[];
+  gradeLevel?: string;
+  duration?: string;
+  location?: string;
+  projectTopic?: string;
+  materials?: string;
+}): string {
+  const bigIdea = captured.ideation?.bigIdea || '(not yet set)';
+  const eq = captured.ideation?.essentialQuestion || '(not yet set)';
+  const challenge = captured.ideation?.challenge || '(not yet set)';
+  const subjects = wizard.subjects?.length ? wizard.subjects.join(', ') : 'Not specified';
+  const duration = wizard.duration || 'Not specified';
+  const gradeLevel = wizard.gradeLevel || 'Not specified';
+  const location = wizard.location || 'Not specified';
+  const topic = wizard.projectTopic || 'Not specified';
+
+  const phases = captured.journey?.phases || [];
+  const phaseLines = phases.map((p, i) => `  ${i + 1}. ${p.name} — activities: ${(p.activities || []).join('; ')}`).join('\n');
+
+  const resolved = resolveGradeBand(wizard.gradeLevel);
+  const gradeLines = resolved ? buildGradeBandPrompt(resolved) : null;
+
+  return [
+    'PROJECT CONTEXT',
+    `Subjects: ${subjects} | Grade: ${gradeLevel} | Duration: ${duration} | Setting: ${location}`,
+    `Topic: ${topic}`,
+    '',
+    'FOUNDATION',
+    `Big Idea: ${bigIdea}`,
+    `Essential Question: ${eq}`,
+    `Challenge: ${challenge}`,
+    '',
+    phases.length ? 'LEARNING JOURNEY' : null,
+    phases.length ? phaseLines : null,
+    '',
+    gradeLines ? 'GRADE-BAND GUARDRAILS' : null,
+    gradeLines
+  ].filter(Boolean).join('\n');
 }

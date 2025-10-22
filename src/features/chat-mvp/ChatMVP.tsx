@@ -20,6 +20,7 @@ import { JourneyBoard, type JourneyPhaseDraft } from './components/JourneyBoard'
 import { PhaseEditorDrawer } from './components/PhaseEditorDrawer';
 import { DecisionBar } from './components/DecisionBar';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
+import { scoreIdeationSpecificity, nextQuestionFor } from './domain/specificityScorer';
 import { generateAI } from './domain/ai';
 import {
   type CapturedData,
@@ -118,6 +119,50 @@ export function ChatMVP({
   const stageIndex = stageOrder.indexOf(stage);
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
   const journeyV2Enabled = useMemo(() => (import.meta.env.VITE_FEATURE_STUDIO_JOURNEY_V2 ?? 'true') !== 'false', []);
+
+  // Accept suggestion directly (capture + validate + advance or ask follow-up)
+  const acceptSuggestion = useCallback(async (text: string, index?: number) => {
+    try {
+      const recent = suggestionTracker.getMostRecent(5);
+      if (typeof index === 'number' && recent[index]) {
+        suggestionTracker.recordSelection(recent[index].id);
+      }
+
+      const updatedCaptured = captureStageInput(captured, stage, text);
+      setCaptured(updatedCaptured);
+
+      const gatingInfo = validate(stage, updatedCaptured);
+      // For ideation, guide with targeted follow-up if not complete
+      if (!gatingInfo.ok && (stage === 'BIG_IDEA' || stage === 'ESSENTIAL_QUESTION' || stage === 'CHALLENGE')) {
+        const { score, missing } = scoreIdeationSpecificity(stage as any, updatedCaptured, wizard);
+        const band = resolveGradeBand(wizard.gradeLevel);
+        const follow = nextQuestionFor('CHALLENGE', missing, band);
+        const ack = score >= 40 ? 'Nice—this is getting clearer.' : 'Good start.';
+        engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: follow ? `${ack} ${follow.question}` : `${ack} Tell me a bit more so we can lock this in.`, timestamp: new Date() } as any);
+        if (follow?.chips?.length) {
+          setAiSuggestions(follow.chips);
+          setShowIdeas(true);
+        }
+        return;
+      }
+
+      if (gatingInfo.ok) {
+        const transition = transitionMessageFor(stage, updatedCaptured, wizard);
+        if (transition) {
+          engine.appendMessage({ id: String(Date.now() + 2), role: 'assistant', content: transition, timestamp: new Date() } as any);
+        }
+        if (!autosaveEnabled) {setAutosaveEnabled(true);}        
+        const nxt = nextStage(stage);
+        if (nxt) {
+          setStage(nxt);
+          setStageTurns(0);
+          setHasInput(false);
+        }
+      }
+    } catch (e) {
+      console.error('[ChatMVP] acceptSuggestion failed:', e);
+    }
+  }, [captured, stage, wizard, autosaveEnabled]);
   const deliverablesComplete = useMemo(() => {
     const milestones = captured.deliverables?.milestones?.length ?? 0;
     const artifacts = captured.deliverables?.artifacts?.length ?? 0;
@@ -1573,10 +1618,25 @@ Your project structure is ready!`,
     setCaptured(updatedCaptured);
 
     const gatingInfo = validate(stage, updatedCaptured);
+    // For ideation, if still incomplete, ask a targeted follow-up instead of a generic prompt
+    if (!gatingInfo.ok && (stage === 'BIG_IDEA' || stage === 'ESSENTIAL_QUESTION' || stage === 'CHALLENGE')) {
+      const { score, missing } = scoreIdeationSpecificity(stage as any, updatedCaptured, wizard);
+      const band = resolveGradeBand(wizard.gradeLevel);
+      const follow = nextQuestionFor('CHALLENGE', missing, band);
+      const ack = score >= 40 ? 'Nice—this is getting clearer.' : 'Good start.';
+      engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: follow ? `${ack} ${follow.question}` : `${ack} Tell me a bit more so we can lock this in.`, timestamp: new Date() } as any);
+      if (follow?.chips?.length) {
+        setAiSuggestions(follow.chips);
+        setShowIdeas(true);
+      }
+      return;
+    }
+
     const snapshot = summarizeCaptured({ wizard, captured: updatedCaptured, stage });
     const prompt = buildStagePrompt({
       stage,
       wizard,
+      captured: updatedCaptured,
       userInput: extractedContent, // Use extracted content for AI prompt too
       messageCountInStage,
       snapshot,
@@ -1697,6 +1757,21 @@ Your project structure is ready!`,
                 Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
               </div>
               <div className="flex items-center gap-2">
+                {(['BIG_IDEA','ESSENTIAL_QUESTION','CHALLENGE'] as const).includes(stage) && (
+                  (() => {
+                    const { score, missing } = scoreIdeationSpecificity(stage as any, captured, wizard);
+                    return (
+                      <div className="hidden sm:flex items-center gap-2 text-[10px]">
+                        <span className="inline-flex items-center rounded-full px-2 py-0.5 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-semibold">
+                          Specificity {score}
+                        </span>
+                        {missing.length > 0 && (
+                          <span className="text-gray-500 dark:text-gray-400">Need: {missing[0]}</span>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
                 {/* Hidden AIStatus/FirebaseStatus for backward compatibility */}
                 <div className="hidden">
                   <AIStatus
@@ -1910,7 +1985,7 @@ Your project structure is ready!`,
                 Gathering ideas…
               </div>
             ) : suggestions.length > 0 ? (
-              <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
+              <SuggestionChips items={suggestions} onSelect={(t, i) => { setShowIdeas(false); void acceptSuggestion(t, i); }} />
             ) : null}
           </div>
           <InputArea
