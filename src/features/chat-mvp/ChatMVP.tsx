@@ -1936,6 +1936,15 @@ Your project structure is ready!`,
                     };
                     handleJourneySavePhase(next);
                     setShowPhaseAI(false);
+                    // Confirmation toast
+                    try {
+                      const idx = journeyDraft.findIndex(p => p.id === editingPhase.id);
+                      const toast = document.createElement('div');
+                      toast.textContent = `Applied teacher moves to Phase ${idx >= 0 ? idx + 1 : ''} \u2713`;
+                      toast.className = 'fixed top-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]';
+                      document.body.appendChild(toast);
+                      setTimeout(() => toast.remove(), 2000);
+                    } catch {}
                   }}
                 />
                 <DecisionBar
