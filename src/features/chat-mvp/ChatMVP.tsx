@@ -301,7 +301,7 @@ export function ChatMVP({
     } else {
       setMicroFlowActionChips([]);
     }
-  }, [journeyV2Enabled]);
+  }, [journeyV2Enabled, getDeliverablesActionChips]);
 
   const handleJourneyAccept = useCallback(() => {
     const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
