@@ -44,7 +44,7 @@ import {
 import { assessStageInput } from './domain/inputQuality';
 import { detectIntent, getImmediateAcknowledgment, extractFromConversationalWrapper, type UserIntent } from './domain/intentDetection';
 import { suggestionTracker } from './domain/suggestionTracking';
-import { generateSmartJourney } from './domain/journeyMicroFlow';
+import { generateSmartJourney } from './domain/journeyTemplate';
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
@@ -357,7 +357,7 @@ export function ChatMVP({
     // Background AI refinement of deliverables (replace template with AI when ready)
     (async () => {
       setDeliverablesAIStatus('refining');
-      const { generateSmartDeliverablesAI } = await import('./domain/deliverablesMicroFlow');
+      const { generateSmartDeliverablesAI } = await import('./domain/deliverablesAI');
       const ai = await generateSmartDeliverablesAI(updatedCaptured, wizard);
       if (ai) {
         setDeliverablesMicroState(prev => prev ? { ...prev, suggestedMilestones: ai.suggestedMilestones, suggestedArtifacts: ai.suggestedArtifacts, suggestedCriteria: ai.suggestedCriteria } : prev);
@@ -598,16 +598,8 @@ export function ChatMVP({
     setShowKickoffPanel(!isMobile);
   }, [stage, isMobile]);
 
-  // Auto-dismiss the kickoff panel shortly after it opens automatically
-  useEffect(() => {
-    if (!showKickoffPanel) {return;}
-    if (!kickoffAutoOpenRef.current) {return;}
-    kickoffAutoOpenRef.current = false; // Consume the flag
-    const t = window.setTimeout(() => {
-      setShowKickoffPanel(false);
-    }, 1800); // 1.8s feels responsive without being abrupt
-    return () => window.clearTimeout(t);
-  }, [showKickoffPanel]);
+  // Removed auto-dismiss: let users close kickoff panel manually (per UX feedback)
+  // Intentionally no auto-close behavior here.
 
   const persist = useCallback(async () => {
     try {
