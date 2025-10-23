@@ -111,6 +111,9 @@ export function ChatMVP({
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
   const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
   const [showPhaseAI, setShowPhaseAI] = useState(false);
+  // AI refinement status badges
+  const [journeyAIStatus, setJourneyAIStatus] = useState<'idle' | 'refining' | 'enhanced'>('idle');
+  const [deliverablesAIStatus, setDeliverablesAIStatus] = useState<'idle' | 'refining' | 'enhanced'>('idle');
   const [completionState, setCompletionState] = useState<'idle' | 'processing' | 'ready' | 'error'>(() => {
     const meta = (projectData?.projectData as any)?.status ?? (projectData as any)?.status;
     return meta === 'ready' ? 'ready' : 'idle';
