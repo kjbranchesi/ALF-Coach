@@ -164,7 +164,7 @@ export function ChatMVP({
     } catch (e) {
       console.error('[ChatMVP] acceptSuggestion failed:', e);
     }
-  }, [captured, stage, wizard, autosaveEnabled]);
+  }, [captured, stage, wizard, autosaveEnabled, engine]);
   const deliverablesComplete = useMemo(() => {
     const milestones = captured.deliverables?.milestones?.length ?? 0;
     const artifacts = captured.deliverables?.artifacts?.length ?? 0;
@@ -301,7 +301,7 @@ export function ChatMVP({
     } else {
       setMicroFlowActionChips([]);
     }
-  }, [journeyV2Enabled, getDeliverablesActionChips]);
+  }, [journeyV2Enabled]);
 
   const handleJourneyAccept = useCallback(() => {
     const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
@@ -1760,7 +1760,7 @@ Your project structure is ready!`,
         await handleProjectCompletion(updatedCaptured);
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName, deliverablesMicroState, deliverablesComplete, journeyV2Enabled]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName, deliverablesMicroState, deliverablesComplete, journeyV2Enabled, processDeliverablesResult, suppressNextAckUntil, updateDeliverablesChips]);
 
   return (
     <div className="relative flex h-[100dvh] min-h-[100dvh] bg-gray-50 dark:bg-gray-900 overflow-hidden">
