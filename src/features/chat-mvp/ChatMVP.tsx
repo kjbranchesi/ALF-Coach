@@ -122,6 +122,20 @@ export function ChatMVP({
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
   const journeyV2Enabled = useMemo(() => (import.meta.env.VITE_FEATURE_STUDIO_JOURNEY_V2 ?? 'true') !== 'false', []);
 
+  const wizard = useMemo(() => {
+    const w = projectData?.wizardData || {};
+    const subjects: string[] = Array.isArray(w.projectContext?.subjects) ? w.projectContext.subjects : (w.subjects || []);
+    return {
+      subjects,
+      gradeLevel: w.projectContext?.gradeLevel || w.gradeLevel || '',
+      duration: w.projectContext?.timeWindow || w.duration || '',
+      location: w.projectContext?.space || w.location || '',
+      projectTopic: w.projectTopic || '',
+      materials: Array.isArray(w.projectContext?.availableMaterials) ? w.projectContext.availableMaterials.join(', ') : w.materials || '',
+      pblExperience: w.pblExperience || 'some'
+    } as const;
+  }, [projectData]);
+
   // Accept suggestion directly (capture + validate + advance or ask follow-up)
   const acceptSuggestion = useCallback(async (text: string, index?: number) => {
     try {
@@ -178,19 +192,6 @@ export function ChatMVP({
   const footerRef = useRef<HTMLDivElement | null>(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
-  const wizard = useMemo(() => {
-    const w = projectData?.wizardData || {};
-    const subjects: string[] = Array.isArray(w.projectContext?.subjects) ? w.projectContext.subjects : (w.subjects || []);
-    return {
-      subjects,
-      gradeLevel: w.projectContext?.gradeLevel || w.gradeLevel || '',
-      duration: w.projectContext?.timeWindow || w.duration || '',
-      location: w.projectContext?.space || w.location || '',
-      projectTopic: w.projectTopic || '',
-      materials: Array.isArray(w.projectContext?.availableMaterials) ? w.projectContext.availableMaterials.join(', ') : w.materials || '',
-      pblExperience: w.pblExperience || 'some'
-    } as const;
-  }, [projectData]);
 
   const messages = engine.state.messages as any[];
   const totalMessages = messages.length;
