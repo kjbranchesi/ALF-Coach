@@ -16,6 +16,7 @@
     "test:e2e:webkit": "playwright test --project=webkit",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:clean": "rimraf playwright-report test-results blob-report || true",
+    "test:smoke": "jest src/features/chat-mvp/__tests__/ChatMVP.smoke.test.tsx -i",
     "audit:showcase": "node --import tsx --loader ./scripts/asset-loader.mjs scripts/audit-showcaseV2.ts",
     "lint:enrich": "node --import tsx --loader ./scripts/asset-loader.mjs scripts/enrichment-lint.ts",
     "generate:enrichment": "node --import tsx --loader ./scripts/asset-loader.mjs scripts/generate-enrichment-tracker.ts",
