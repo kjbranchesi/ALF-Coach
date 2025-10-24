@@ -17,7 +17,7 @@ export default {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@testing-library|remark|remark-.*|micromark|micromark-.*|mdast-.*|unist-.*|bail|is-plain-obj|trough|vfile|vfile-message|unified|estree-util-.*|zwitch|longest-streak|markdown-table|escape-string-regexp|character-entities-html4|character-entities-legacy|property-information|hast-util-.*|space-separated-tokens|comma-separated-tokens|ccount|trim-lines|web-namespaces|html-void-elements|devlop)/)',
+    'node_modules/(?!(@testing-library|react-markdown|remark|remark-.*|micromark|micromark-.*|mdast-.*|unist-.*|rehype-sanitize|remark-gfm|html-url-attributes|bail|is-plain-obj|trough|vfile|vfile-message|unified|estree-util-.*|zwitch|longest-streak|markdown-table|escape-string-regexp|character-entities-html4|character-entities-legacy|property-information|hast-util-.*|space-separated-tokens|comma-separated-tokens|ccount|trim-lines|web-namespaces|html-void-elements|devlop)/)',
   ],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   testMatch: ['**/__tests__/**/*.(js|jsx|ts|tsx)', '**/*.(test|spec).(js|jsx|ts|tsx)', '!**/tests/e2e/**'],

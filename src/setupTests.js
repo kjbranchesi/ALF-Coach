@@ -83,3 +83,23 @@ jest.mock('../src/config/featureFlags', () => ({
     showSyncStatus: false,
   }),
 }));
+
+// Lightweight mocks for ESM-only markdown libs in Jest
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const React = require('react');
+jest.mock('react-markdown', () => ({
+  __esModule: true,
+  default: (props) => require('react').createElement('div', null, props.children)
+}));
+jest.mock('remark-gfm', () => ({ __esModule: true, default: () => (tree) => tree }));
+jest.mock('rehype-sanitize', () => ({ __esModule: true, default: () => (tree) => tree }));
+
+// Mock storage manager to avoid import.meta and Firebase branches
+jest.mock('../src/services/UnifiedStorageManager', () => ({
+  unifiedStorage: {
+    loadProject: async () => null,
+    saveProject: async () => null,
+    syncNowIfDue: async () => null,
+    loadHeroProject: async () => null,
+  },
+}));

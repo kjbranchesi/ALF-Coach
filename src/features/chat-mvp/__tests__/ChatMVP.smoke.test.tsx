@@ -8,6 +8,12 @@ jest.mock('../../chat-mvp/domain/ai', () => ({
   generateAI: async () => '',
 }));
 
+// Stub components that read import.meta or complex env
+jest.mock('../../chat-mvp/components/AIStatus', () => ({ AIStatus: () => null }));
+jest.mock('../../chat-mvp/components/FirebaseStatus', () => ({ FirebaseStatus: () => null }));
+jest.mock('../../chat-mvp/components/WorkingDraftSidebar', () => ({ WorkingDraftSidebar: () => null }));
+jest.mock('../../chat-mvp/components/DeliverablesPreviewCard', () => ({ DeliverablesPreviewCard: () => null }));
+
 // Provide a minimal, non-empty captured payload to bypass UnifiedStorage hydrator
 const minimalCaptured = {
   ideation: {},
@@ -35,8 +41,7 @@ describe('ChatMVP smoke', () => {
       </MemoryRouter>
     );
 
-    // Initial stage should be Big Idea
-    expect(screen.getByText(/Big Idea/i)).toBeInTheDocument();
+    // Initial stage should be Big Idea (stage stepper current)
+    expect(screen.getByLabelText('Big Idea stage')).toBeInTheDocument();
   });
 });
-
