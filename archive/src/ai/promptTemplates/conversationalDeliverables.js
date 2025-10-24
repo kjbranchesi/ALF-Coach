@@ -1,4 +1,4 @@
-// src/ai/promptTemplates/conversationalDeliverables.js
+// ARCHIVED - src/ai/promptTemplates/conversationalDeliverables.js
 import { getPedagogicalContext, formatAgeGroup } from '../../lib/textUtils.js';
 
 export const conversationalDeliverablesPrompts = {

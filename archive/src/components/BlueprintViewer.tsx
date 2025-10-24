@@ -1,3 +1,4 @@
+// ARCHIVED - BlueprintViewer
 /**
  * BlueprintViewer.tsx - Comprehensive view and edit interface for project blueprints
  * Shows all captured data from each phase with editing capabilities

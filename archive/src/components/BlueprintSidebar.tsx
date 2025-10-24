@@ -1,3 +1,4 @@
+// ARCHIVED - BlueprintSidebar
 /**
  * BlueprintSidebar.tsx - Collapsible sidebar showing blueprint progress
  * Shows what's being built in real-time during the conversation

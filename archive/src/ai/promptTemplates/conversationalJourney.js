@@ -1,4 +1,4 @@
-// src/ai/promptTemplates/conversationalJourney.js
+// ARCHIVED - src/ai/promptTemplates/conversationalJourney.js
 import { getPedagogicalContext } from '../../lib/textUtils.js';
 
 export const conversationalJourneyPrompts = {

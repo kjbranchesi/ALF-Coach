@@ -1,4 +1,4 @@
-// src/ai/promptTemplates/conversationalIdeation.js
+// ARCHIVED - src/ai/promptTemplates/conversationalIdeation.js
 import { getPedagogicalContext, formatAgeGroup } from '../../lib/textUtils.js';
 
 export const conversationalIdeationPrompts = {

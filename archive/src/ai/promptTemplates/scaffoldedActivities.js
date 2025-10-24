@@ -1,3 +1,4 @@
+// ARCHIVED - scaffoldedActivities prompt templates
 /**
  * Scaffolded Activities Prompt Templates
  * 
