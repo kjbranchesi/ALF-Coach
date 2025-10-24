@@ -1,0 +1,46 @@
+{
+  "$schema": "https://unpkg.com/knip/schema.json",
+  "entry": [
+    "src/main.jsx",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/AuthenticatedApp.tsx",
+    "netlify/functions/**/*.ts",
+    "netlify/functions/**/*.js"
+  ],
+  "project": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "netlify/functions/**/*.ts",
+    "netlify/functions/**/*.js"
+  ],
+  "ignore": [
+    "archive/**",
+    "dist/**",
+    "node_modules/**",
+    "src/**/__generated__/**",
+    "src/**/__mocks__/**",
+    "src/**/__tests__/**",
+    "src/test/**",
+    "src/**/index.ts",
+    "src/**/index.tsx",
+    "src/**/index.js",
+    "src/**/index.jsx",
+    // Dynamic AI modules and prompt templates
+    "src/features/chat-mvp/domain/journeyMicroFlow.ts",
+    "src/features/chat-mvp/domain/deliverablesAI.ts",
+    "src/ai/promptTemplates/**"
+  ],
+  "ignoreDependencies": [
+    "firebase-admin",
+    "firebase-functions"
+  ],
+  "rules": {
+    "unlisted": "warn",
+    "unused": "warn",
+    "exports": "warn"
+  }
+}
+
