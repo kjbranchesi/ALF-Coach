@@ -1,0 +1,114 @@
+{
+  "__tests__/orchestrator.test.js": [
+    "prompts/orchestrator.js"
+  ],
+  "ai/promptTemplates/ideation.js": [],
+  "components/icons/index.js": [],
+  "config/constants.js": [],
+  "config/environment.js": [],
+  "config/fixFlags.js": [],
+  "context/BlueprintContext.jsx": [
+    "context/BlueprintSchema.js"
+  ],
+  "context/BlueprintSchema.js": [],
+  "core/services/__tests__/RubricGeneration.test.js": [],
+  "features/__tests__/fullFlowIntegration.test.js": [
+    "utils/ComprehensiveFrameworkBuilder.js"
+  ],
+  "features/chat/diagnostic.js": [
+    "services/button-state-manager.js",
+    "services/chat-event-handler.js",
+    "utils/event-emitter.js"
+  ],
+  "features/ideation/BlueprintStateMachine.js": [],
+  "features/ideation/ButtonFramework.js": [],
+  "features/ideation/ConversationFlowManager.js": [],
+  "features/ideation/IdeationFlowController.js": [
+    "utils/paraphraseIdea.js"
+  ],
+  "features/ideation/__tests__/ConversationalFlow.test.js": [
+    "context/BlueprintContext.jsx",
+    "utils/onboardingProcessor.js"
+  ],
+  "features/ideation/__tests__/ideationFlow.test.js": [],
+  "features/ideation/removeEmojis.js": [],
+  "features/review/__tests__/ExportFunctions.test.js": [],
+  "features/review/__tests__/ExportIntegration.test.js": [],
+  "hooks/__tests__/useButtonState.test.js": [],
+  "hooks/__tests__/useConversationRecovery.test.js": [
+    "hooks/useConversationRecovery.js"
+  ],
+  "hooks/useAuth.js": [],
+  "hooks/useButtonState.js": [
+    "services/index.js"
+  ],
+  "hooks/useConversationRecovery.js": [],
+  "hooks/useConversationalSOPUpdate.js": [
+    "utils/conversationalDataExtractor.js"
+  ],
+  "hooks/useDebounce.js": [],
+  "hooks/useFirestoreConnection.js": [],
+  "hooks/useWhatIfScenarios.js": [
+    "context/BlueprintContext.jsx",
+    "context/BlueprintSchema.js"
+  ],
+  "lib/chat-flow-config.js": [],
+  "lib/scaffoldingUtils.js": [],
+  "prompts/base.js": [],
+  "prompts/lenses.js": [],
+  "prompts/orchestrator.js": [
+    "prompts/base.js",
+    "prompts/lenses.js",
+    "prompts/workflows.js"
+  ],
+  "prompts/workflows.js": [],
+  "services/__tests__/button-state-manager.test.js": [
+    "services/button-state-manager.js"
+  ],
+  "services/__tests__/chat-event-handler.test.js": [],
+  "services/button-state-manager.js": [
+    "utils/event-emitter.js"
+  ],
+  "services/chat-event-handler.js": [
+    "services/button-state-manager.js"
+  ],
+  "services/conversation-state-machine.js": [
+    "lib/chat-flow-config.js"
+  ],
+  "services/event-emitter.js": [],
+  "services/ideationPreprocessor.js": [],
+  "services/index.js": [
+    "services/button-state-manager.js",
+    "services/chat-event-handler.js"
+  ],
+  "setupTests.js": [],
+  "utils/AgeAdaptiveValidation.js": [],
+  "utils/BranchingStrategies.js": [],
+  "utils/ComprehensiveFrameworkBuilder.js": [],
+  "utils/ProgressionEngine.js": [],
+  "utils/__tests__/responseValidator.test.js": [
+    "utils/responseValidator.js"
+  ],
+  "utils/cleanupStorage.js": [],
+  "utils/conversationalDataExtractor.js": [],
+  "utils/environment.js": [],
+  "utils/event-emitter.js": [],
+  "utils/firestoreHelpers.js": [],
+  "utils/firestoreWithRetry.js": [
+    "utils/firestoreHelpers.js"
+  ],
+  "utils/onboardingProcessor.js": [],
+  "utils/paraphraseIdea.js": [
+    "ai/promptTemplates/ideation.js"
+  ],
+  "utils/projectThemes.js": [],
+  "utils/responseHealer.js": [],
+  "utils/responseValidator.js": [],
+  "utils/suppressFirebaseErrors.js": [],
+  "utils/test-onboarding.js": [],
+  "utils/testAllButtons.js": [
+    "features/ideation/ButtonFramework.js",
+    "utils/onboardingProcessor.js"
+  ],
+  "utils/testIdeationFlow.js": []
+}

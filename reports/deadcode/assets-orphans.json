@@ -1,0 +1,11 @@
+{
+  "orphans": [
+    "public/.DS_Store",
+    "public/_redirects",
+    "public/animations/LivingHistoryPreservingCommunityStories.webm",
+    "public/images/.DS_Store",
+    "public/images/.keep",
+    "public/images/hero-projects/.DS_Store",
+    "public/images/hero-projects/sustainability-campaign/.gitkeep"
+  ]
+}

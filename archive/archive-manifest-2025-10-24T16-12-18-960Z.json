@@ -1,0 +1,667 @@
+{
+  "percent": 50,
+  "total": 330,
+  "movedCount": 165,
+  "moved": [
+    {
+      "from": "src/components/ConfirmationModal.jsx",
+      "to": "archive/src/components/ConfirmationModal.jsx"
+    },
+    {
+      "from": "src/components/ConsistencyDialog.jsx",
+      "to": "archive/src/components/ConsistencyDialog.jsx"
+    },
+    {
+      "from": "src/components/ConversationButton.jsx",
+      "to": "archive/src/components/ConversationButton.jsx"
+    },
+    {
+      "from": "src/components/CurriculumOutline.jsx",
+      "to": "archive/src/components/CurriculumOutline.jsx"
+    },
+    {
+      "from": "src/components/Dashboard.jsx",
+      "to": "archive/src/components/Dashboard.jsx"
+    },
+    {
+      "from": "src/components/EmptyState.jsx",
+      "to": "archive/src/components/EmptyState.jsx"
+    },
+    {
+      "from": "src/components/EnhancedSuggestionCard.helpers.ts",
+      "to": "archive/src/components/EnhancedSuggestionCard.helpers.ts"
+    },
+    {
+      "from": "src/components/EnhancedSuggestionCard.tsx",
+      "to": "archive/src/components/EnhancedSuggestionCard.tsx"
+    },
+    {
+      "from": "src/components/ExpertReviewPanel.tsx",
+      "to": "archive/src/components/ExpertReviewPanel.tsx"
+    },
+    {
+      "from": "src/components/FirebaseErrorNotification.jsx",
+      "to": "archive/src/components/FirebaseErrorNotification.jsx"
+    },
+    {
+      "from": "src/components/FrameworkCelebration.jsx",
+      "to": "archive/src/components/FrameworkCelebration.jsx"
+    },
+    {
+      "from": "src/components/FrameworkOverview.jsx",
+      "to": "archive/src/components/FrameworkOverview.jsx"
+    },
+    {
+      "from": "src/components/GuestSpeakerHints.jsx",
+      "to": "archive/src/components/GuestSpeakerHints.jsx"
+    },
+    {
+      "from": "src/components/HowItWorks.jsx",
+      "to": "archive/src/components/HowItWorks.jsx"
+    },
+    {
+      "from": "src/components/JourneySummary.tsx",
+      "to": "archive/src/components/JourneySummary.tsx"
+    },
+    {
+      "from": "src/components/LandingPage.jsx",
+      "to": "archive/src/components/LandingPage.jsx"
+    },
+    {
+      "from": "src/components/LazyLoad.tsx",
+      "to": "archive/src/components/LazyLoad.tsx"
+    },
+    {
+      "from": "src/components/LiveFrameworkBuilder.jsx",
+      "to": "archive/src/components/LiveFrameworkBuilder.jsx"
+    },
+    {
+      "from": "src/components/MilestoneAnimation.tsx",
+      "to": "archive/src/components/MilestoneAnimation.tsx"
+    },
+    {
+      "from": "src/components/PedagogicalRationale.jsx",
+      "to": "archive/src/components/PedagogicalRationale.jsx"
+    },
+    {
+      "from": "src/components/ProgressIndicator.jsx",
+      "to": "archive/src/components/ProgressIndicator.jsx"
+    },
+    {
+      "from": "src/components/ProjectAnimation.tsx",
+      "to": "archive/src/components/ProjectAnimation.tsx"
+    },
+    {
+      "from": "src/components/ProjectCard.jsx",
+      "to": "archive/src/components/ProjectCard.jsx"
+    },
+    {
+      "from": "src/components/ResearchBacking.tsx",
+      "to": "archive/src/components/ResearchBacking.tsx"
+    },
+    {
+      "from": "src/components/RevisionHistory.tsx",
+      "to": "archive/src/components/RevisionHistory.tsx"
+    },
+    {
+      "from": "src/components/RiveInteractions.tsx",
+      "to": "archive/src/components/RiveInteractions.tsx"
+    },
+    {
+      "from": "src/components/RubricGenerator.jsx",
+      "to": "archive/src/components/RubricGenerator.jsx"
+    },
+    {
+      "from": "src/components/SafetyErrorBoundary.jsx",
+      "to": "archive/src/components/SafetyErrorBoundary.jsx"
+    },
+    {
+      "from": "src/components/SamplesGallery.tsx",
+      "to": "archive/src/components/SamplesGallery.tsx"
+    },
+    {
+      "from": "src/components/SaveExitButton.tsx",
+      "to": "archive/src/components/SaveExitButton.tsx"
+    },
+    {
+      "from": "src/components/SaveExitButtonProvider.tsx",
+      "to": "archive/src/components/SaveExitButtonProvider.tsx"
+    },
+    {
+      "from": "src/components/ScrollToTop.tsx",
+      "to": "archive/src/components/ScrollToTop.tsx"
+    },
+    {
+      "from": "src/components/StageTransitionModal.jsx",
+      "to": "archive/src/components/StageTransitionModal.jsx"
+    },
+    {
+      "from": "src/components/SubtleAnimations.jsx",
+      "to": "archive/src/components/SubtleAnimations.jsx"
+    },
+    {
+      "from": "src/components/SyllabusView.jsx",
+      "to": "archive/src/components/SyllabusView.jsx"
+    },
+    {
+      "from": "src/components/SyncStatusIndicator.tsx",
+      "to": "archive/src/components/SyncStatusIndicator.tsx"
+    },
+    {
+      "from": "src/components/TeacherFeedback.tsx",
+      "to": "archive/src/components/TeacherFeedback.tsx"
+    },
+    {
+      "from": "src/components/UserMenu.jsx",
+      "to": "archive/src/components/UserMenu.jsx"
+    },
+    {
+      "from": "src/components/analytics/views/StudentView.tsx",
+      "to": "archive/src/components/analytics/views/StudentView.tsx"
+    },
+    {
+      "from": "src/components/analytics/views/TeacherView.tsx",
+      "to": "archive/src/components/analytics/views/TeacherView.tsx"
+    },
+    {
+      "from": "src/components/animations/AnimatedLoader.jsx",
+      "to": "archive/src/components/animations/AnimatedLoader.jsx"
+    },
+    {
+      "from": "src/components/animations/LottieAnimation.jsx",
+      "to": "archive/src/components/animations/LottieAnimation.jsx"
+    },
+    {
+      "from": "src/components/animations/RiveAnimation.jsx",
+      "to": "archive/src/components/animations/RiveAnimation.jsx"
+    },
+    {
+      "from": "src/components/animations/ScrollAnimations.jsx",
+      "to": "archive/src/components/animations/ScrollAnimations.jsx"
+    },
+    {
+      "from": "src/components/assessment/AssessmentAccommodationsPanel.tsx",
+      "to": "archive/src/components/assessment/AssessmentAccommodationsPanel.tsx"
+    },
+    {
+      "from": "src/components/assessment/ExitTicket.tsx",
+      "to": "archive/src/components/assessment/ExitTicket.tsx"
+    },
+    {
+      "from": "src/components/assessment/PeerAssessment.tsx",
+      "to": "archive/src/components/assessment/PeerAssessment.tsx"
+    },
+    {
+      "from": "src/components/assessment/ProgressMonitoringDashboard.tsx",
+      "to": "archive/src/components/assessment/ProgressMonitoringDashboard.tsx"
+    },
+    {
+      "from": "src/components/assessment/QuickAssessmentStrategies.tsx",
+      "to": "archive/src/components/assessment/QuickAssessmentStrategies.tsx"
+    },
+    {
+      "from": "src/components/assessment/SelfReflection.tsx",
+      "to": "archive/src/components/assessment/SelfReflection.tsx"
+    },
+    {
+      "from": "src/components/assessment/index.ts",
+      "to": "archive/src/components/assessment/index.ts"
+    },
+    {
+      "from": "src/components/chat/AdaptiveMilestones.tsx",
+      "to": "archive/src/components/chat/AdaptiveMilestones.tsx"
+    },
+    {
+      "from": "src/components/chat/CelebrationSystem.tsx",
+      "to": "archive/src/components/chat/CelebrationSystem.tsx"
+    },
+    {
+      "from": "src/components/chat/ChatDebugPanel.tsx",
+      "to": "archive/src/components/chat/ChatDebugPanel.tsx"
+    },
+    {
+      "from": "src/components/chat/ClassContextCapture.tsx",
+      "to": "archive/src/components/chat/ClassContextCapture.tsx"
+    },
+    {
+      "from": "src/components/chat/CompactRecapBar.tsx",
+      "to": "archive/src/components/chat/CompactRecapBar.tsx"
+    },
+    {
+      "from": "src/components/chat/ConfirmationFramework.tsx",
+      "to": "archive/src/components/chat/ConfirmationFramework.tsx"
+    },
+    {
+      "from": "src/components/chat/ConfirmationFrameworkExample.tsx",
+      "to": "archive/src/components/chat/ConfirmationFrameworkExample.tsx"
+    },
+    {
+      "from": "src/components/chat/ContextualHelp.tsx",
+      "to": "archive/src/components/chat/ContextualHelp.tsx"
+    },
+    {
+      "from": "src/components/chat/ContextualInitiator.tsx",
+      "to": "archive/src/components/chat/ContextualInitiator.tsx"
+    },
+    {
+      "from": "src/components/chat/ConversationFlowEngine.ts",
+      "to": "archive/src/components/chat/ConversationFlowEngine.ts"
+    },
+    {
+      "from": "src/components/chat/ConversationStatus.tsx",
+      "to": "archive/src/components/chat/ConversationStatus.tsx"
+    },
+    {
+      "from": "src/components/chat/DebugPanel.tsx",
+      "to": "archive/src/components/chat/DebugPanel.tsx"
+    },
+    {
+      "from": "src/components/chat/ErrorRecovery.tsx",
+      "to": "archive/src/components/chat/ErrorRecovery.tsx"
+    },
+    {
+      "from": "src/components/chat/ErrorRecoveryEnhanced.tsx",
+      "to": "archive/src/components/chat/ErrorRecoveryEnhanced.tsx"
+    },
+    {
+      "from": "src/components/chat/FlowGuidance.tsx",
+      "to": "archive/src/components/chat/FlowGuidance.tsx"
+    },
+    {
+      "from": "src/components/chat/InputArea.tsx",
+      "to": "archive/src/components/chat/InputArea.tsx"
+    },
+    {
+      "from": "src/components/chat/LazyComponents.tsx",
+      "to": "archive/src/components/chat/LazyComponents.tsx"
+    },
+    {
+      "from": "src/components/chat/LightweightCodeBlock.tsx",
+      "to": "archive/src/components/chat/LightweightCodeBlock.tsx"
+    },
+    {
+      "from": "src/components/chat/LiveShowcasePreview.tsx",
+      "to": "archive/src/components/chat/LiveShowcasePreview.tsx"
+    },
+    {
+      "from": "src/components/chat/LoadingIndicator.tsx",
+      "to": "archive/src/components/chat/LoadingIndicator.tsx"
+    },
+    {
+      "from": "src/components/chat/MVPActionButtons.tsx",
+      "to": "archive/src/components/chat/MVPActionButtons.tsx"
+    },
+    {
+      "from": "src/components/chat/MarkdownRendererOptimized.tsx",
+      "to": "archive/src/components/chat/MarkdownRendererOptimized.tsx"
+    },
+    {
+      "from": "src/components/chat/MessageErrorBoundary.tsx",
+      "to": "archive/src/components/chat/MessageErrorBoundary.tsx"
+    },
+    {
+      "from": "src/components/chat/MessageRenderer.tsx",
+      "to": "archive/src/components/chat/MessageRenderer.tsx"
+    },
+    {
+      "from": "src/components/chat/MessagesList.tsx",
+      "to": "archive/src/components/chat/MessagesList.tsx"
+    },
+    {
+      "from": "src/components/chat/ProcessOverview.tsx",
+      "to": "archive/src/components/chat/ProcessOverview.tsx"
+    },
+    {
+      "from": "src/components/chat/ProgressBar.tsx",
+      "to": "archive/src/components/chat/ProgressBar.tsx"
+    },
+    {
+      "from": "src/components/chat/QuickReplyChips.tsx",
+      "to": "archive/src/components/chat/QuickReplyChips.tsx"
+    },
+    {
+      "from": "src/components/chat/ReviewChecklist.tsx",
+      "to": "archive/src/components/chat/ReviewChecklist.tsx"
+    },
+    {
+      "from": "src/components/chat/StageGuideCard.tsx",
+      "to": "archive/src/components/chat/StageGuideCard.tsx"
+    },
+    {
+      "from": "src/components/chat/StageInitiatorCards.tsx",
+      "to": "archive/src/components/chat/StageInitiatorCards.tsx"
+    },
+    {
+      "from": "src/components/chat/StageSpecificSuggestions.tsx",
+      "to": "archive/src/components/chat/StageSpecificSuggestions.tsx"
+    },
+    {
+      "from": "src/components/chat/StageTransition.tsx",
+      "to": "archive/src/components/chat/StageTransition.tsx"
+    },
+    {
+      "from": "src/components/chat/SuggestionCards.tsx",
+      "to": "archive/src/components/chat/SuggestionCards.tsx"
+    },
+    {
+      "from": "src/components/chat/SuggestionPanel.tsx",
+      "to": "archive/src/components/chat/SuggestionPanel.tsx"
+    },
+    {
+      "from": "src/components/chat/SystemHealth.tsx",
+      "to": "archive/src/components/chat/SystemHealth.tsx"
+    },
+    {
+      "from": "src/components/chat/UDLSuggestionPanel.tsx",
+      "to": "archive/src/components/chat/UDLSuggestionPanel.tsx"
+    },
+    {
+      "from": "src/components/chat/UIGuidanceSystemV2.tsx",
+      "to": "archive/src/components/chat/UIGuidanceSystemV2.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/ActivityBuilderEnhanced.tsx",
+      "to": "archive/src/components/chat/stages/ActivityBuilderEnhanced.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/EnhancedStageInitiator.tsx",
+      "to": "archive/src/components/chat/stages/EnhancedStageInitiator.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/ImpactDesignerEnhanced.tsx",
+      "to": "archive/src/components/chat/stages/ImpactDesignerEnhanced.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/JourneyDetailsStage.tsx",
+      "to": "archive/src/components/chat/stages/JourneyDetailsStage.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/JourneyPhaseSelector.tsx",
+      "to": "archive/src/components/chat/stages/JourneyPhaseSelector.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/JourneyPhaseSelectorDraggable.tsx",
+      "to": "archive/src/components/chat/stages/JourneyPhaseSelectorDraggable.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/JourneySummary.tsx",
+      "to": "archive/src/components/chat/stages/JourneySummary.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx",
+      "to": "archive/src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/LearningJourneySummary.tsx",
+      "to": "archive/src/components/chat/stages/LearningJourneySummary.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/LearningPathwayBuilder.tsx",
+      "to": "archive/src/components/chat/stages/LearningPathwayBuilder.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/MethodSelectionStage.tsx",
+      "to": "archive/src/components/chat/stages/MethodSelectionStage.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/MilestoneSelector.tsx",
+      "to": "archive/src/components/chat/stages/MilestoneSelector.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/MilestoneSelectorDraggable.tsx",
+      "to": "archive/src/components/chat/stages/MilestoneSelectorDraggable.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/ResourceSelector.tsx",
+      "to": "archive/src/components/chat/stages/ResourceSelector.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/RubricBuilder.tsx",
+      "to": "archive/src/components/chat/stages/RubricBuilder.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/RubricBuilderEnhanced.tsx",
+      "to": "archive/src/components/chat/stages/RubricBuilderEnhanced.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/RubricStage.tsx",
+      "to": "archive/src/components/chat/stages/RubricStage.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/SimplifiedLearningJourneyStage.tsx",
+      "to": "archive/src/components/chat/stages/SimplifiedLearningJourneyStage.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/StageClarifier.tsx",
+      "to": "archive/src/components/chat/stages/StageClarifier.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/StageInitiator.tsx",
+      "to": "archive/src/components/chat/stages/StageInitiator.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/StepPrompt.tsx",
+      "to": "archive/src/components/chat/stages/StepPrompt.tsx"
+    },
+    {
+      "from": "src/components/chat/stages/index.ts",
+      "to": "archive/src/components/chat/stages/index.ts"
+    },
+    {
+      "from": "src/components/chat/stages/shared/useMultiSelect.ts",
+      "to": "archive/src/components/chat/stages/shared/useMultiSelect.ts"
+    },
+    {
+      "from": "src/components/competency/ALFCompetencyTracker.tsx",
+      "to": "archive/src/components/competency/ALFCompetencyTracker.tsx"
+    },
+    {
+      "from": "src/components/feasibility/FeasibilityPanel.tsx",
+      "to": "archive/src/components/feasibility/FeasibilityPanel.tsx"
+    },
+    {
+      "from": "src/components/feedback/QuickFeedback.tsx",
+      "to": "archive/src/components/feedback/QuickFeedback.tsx"
+    },
+    {
+      "from": "src/components/hero/FeasibilityPanel.tsx",
+      "to": "archive/src/components/hero/FeasibilityPanel.tsx"
+    },
+    {
+      "from": "src/components/hero/ProcessIndicator.tsx",
+      "to": "archive/src/components/hero/ProcessIndicator.tsx"
+    },
+    {
+      "from": "src/components/hero/StandardsCoverageMap.tsx",
+      "to": "archive/src/components/hero/StandardsCoverageMap.tsx"
+    },
+    {
+      "from": "src/components/icons/ButtonIcons.jsx",
+      "to": "archive/src/components/icons/ButtonIcons.jsx"
+    },
+    {
+      "from": "src/components/icons/ModernIcons.tsx",
+      "to": "archive/src/components/icons/ModernIcons.tsx"
+    },
+    {
+      "from": "src/components/icons/index.js",
+      "to": "archive/src/components/icons/index.js"
+    },
+    {
+      "from": "src/components/icons/index.jsx",
+      "to": "archive/src/components/icons/index.jsx"
+    },
+    {
+      "from": "src/components/layout/ALFProcessRibbon.tsx",
+      "to": "archive/src/components/layout/ALFProcessRibbon.tsx"
+    },
+    {
+      "from": "src/components/onboarding/TourOverlay.tsx",
+      "to": "archive/src/components/onboarding/TourOverlay.tsx"
+    },
+    {
+      "from": "src/components/onboarding/steamData.ts",
+      "to": "archive/src/components/onboarding/steamData.ts"
+    },
+    {
+      "from": "src/components/patterns/ErrorPreventionPatterns.tsx",
+      "to": "archive/src/components/patterns/ErrorPreventionPatterns.tsx"
+    },
+    {
+      "from": "src/components/preview/BlueprintPreviewModal.tsx",
+      "to": "archive/src/components/preview/BlueprintPreviewModal.tsx"
+    },
+    {
+      "from": "src/components/progress/EnhancedProgressIndicator.tsx",
+      "to": "archive/src/components/progress/EnhancedProgressIndicator.tsx"
+    },
+    {
+      "from": "src/components/progress/HeaderProgressBar.tsx",
+      "to": "archive/src/components/progress/HeaderProgressBar.tsx"
+    },
+    {
+      "from": "src/components/progress/MobileProgressIndicator.tsx",
+      "to": "archive/src/components/progress/MobileProgressIndicator.tsx"
+    },
+    {
+      "from": "src/components/progress/index.ts",
+      "to": "archive/src/components/progress/index.ts"
+    },
+    {
+      "from": "src/components/standards/StandardsCoverageMap.tsx",
+      "to": "archive/src/components/standards/StandardsCoverageMap.tsx"
+    },
+    {
+      "from": "src/components/ui/AlfLogo.tsx",
+      "to": "archive/src/components/ui/AlfLogo.tsx"
+    },
+    {
+      "from": "src/components/ui/BigIdeaAnimation.jsx",
+      "to": "archive/src/components/ui/BigIdeaAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/Button.jsx",
+      "to": "archive/src/components/ui/Button.jsx"
+    },
+    {
+      "from": "src/components/ui/Card.jsx",
+      "to": "archive/src/components/ui/Card.jsx"
+    },
+    {
+      "from": "src/components/ui/ConnectionIndicator.tsx",
+      "to": "archive/src/components/ui/ConnectionIndicator.tsx"
+    },
+    {
+      "from": "src/components/ui/DeliverablesAnimation.jsx",
+      "to": "archive/src/components/ui/DeliverablesAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/EnhancedButton.tsx",
+      "to": "archive/src/components/ui/EnhancedButton.tsx"
+    },
+    {
+      "from": "src/components/ui/EnhancedCards.jsx",
+      "to": "archive/src/components/ui/EnhancedCards.jsx"
+    },
+    {
+      "from": "src/components/ui/FlowChip.tsx",
+      "to": "archive/src/components/ui/FlowChip.tsx"
+    },
+    {
+      "from": "src/components/ui/GrowingLearningTree.jsx",
+      "to": "archive/src/components/ui/GrowingLearningTree.jsx"
+    },
+    {
+      "from": "src/components/ui/HeroOrbitAnimation.jsx",
+      "to": "archive/src/components/ui/HeroOrbitAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/IdeationAnimation.jsx",
+      "to": "archive/src/components/ui/IdeationAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/Input.jsx",
+      "to": "archive/src/components/ui/Input.jsx"
+    },
+    {
+      "from": "src/components/ui/JourneyAnimation.jsx",
+      "to": "archive/src/components/ui/JourneyAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/KnowledgeRipples.jsx",
+      "to": "archive/src/components/ui/KnowledgeRipples.jsx"
+    },
+    {
+      "from": "src/components/ui/OptimizedIcons.tsx",
+      "to": "archive/src/components/ui/OptimizedIcons.tsx"
+    },
+    {
+      "from": "src/components/ui/STEAMVennDiagram.jsx",
+      "to": "archive/src/components/ui/STEAMVennDiagram.jsx"
+    },
+    {
+      "from": "src/components/ui/SVGSquircleIcon.tsx",
+      "to": "archive/src/components/ui/SVGSquircleIcon.tsx"
+    },
+    {
+      "from": "src/components/ui/SafeBoundary.tsx",
+      "to": "archive/src/components/ui/SafeBoundary.tsx"
+    },
+    {
+      "from": "src/components/ui/SolarSystemAnimation.jsx",
+      "to": "archive/src/components/ui/SolarSystemAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/TooltipGlossary.tsx",
+      "to": "archive/src/components/ui/TooltipGlossary.tsx"
+    },
+    {
+      "from": "src/components/ui/TransformationAnimation.jsx",
+      "to": "archive/src/components/ui/TransformationAnimation.jsx"
+    },
+    {
+      "from": "src/components/ui/TypewriterText.tsx",
+      "to": "archive/src/components/ui/TypewriterText.tsx"
+    },
+    {
+      "from": "src/design-system/components/Button.tsx",
+      "to": "archive/src/design-system/components/Button.tsx"
+    },
+    {
+      "from": "src/design-system/components/CardNew.tsx",
+      "to": "archive/src/design-system/components/CardNew.tsx"
+    },
+    {
+      "from": "src/design-system/components/EducationComponents.tsx",
+      "to": "archive/src/design-system/components/EducationComponents.tsx"
+    },
+    {
+      "from": "src/design-system/components/EnhancedButton.tsx",
+      "to": "archive/src/design-system/components/EnhancedButton.tsx"
+    },
+    {
+      "from": "src/design-system/components/Icon.tsx",
+      "to": "archive/src/design-system/components/Icon.tsx"
+    },
+    {
+      "from": "src/design-system/components/IconFixed.tsx",
+      "to": "archive/src/design-system/components/IconFixed.tsx"
+    },
+    {
+      "from": "src/design-system/components/Layout.tsx",
+      "to": "archive/src/design-system/components/Layout.tsx"
+    },
+    {
+      "from": "src/design-system/components/Typography.tsx",
+      "to": "archive/src/design-system/components/Typography.tsx"
+    },
+    {
+      "from": "src/features/chat/ButtonStateTest.tsx",
+      "to": "archive/src/features/chat/ButtonStateTest.tsx"
+    },
+    {
+      "from": "src/features/chat/ChatLoader.tsx",
+      "to": "archive/src/features/chat/ChatLoader.tsx"
+    }
+  ]
+}
