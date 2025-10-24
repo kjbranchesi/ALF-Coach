@@ -67,7 +67,7 @@ export default [
       
       // React specific
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/exhaustive-deps': isCI ? 'error' : 'warn',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // Enforce using the lazy variant when defined in the same file
       // Warn locally; error in CI to avoid blocking your flow
