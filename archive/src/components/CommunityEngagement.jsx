@@ -29,6 +29,7 @@ const engagementIdeas = {
   ]
 };
 
+// ARCHIVED - CommunityEngagement
 export default function CommunityEngagement({ currentStage, subject, isVisible = true }) {
   const [isExpanded, setIsExpanded] = useState(false);
   

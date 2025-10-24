@@ -1,4 +1,4 @@
-// NotificationBell.jsx - Notification bell component for ALF Coach
+// ARCHIVED - NotificationBell.jsx - Notification bell component for ALF Coach
 // Follows ALF Design System specifications with soft shadows and blue primary color
 
 import React, { useState, useRef, useEffect } from 'react';

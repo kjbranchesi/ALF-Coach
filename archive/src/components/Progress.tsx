@@ -129,3 +129,4 @@ if (typeof window !== 'undefined') {
   `;
   document.head.appendChild(style);
 }
+// ARCHIVED - Legacy Progress component

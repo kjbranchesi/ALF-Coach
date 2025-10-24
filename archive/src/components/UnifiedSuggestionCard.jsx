@@ -1,4 +1,4 @@
-// UnifiedSuggestionCard.jsx - Consistent card styling for all suggestions
+// ARCHIVED - UnifiedSuggestionCard.jsx - Consistent card styling for all suggestions
 
 import React from 'react';
 import { motion } from 'framer-motion';

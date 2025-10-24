@@ -378,3 +378,4 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
     </div>
   );
 }
+// ARCHIVED - Legacy ProgressV2 component

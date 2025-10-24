@@ -210,3 +210,4 @@ export const StageProgress = ({ stage, currentStep = 0, totalSteps = 3 }) => {
 };
 
 export default StageHeader;
+// ARCHIVED - StageHeader

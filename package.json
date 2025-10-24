@@ -32,7 +32,6 @@
     "generate:hero-schema": "tsx scripts/generate-hero-schema.ts",
     "export:hero-data": "node --import tsx scripts/export-hero-data.ts",
     "lint:curly": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --rule '{\"curly\": \"error\"}',",
-    "analyze:quick": "node scripts/analyze-quick.mjs",
     "analyze:knip": "knip --json --output reports/deadcode/knip.json",
     "analyze:tsprune": "ts-prune -p tsconfig.json --json > reports/deadcode/tsprune.json || true",
     "analyze:madge": "madge src --json > reports/deadcode/madge.json",

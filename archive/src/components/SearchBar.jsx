@@ -275,3 +275,4 @@ const SearchBar = ({
 };
 
 export default SearchBar;
+// ARCHIVED - SearchBar
