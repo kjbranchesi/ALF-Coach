@@ -1,0 +1,1621 @@
+{
+  "orphanModules": [
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/ai/promptTemplates/conversationalDeliverables.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/ai/promptTemplates/conversationalIdeation.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/ai/promptTemplates/conversationalJourney.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/ai/promptTemplates/scaffoldedActivities.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/BlueprintSidebar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/BlueprintViewer.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/CommunityEngagement.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ConsistencyDialog.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ConversationButton.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/CurriculumOutline.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/EmptyState.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ErrorBoundary/DataErrorBoundary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ErrorBoundary/MultiSelectErrorBoundary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ErrorBoundary/WizardErrorBoundary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/FrameworkCelebration.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/FrameworkOverview.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/GuestSpeakerHints.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/JourneySummary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/LazyLoad.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/LiveFrameworkBuilder.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/MilestoneAnimation.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ModernProgress.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/NotificationBell.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/PedagogicalRationale.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/Progress.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ProgressIndicator.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ProgressV2.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ResearchBacking.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SafetyErrorBoundary.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SaveExitButtonProvider.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SearchBar.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/StageHeader.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/StageTransitionModal.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SubtleAnimations.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SyllabusView.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/SyncStatusIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/TeacherFeedback.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/TypingIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/UnifiedSuggestionCard.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/UserMenu.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/analytics/views/StudentView.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/analytics/views/TeacherView.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/animations/AnimatedLoader.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/animations/RiveAnimation.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/animations/ScrollAnimations.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/AssessmentAccommodationsPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/ExitTicket.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/PeerAssessment.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/ProgressMonitoringDashboard.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/QuickAssessmentStrategies.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/assessment/SelfReflection.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/AdaptiveMilestones.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ClassContextCapture.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/CompactRecapBar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ConfirmationFramework.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ConfirmationFrameworkExample.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ContextualHelp.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ContextualInitiator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ConversationStatus.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/DebugPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ErrorRecovery.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ErrorRecoveryEnhanced.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/FlowGuidance.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/LazyComponents.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/LiveShowcasePreview.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/MVPActionButtons.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/MarkdownRendererOptimized.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/MessageErrorBoundary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ProcessOverview.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ProgressBar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/ReviewChecklist.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/StageGuideCard.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/StageInitiatorCards.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/StageSpecificSuggestions.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/StageTransition.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/SuggestionCards.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/SuggestionPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/SystemHealth.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/UDLSuggestionPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/UIGuidanceSystemV2.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/JourneyDetailsStage.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/JourneyPhaseSelector.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/JourneyPhaseSelectorDraggable.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/JourneySummary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/LearningJourneySummary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/LearningPathwayBuilder.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/MethodSelectionStage.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/MilestoneSelector.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/MilestoneSelectorDraggable.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/ResourceSelector.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/RubricBuilder.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/RubricStage.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/SimplifiedLearningJourneyStage.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/StageClarifier.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/StageInitiator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/StepPrompt.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/chat/stages/shared/useMultiSelect.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/competency/ALFCompetencyTracker.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/feedback/QuickFeedback.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/hero/FeasibilityPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/hero/ProcessIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/hero/StandardsCoverageMap.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/icons/ButtonIcons.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/icons/ModernIcons.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/layout/ALFProcessRibbon.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/onboarding/TourOverlay.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/onboarding/steamData.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/patterns/ErrorPreventionPatterns.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/preview/BlueprintPreviewModal.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/progress/HeaderProgressBar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/progress/MobileProgressIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/Card.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/ConnectionIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/EnhancedCards.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/GrowingLearningTree.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/IdeationAnimation.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/Input.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/KnowledgeRipples.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/OptimizedIcons.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/SVGSquircleIcon.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/SafeBoundary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/TooltipGlossary.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/TransformationAnimation.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/components/ui/TypewriterText.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/config/conversationConfig.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/config/fixFlags.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/constants/terms.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/contexts/ThemeContext.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/core/SOPFlowManager.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/core/services/GoogleDocsExportService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/core/types/DeliverableTypes.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/core/utils/commandDetection.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/data/generated/hero/loader.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/data/heroSampleData.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/data/sample-tools.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/DesignSystemShowcase.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/Button.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/CardNew.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/EducationComponents.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/EnhancedButton.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/IconFixed.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/Layout.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/components/Typography.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/featureFlags.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/spacing.config.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/design-system/spacing.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/examples/ContentParsingServiceExample.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/ButtonStateTest.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/DebugPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/IconText.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/IdeaCardsDisplay.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/IdeaCardsV2.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/MessageContent.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/StageOverview.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/TestChat.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/diagnostic.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/parseIdeas.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/CoachDrawer.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/CollapsibleProjectBrief.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/GuidanceFAB.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/JourneyPreviewCard.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/ProjectBriefCard.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/ResponsiveSidebar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/StageGuide.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/components/StatusIndicator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/domain/deliverablesMicroFlow.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/hooks/useResponsiveLayout.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat-mvp/hooks/useSidebarState.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/deliverables/DeliverablesProgress.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/ideation/BlueprintStateMachine.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/ideation/ConversationFlowManager.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/ideation/IdeationFlowController.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/ideation/removeEmojis.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/CreativeProcessJourney.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/StudentCreativeProcess.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/AITutor.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/AdaptiveLearning.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/IterationAnalytics.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/IterationDialog.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/IterationHistory.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/PhaseBuilder.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/PhasePanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/PhaseTimeline.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/ReportGenerator.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/StudentProgress.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/SupportResources.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/components/TeacherGuidance.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/hooks/useCreativeJourney.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/learningJourney/utils/colorMappings.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/publish/PublishPro.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/review/ReviewScreenDiagnostic.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/review/ReviewScreenDiagnosticV2.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/review/exportUtilsLazy.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/showcase/PolishPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/WizardV3Wrapper.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/config/comprehensiveSubjects.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/config/realWorldContexts.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/config/subjectConnections.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/ALFProcessCards.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/CardActionBar.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/DifferentiationOptionsStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/EnhancedSubjectSelector.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/InlineProcessGuide.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/components/WhatHappensNext.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/root/ALFOnboarding.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/root/FlexibleSubjectInput.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/root/QuickSelectionTags.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ALFIntroStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/AgeStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ArtifactsRubricsStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/DifferentiationStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/EnhancedSubjectStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/EvidenceLogisticsStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ExhibitionStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/GoalsEQStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ImprovedSubjectStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/LocationStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/MaterialsStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/MotivationStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/PhasesMilestonesStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ReviewExportStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ReviewStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/ScopeStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/StudentsStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/SubjectScopeStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/SubjectStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/legacy/steps/VisionStep.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/useWizardData.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/wizardExamples.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/wizard/wizardValidation.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/firebase/firebaseLazy.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/alignment-dashboard/AlignmentDashboard.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/community/CommunityResourceButton.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/enrichment/EnrichmentPanel.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/enrichment/EnrichmentToggle.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/progress/ProgressMonitoringButton.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/futures/teacher-pathways/TeacherExperienceRouter.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useConversationRecovery.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useConversationalSOPUpdate.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useDebounce.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useErrorHandler.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useFirestoreConnection.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useGeminiStream.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useKeyboardNavigation.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useMilestoneTracking.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/hooks/useWhatIfScenarios.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/chat-architecture-v2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/chat-flow-config.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/design-utils.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/prompt-templates.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/response-guidelines.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/scaffoldingUtils.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/textUtils.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/lib/validation-system.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/main.jsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pages/HowItWorks.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pages/HowItWorksSimple.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pages/ProjectShowcase.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pages/test-chat-debug.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pages/test-chat-stability.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/pdf/reactPdfRuntime.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/prompts/enhanced-conversational-flow.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/prompts/journey-v2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/prompts/journey-v3.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/prompts/journey.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/prompts/orchestrator.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/AdaptiveTimelineService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/ChatPromptBuilder.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/CloudStorageAdapter.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/ContextTracker.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/ContextualAIService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/FirebaseSync.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/FlowOrchestrator.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/PBLErrorRecovery.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/PBLWizardAdapter.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/PerformanceMonitor.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/RobustFirebaseService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/SuggestionSelector.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/WizardHandoffService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/button-state-manager.d.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/chat-event-handler.d.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/chat-service-migration.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/chat-service-original.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/checkpoint-implementations.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/communication-guidance-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/conversation-state-machine.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/archive-system 2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/archive-system.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/certificate-generation 2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/certificate-generation.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/community-connections.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/portfolio-export-system 2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/portfolio-export-system.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/professional-development.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/progress-report-builder 2.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/progress-report-builder.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/core/resource-library.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/enriched-ai-conversation-manager.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/event-emitter.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/firebase/PrimaryCloudSync.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/future/adaptive-interface-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/future/expert-network-builder.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/future/media-library-integration.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/future/resource-recommendation-engine.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/ideationPreprocessor.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/index.d.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/interactive-tool-curation-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/FormativeAssessmentIntegrationService.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/accessibility-checker-implementation.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/accessibility-checker-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/advanced-learning-objectives-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-community-validation-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-competency-demonstration-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-competency-tracking-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-gap-analysis-intervention-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-portfolio-standards-mapper.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-progression-integration-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-progression-types.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-real-time-standards-tracker.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-standards-reporting-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/alf-standards-reporting-templates.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/choice-menu-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/cultural-responsiveness-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/formative-assessment-integration.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/language-simplification-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/multi-modal-content-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/pedagogical-framework-engine.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/pre-assessment-grouping-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/professional-development-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/real-time-feedback-mechanism.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/scaffolding-integration-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/simple-accessibility-helper.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-alf-integration-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-content-adaptation-engine.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-engagement-strategy-engine.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-expression-assessment-engine.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-learner-assessment-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/udl-resource-recommendations.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/validation-pipeline-integration.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/legacy/validation-profiles-guide.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/rubric-export-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/rubric-standards-alignment-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/rubric-weighting-service.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/streaming-handler.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/services/validation-components.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/setupTests.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/test-ai-integration.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/test-pdf-export.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/types/FormativeAssessmentTypes.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/types/ProjectDataTypes.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/types/progress.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/types/rubric.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/types/zod-schemas.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/AgeAdaptiveValidation.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/BranchingStrategies.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/ComprehensiveFrameworkBuilder.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/DataMigrationUtils.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/DataRecoveryTool.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/InputValidationSystem.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/ProgressionEngine.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/accessibility-improvements.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/alfFlow.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/autosave.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/cleanupLocalStorage.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/cleanupStorage.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/confirmationFramework.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/contextualHelp.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/conversationFramework.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/dataValidator.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/draftMerge.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/environment.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/event-emitter.d.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/feature-flags.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/featureFlags.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/hero/builders.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/hero/validation.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/intent-detection.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/lazy-components.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/markdown-security.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/normalizeWizardData.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/optimization.tsx",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/projectNormalize.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/responseValidator.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-accessability-ai.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-assistive-tech.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-civic-signals.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-community-history.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-future-food.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-harbor-health.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-heatsafe-blocks.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-move-fair.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-playable-city.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-sensing-self.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/sampleBlueprints/hero-sustainability.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/showcase-projects.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/stageTransitions.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/suppressFirebaseErrors.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/systemHealthCheck.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/test-onboarding.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/testAllButtons.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/testIdeationFlow.js",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/utils/udlEnhancedSuggestions.ts",
+      "inbound": 0
+    },
+    {
+      "file": "/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/vite-env.d.ts",
+      "inbound": 0
+    }
+  ],
+  "inboundCounted": 327
+}
