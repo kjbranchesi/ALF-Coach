@@ -54,6 +54,14 @@ export interface UnifiedProjectData {
   completedAt?: Date; // When the project was completed (all stages done)
   description?: string; // Course description for display
 
+  // Stage tracking (for segmented builder flow)
+  currentStage?: 'ideation' | 'journey' | 'deliverables' | 'review';
+  stageStatus?: {
+    ideation: 'not_started' | 'in_progress' | 'complete';
+    journey: 'not_started' | 'in_progress' | 'complete';
+    deliverables: 'not_started' | 'in_progress' | 'complete';
+  };
+
   // Sync status
   syncStatus: 'local' | 'synced' | 'conflict' | 'error';
   lastError?: string;

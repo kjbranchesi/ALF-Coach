@@ -39,6 +39,11 @@ const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor
 const IntakeWizardMinimal = lazy(() => import('./features/wizard/IntakeWizardMinimal'));
 const DebugTelemetry = lazy(() => import('./pages/DebugTelemetry'));
 
+// Stage-separated builder components (Phase 1 - Infrastructure)
+const IdeationStage = lazy(() => import('./features/builder/IdeationStage').then(m => ({ default: m.IdeationStage })));
+const JourneyStage = lazy(() => import('./features/builder/JourneyStage').then(m => ({ default: m.JourneyStage })));
+const DeliverablesStage = lazy(() => import('./features/builder/DeliverablesStage').then(m => ({ default: m.DeliverablesStage })));
+
 const dashboardErrorFallback = (
   <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
     <h2 className="text-xl font-semibold">We couldn't load your dashboard</h2>
@@ -234,6 +239,35 @@ export default function AuthenticatedApp() {
                 <AppLayout key="app-blueprint">
                   <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading blueprint...</div></div>}>
                     <ChatLoader key="blueprint-chat" />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+
+            {/* Stage-separated builder routes (Phase 1 - Infrastructure) */}
+            <Route path="/app/projects/:id/ideation" element={
+              <ProtectedRoute>
+                <AppLayout key="app-ideation">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading ideation...</div></div>}>
+                    <IdeationStage />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/projects/:id/journey" element={
+              <ProtectedRoute>
+                <AppLayout key="app-journey">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading journey...</div></div>}>
+                    <JourneyStage />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/projects/:id/deliverables" element={
+              <ProtectedRoute>
+                <AppLayout key="app-deliverables">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading deliverables...</div></div>}>
+                    <DeliverablesStage />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
