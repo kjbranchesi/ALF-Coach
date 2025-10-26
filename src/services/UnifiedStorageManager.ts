@@ -422,6 +422,8 @@ export class UnifiedStorageManager {
       tagline: data.tagline || '',
       updatedAt: data.updatedAt,
       stage: data.stage,
+      currentStage: data.currentStage, // Phase 2: Added for segmented builder
+      stageStatus: data.stageStatus, // Phase 2: Added for segmented builder
       syncStatus: data.syncStatus,
       status: data.status,
       deletedAt: data.deletedAt || null,

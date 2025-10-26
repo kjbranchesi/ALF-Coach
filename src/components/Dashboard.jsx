@@ -6,6 +6,8 @@ import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import { projectRepository } from '../services/ProjectRepository';
+import { deriveStageStatus, getStageRoute } from '../utils/stageStatus';
+import { telemetry } from '../features/builder/useStageController';
 // Data recovery tool temporarily disabled from UI
 
 // Design system imports
@@ -117,12 +119,27 @@ export default function Dashboard() {
 
     // Find the project to check its completion status
     const project = drafts.find(d => d.id === draftId);
+    if (!project) {
+      return;
+    }
 
-    // Route completed projects to showcase view instead of chat
-    if (project && (project.status === 'ready' || project.stage === 'COMPLETED')) {
+    // Use deriveStageStatus to determine current stage
+    const { currentStage, stageStatus } = deriveStageStatus(project);
+
+    // Track resume click with stage info
+    telemetry.track('resume_click', {
+      projectId: draftId,
+      stage: currentStage,
+      stageStatus: stageStatus[currentStage]
+    });
+
+    // Route to preview if project is completed, otherwise to stage route
+    if (currentStage === 'review') {
       navigate(`/app/project/${draftId}/preview`);
     } else {
-      navigate(`/app/blueprint/${draftId}`);
+      // Route to the stage-specific page
+      const stagePath = getStageRoute(draftId, currentStage);
+      navigate(stagePath);
     }
   };
 
@@ -204,6 +221,28 @@ export default function Dashboard() {
 
   // MVP: show all drafts without status filtering
   const filteredDrafts = drafts;
+
+  // Group projects by stage using deriveStageStatus
+  const groupedProjects = useMemo(() => {
+    const groups = {
+      ideation: [],
+      journey: [],
+      deliverables: [],
+      completed: []
+    };
+
+    filteredDrafts.forEach(project => {
+      const { currentStage } = deriveStageStatus(project);
+
+      if (currentStage === 'review') {
+        groups.completed.push(project);
+      } else {
+        groups[currentStage].push(project);
+      }
+    });
+
+    return groups;
+  }, [filteredDrafts]);
 
   return (
     <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
@@ -452,15 +491,128 @@ export default function Dashboard() {
           )}
 
           {!isLoading && !loadError && filteredDrafts.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 auto-rows-fr">
-              {filteredDrafts.map(draft => (
-                <ProjectCard
-                  key={draft.id}
-                  draft={draft}
-                  onOpen={handleOpenDraft}
-                  onDelete={handleDeleteDraft}
-                />
-              ))}
+            <div className="space-y-12">
+              {/* In Progress Section: 3 Columns */}
+              {(groupedProjects.ideation.length > 0 ||
+                groupedProjects.journey.length > 0 ||
+                groupedProjects.deliverables.length > 0) && (
+                <div className="space-y-6">
+                  <Heading level={2} className="text-slate-900 dark:text-slate-50">
+                    In Progress
+                  </Heading>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                    {/* Ideation Column */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between px-1">
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                          Ideation
+                        </h3>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                          {groupedProjects.ideation.length}
+                        </span>
+                      </div>
+                      <div className="space-y-4">
+                        {groupedProjects.ideation.length === 0 ? (
+                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
+                            <Text size="sm" color="secondary">No projects in ideation</Text>
+                          </div>
+                        ) : (
+                          groupedProjects.ideation.map(draft => (
+                            <ProjectCard
+                              key={draft.id}
+                              draft={draft}
+                              onOpen={handleOpenDraft}
+                              onDelete={handleDeleteDraft}
+                            />
+                          ))
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Journey Column */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between px-1">
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                          Journey
+                        </h3>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                          {groupedProjects.journey.length}
+                        </span>
+                      </div>
+                      <div className="space-y-4">
+                        {groupedProjects.journey.length === 0 ? (
+                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
+                            <Text size="sm" color="secondary">No projects in journey</Text>
+                          </div>
+                        ) : (
+                          groupedProjects.journey.map(draft => (
+                            <ProjectCard
+                              key={draft.id}
+                              draft={draft}
+                              onOpen={handleOpenDraft}
+                              onDelete={handleDeleteDraft}
+                            />
+                          ))
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Deliverables Column */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between px-1">
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                          Deliverables
+                        </h3>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+                          {groupedProjects.deliverables.length}
+                        </span>
+                      </div>
+                      <div className="space-y-4">
+                        {groupedProjects.deliverables.length === 0 ? (
+                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
+                            <Text size="sm" color="secondary">No projects in deliverables</Text>
+                          </div>
+                        ) : (
+                          groupedProjects.deliverables.map(draft => (
+                            <ProjectCard
+                              key={draft.id}
+                              draft={draft}
+                              onOpen={handleOpenDraft}
+                              onDelete={handleDeleteDraft}
+                            />
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Completed Section */}
+              {groupedProjects.completed.length > 0 && (
+                <div className="space-y-6 pt-8 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <div className="flex items-center justify-between">
+                    <Heading level={2} className="text-slate-900 dark:text-slate-50">
+                      Completed
+                    </Heading>
+                    <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                      {groupedProjects.completed.length} {groupedProjects.completed.length === 1 ? 'project' : 'projects'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+                    {groupedProjects.completed.map(draft => (
+                      <ProjectCard
+                        key={draft.id}
+                        draft={draft}
+                        onOpen={handleOpenDraft}
+                        onDelete={handleDeleteDraft}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
