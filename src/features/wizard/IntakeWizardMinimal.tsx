@@ -4,6 +4,8 @@ import { Icon } from '../../design-system';
 import type { IconName } from '../../design-system/components/Icon';
 import { StageRoadmapPreview } from './components/StageRoadmapPreview';
 import { trackEvent } from '../../utils/analytics';
+import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
+import { v4 as uuidv4 } from 'uuid';
 
 type SubjectKey = string; // supports built-ins and custom (e.g., "custom:Ocean Literacy")
 
@@ -69,31 +71,89 @@ export default function IntakeWizardMinimal() {
     });
   };
 
-  const startBuilding = () => {
+  const startBuilding = async () => {
     if (isLaunching) {return;}
-    const id = `new-${Date.now()}`;
-    const params = new URLSearchParams();
-    params.set('skip', 'true');
-    params.set('intro', '1');
-    if (selectedSubjects.length) {params.set('subjects', selectedSubjects.join(','));}
-    if (primarySubject) {params.set('primarySubject', primarySubject);}
-    if (ageGroup) {params.set('ageGroup', ageGroup);}
-    if (classSize) {params.set('classSize', classSize);}
-    if (duration) {params.set('duration', duration);}
-    if (initialIdea.trim()) {params.set('topic', initialIdea.trim());}
-    const hasName = Boolean(projectName.trim());
-    if (hasName) {params.set('projectName', projectName.trim());}
-
-    void trackEvent('wizard_cta_clicked', {
-      subjectCount: selectedSubjects.length,
-      hasProjectName: hasName,
-      topicLength: initialIdea.trim().length
-    });
-
     setIsLaunching(true);
-    void window.setTimeout(() => {
-      void navigate(`/app/blueprint/${id}?${params.toString()}`);
-    }, 1400);
+
+    try {
+      // Create real project with proper structure
+      const projectId = `bp_${Date.now()}_${uuidv4().slice(0, 8)}`;
+      const hasName = Boolean(projectName.trim());
+
+      // Track wizard completion
+      void trackEvent('wizard_cta_clicked', {
+        subjectCount: selectedSubjects.length,
+        hasProjectName: hasName,
+        topicLength: initialIdea.trim().length
+      });
+
+      // Build wizard data object
+      const wizardData = {
+        subjects: selectedSubjects,
+        primarySubject: primarySubject || selectedSubjects[0] || null,
+        ageGroup: ageGroup || '',
+        classSize: classSize || '',
+        duration: duration || 'unit',
+        initialIdea: initialIdea.trim(),
+        projectName: projectName.trim()
+      };
+
+      // Create project in UnifiedStorageManager
+      const now = new Date();
+      const newProject: UnifiedProjectData = {
+        id: projectId,
+        title: projectName.trim() || 'Untitled Project',
+        userId: 'anonymous', // Will be updated by auth system
+        createdAt: now,
+        updatedAt: now,
+        version: '1.0',
+        source: 'wizard',
+        wizardData,
+
+        // Initialize empty stage data
+        ideation: {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
+        journey: {
+          phases: [],
+          resources: []
+        },
+        deliverables: {
+          milestones: [],
+          artifacts: [],
+          rubric: { criteria: [] }
+        },
+
+        // Stage tracking
+        currentStage: 'ideation',
+        stageStatus: {
+          ideation: 'not_started',
+          journey: 'not_started',
+          deliverables: 'not_started'
+        },
+        status: 'draft',
+        syncStatus: 'local',
+        provisional: true // Mark as provisional until first real edit
+      };
+
+      // Save to storage
+      const storage = UnifiedStorageManager.getInstance();
+      await storage.saveProject(newProject);
+
+      console.log(`[IntakeWizard] Created project ${projectId}, navigating to ideation`);
+
+      // Navigate to ideation stage (stage-separated builder)
+      void window.setTimeout(() => {
+        navigate(`/app/projects/${projectId}/ideation`);
+      }, 800);
+    } catch (error) {
+      console.error('[IntakeWizard] Failed to create project', error);
+      setIsLaunching(false);
+      // Show error to user or navigate to dashboard
+      alert('Failed to create project. Please try again.');
+    }
   };
 
   useEffect(() => {

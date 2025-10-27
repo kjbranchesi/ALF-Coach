@@ -9,12 +9,15 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useLocation } from 'react-router-dom';
 import { UnifiedStorageManager } from '../services/UnifiedStorageManager';
 import { deriveStageStatus, getStageRoute } from '../utils/stageStatus';
+import { useAuth } from '../hooks/useAuth.js';
 
 export function StageRedirect() {
   const { id, projectId } = useParams<{ id?: string; projectId?: string }>();
+  const location = useLocation();
+  const { user, userId } = useAuth();
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +34,82 @@ export function StageRedirect() {
       }
 
       try {
-        // Load project from storage
         const storage = UnifiedStorageManager.getInstance();
+
+        // Handle "new-*" IDs from the IntakeWizard: mint a real project ID and seed
+        if (targetId.startsWith('new-')) {
+          const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+          // Preserve onboarding params (e.g., intro=1) and capture wizard context
+          const params = new URLSearchParams(location.search || window.location.search || '');
+          const qpSubjectsParam = params.get('subjects') || '';
+          const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
+          const qpPrimary = params.get('primarySubject') || '';
+          const qpAge = params.get('ageGroup') || '';
+          const qpClassSize = params.get('classSize') || '';
+          const qpDuration = params.get('duration') || 'medium';
+          const qpTopic = params.get('topic') || '';
+          const qpProjectName = params.get('projectName') || '';
+          const userIdentity = user?.isAnonymous ? 'anonymous' : (userId || 'anonymous');
+
+          try {
+            await storage.saveProject({
+              id: newBlueprintId,
+              title: qpProjectName || 'Untitled Project',
+              userId: userIdentity,
+              stage: 'ideation',
+              status: 'draft',
+              provisional: true,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              wizardData: {
+                entryPoint: 'learning_goal',
+                projectTopic: qpTopic || '',
+                projectName: qpProjectName || '',
+                learningGoals: '',
+                subjects: qpSubjects,
+                primarySubject: qpPrimary || (qpSubjects[0] || ''),
+                gradeLevel: qpAge || '',
+                duration: qpDuration || 'medium',
+                pblExperience: 'some',
+                vision: qpTopic || 'balanced',
+                subject: qpPrimary || (qpSubjects[0] || ''),
+                ageGroup: qpAge || '',
+                students: qpClassSize || '',
+                location: '',
+                materials: '',
+                resources: '',
+                scope: 'unit',
+                metadata: {
+                  createdAt: new Date(),
+                  lastModified: new Date(),
+                  version: '3.0',
+                  wizardCompleted: false,
+                  skippedFields: []
+                }
+              },
+              ideation: { bigIdea: '', essentialQuestion: '', challenge: '' },
+              journey: { phases: [], activities: [], resources: [] },
+              deliverables: { milestones: [], rubric: { criteria: [] }, impact: { audience: '', method: '' } },
+              chatHistory: []
+            });
+          } catch (seedErr) {
+            console.error('[StageRedirect] Failed to seed new project', (seedErr as Error)?.message);
+            setRedirectPath('/app/dashboard');
+            setIsLoading(false);
+            return;
+          }
+
+          // Redirect to ideation for the newly minted project, preserve intro param if present
+          const intro = params.get('intro') === '1' ? '?intro=1' : '';
+          const nextPath = `/app/projects/${newBlueprintId}/ideation${intro}`;
+          console.log(`[StageRedirect] Minted new project ${newBlueprintId} from ${targetId} → ${nextPath}`);
+          setRedirectPath(nextPath);
+          setIsLoading(false);
+          return;
+        }
+
+        // Load existing project from storage
         const project = await storage.loadProject(targetId);
 
         if (!project) {
@@ -60,7 +137,7 @@ export function StageRedirect() {
     };
 
     determineRedirect();
-  }, [id, projectId]);
+  }, [id, projectId, location.search, userId, user?.isAnonymous]);
 
   if (isLoading) {
     return (
