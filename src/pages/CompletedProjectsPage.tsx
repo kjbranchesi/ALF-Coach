@@ -57,7 +57,7 @@ export default function CompletedProjectsPage() {
 
         {!loading && completed.length === 0 && (
           <div className="squircle-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/60 p-10 text-center">
-            <Heading level={2} className="text-slate-900 dark:text-slate-50 mb-2">No completed projects yet</nHeading>
+            <Heading level={2} className="text-slate-900 dark:text-slate-50 mb-2">No completed projects yet</Heading>
             <Text color="secondary">Finalize a project to see it here.</Text>
           </div>
         )}
@@ -78,4 +78,3 @@ export default function CompletedProjectsPage() {
     </div>
   );
 }
-
