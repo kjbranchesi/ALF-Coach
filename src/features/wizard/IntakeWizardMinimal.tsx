@@ -87,19 +87,37 @@ export default function IntakeWizardMinimal() {
         topicLength: initialIdea.trim().length
       });
 
-      // Build wizard data object
+      const now = new Date();
+
+      // Build wizard data object - aligned with StageRedirect structure
       const wizardData = {
+        entryPoint: 'learning_goal',
+        projectTopic: initialIdea.trim(),
+        projectName: projectName.trim(),
+        learningGoals: initialIdea.trim(), // Use initialIdea as learning goals
         subjects: selectedSubjects,
-        primarySubject: primarySubject || selectedSubjects[0] || null,
-        ageGroup: ageGroup || '',
-        classSize: classSize || '',
+        primarySubject: primarySubject || selectedSubjects[0] || '',
+        gradeLevel: ageGroup || '',
         duration: duration || 'unit',
-        initialIdea: initialIdea.trim(),
-        projectName: projectName.trim()
+        pblExperience: 'some',
+        vision: 'balanced',
+        subject: primarySubject || selectedSubjects[0] || '',
+        ageGroup: ageGroup || '',
+        students: classSize || '',
+        location: '',
+        materials: '',
+        resources: '',
+        scope: 'unit',
+        metadata: {
+          createdAt: now,
+          lastModified: now,
+          version: '3.0',
+          wizardCompleted: true,
+          skippedFields: [] as string[]
+        }
       };
 
       // Create project in UnifiedStorageManager
-      const now = new Date();
       const newProject: UnifiedProjectData = {
         id: projectId,
         title: projectName.trim() || 'Untitled Project',
