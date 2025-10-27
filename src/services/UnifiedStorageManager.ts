@@ -218,7 +218,10 @@ export class UnifiedStorageManager {
         typeof projectData.stage !== 'undefined' ||
         typeof projectData.progress !== 'undefined';
 
-      if (!this.hasMinimumViableData(unifiedData) && !metadataOnlyUpdate && !existing) {
+      // Allow provisional projects (from wizard) to bypass minimum data check
+      const isProvisional = unifiedData.provisional === true;
+
+      if (!this.hasMinimumViableData(unifiedData) && !metadataOnlyUpdate && !existing && !isProvisional) {
         console.log(`[UnifiedStorageManager] Skipping save for ${id} (insufficient data)`);
         return id;
       }

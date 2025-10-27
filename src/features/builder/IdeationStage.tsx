@@ -65,7 +65,10 @@ export function IdeationStage() {
         const project = await storage.loadProject(projectId);
 
         if (!project) {
-          console.error('[IdeationStage] Project not found');
+          console.error(`[IdeationStage] Project ${projectId} not found in storage`);
+          console.error('[IdeationStage] This may indicate a save timing issue or validation failure');
+          // Give user feedback before redirecting
+          alert('Unable to load project. You will be redirected to the dashboard.');
           navigate('/app/dashboard');
           return;
         }
@@ -78,6 +81,7 @@ export function IdeationStage() {
         setChallenge(project.ideation?.challenge || '');
       } catch (error) {
         console.error('[IdeationStage] Failed to load project', error);
+        alert('An error occurred while loading the project. You will be redirected to the dashboard.');
         navigate('/app/dashboard');
       } finally {
         setIsLoading(false);

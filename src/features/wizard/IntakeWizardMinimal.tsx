@@ -160,12 +160,19 @@ export default function IntakeWizardMinimal() {
       const storage = UnifiedStorageManager.getInstance();
       await storage.saveProject(newProject);
 
+      // Verify the project was actually saved
+      const savedProject = await storage.loadProject(projectId);
+      if (!savedProject) {
+        console.error('[IntakeWizard] Project save verification failed - project not found after save');
+        setIsLaunching(false);
+        alert('Failed to create project. Please try again.');
+        return;
+      }
+
       console.log(`[IntakeWizard] Created project ${projectId}, navigating to ideation`);
 
-      // Navigate to ideation stage (stage-separated builder)
-      void window.setTimeout(() => {
-        navigate(`/app/projects/${projectId}/ideation`);
-      }, 800);
+      // Navigate immediately after successful save verification (no setTimeout needed)
+      navigate(`/app/projects/${projectId}/ideation`);
     } catch (error) {
       console.error('[IntakeWizard] Failed to create project', error);
       setIsLaunching(false);
