@@ -8,7 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
-import { useStageController } from './useStageController';
+import { useStageController, telemetry } from './useStageController';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import {
   Container,
@@ -272,7 +272,22 @@ export function DeliverablesStage() {
   };
 
   const handleFinalizeAndReview = () => {
+    // Track finalize click
+    telemetry.track('finalize_click', {
+      stage: 'deliverables',
+      projectId: projectId || '',
+      milestonesCount: milestones.filter(m => m.name.trim()).length,
+      artifactsCount: artifacts.filter(a => a.name.trim()).length,
+      criteriaCount: criteria.filter(c => c.text.trim()).length
+    });
+
     if (canCompleteStage()) {
+      // Track successful finalization (completeStage will also track stage_completed)
+      telemetry.track('finalize_completed', {
+        stage: 'deliverables',
+        projectId: projectId || ''
+      });
+
       completeStage('review');
     }
   };

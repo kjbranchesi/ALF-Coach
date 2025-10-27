@@ -132,6 +132,7 @@ export function useStageController({
 
   // Refs for debouncing and cleanup
   const saveTimerRef = useRef<number | null>(null);
+  const pendingUpdatesRef = useRef<Partial<UnifiedProjectData> | null>(null);
   const storage = useRef(UnifiedStorageManager.getInstance());
   const stageViewTrackedRef = useRef(false);
 
@@ -163,11 +164,69 @@ export function useStageController({
   }, []);
 
   // =========================================================================
+  // Flush Pending Save (prevent data loss on transitions)
+  // =========================================================================
+
+  const flushPendingSave = useCallback(async (): Promise<void> => {
+    // If there's a pending timer and pending updates, save them immediately
+    if (saveTimerRef.current && pendingUpdatesRef.current) {
+      // Cancel the timer
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+
+      // Merge pending updates with current blueprint
+      const updatedBlueprint = {
+        ...blueprint,
+        ...pendingUpdatesRef.current,
+        id: projectId,
+        updatedAt: new Date()
+      } as UnifiedProjectData;
+
+      // Clear pending updates
+      pendingUpdatesRef.current = null;
+
+      // Empty-save guard: Don't save if no substantive content
+      if (!hasSubstantiveChanges(updatedBlueprint)) {
+        console.log('[StageController] Skipping flush (no substantive content)');
+        return;
+      }
+
+      setIsSaving(true);
+
+      try {
+        await storage.current.saveProject(updatedBlueprint);
+
+        console.log(`[StageController] Flushed pending save for ${stage} stage`);
+
+        // Track telemetry
+        telemetry.track('stage_flush_save', {
+          stage,
+          projectId,
+          reason: 'transition'
+        });
+
+        // Notify parent of update
+        if (onBlueprintUpdate) {
+          onBlueprintUpdate(updatedBlueprint);
+        }
+      } catch (error) {
+        console.error('[StageController] Flush save failed', error);
+        // Don't throw - save failures shouldn't break transitions
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  }, [blueprint, projectId, stage, onBlueprintUpdate]);
+
+  // =========================================================================
   // Debounced Autosave (500-800ms)
   // =========================================================================
 
   const debouncedSave = useCallback(
     (updates: Partial<UnifiedProjectData>) => {
+      // Store pending updates
+      pendingUpdatesRef.current = updates;
+
       // Clear existing timer
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
@@ -175,6 +234,9 @@ export function useStageController({
 
       // Set new timer (600ms - middle of 500-800ms range)
       saveTimerRef.current = window.setTimeout(async () => {
+        // Clear pending updates since we're about to save them
+        pendingUpdatesRef.current = null;
+
         // Merge updates with current blueprint
         const updatedBlueprint = {
           ...blueprint,
@@ -301,9 +363,13 @@ export function useStageController({
   // =========================================================================
 
   const saveAndContinueLater = useCallback(async () => {
-    // Cancel any pending autosave
+    // Flush any pending autosave before transition
+    await flushPendingSave();
+
+    // Clear timer (already handled by flush, but ensure cleanup)
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
     }
 
     if (!blueprint) {
@@ -353,7 +419,7 @@ export function useStageController({
     } finally {
       setIsSaving(false);
     }
-  }, [blueprint, stage, projectId, navigate]);
+  }, [blueprint, stage, projectId, navigate, flushPendingSave]);
 
   // =========================================================================
   // Complete Stage and Transition
@@ -361,9 +427,13 @@ export function useStageController({
 
   const completeStage = useCallback(
     async (explicitNextStage?: StageId) => {
-      // Cancel any pending autosave
+      // Flush any pending autosave before transition
+      await flushPendingSave();
+
+      // Clear timer (already handled by flush, but ensure cleanup)
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
       }
 
       if (!blueprint) {
@@ -436,7 +506,7 @@ export function useStageController({
         setIsSaving(false);
       }
     },
-    [blueprint, stage, projectId, navigate, canCompleteStage, onBlueprintUpdate]
+    [blueprint, stage, projectId, navigate, canCompleteStage, onBlueprintUpdate, flushPendingSave]
   );
 
   // =========================================================================

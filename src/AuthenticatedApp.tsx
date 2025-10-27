@@ -27,7 +27,7 @@ import SignIn from './components/SignIn';
 
 // Lazy load heavy components to improve performance
 const Dashboard = lazy(() => import('./components/Dashboard'));
-const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
+const StageRedirect = lazy(() => import('./components/StageRedirect').then(m => ({ default: m.StageRedirect })));
 const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
@@ -225,22 +225,19 @@ export default function AuthenticatedApp() {
                 </AppLayout>
               </ProtectedRoute>
             } />
+            {/* Legacy builder routes - redirect to stage-separated builder */}
             <Route path="/app/project/:projectId" element={
               <ProtectedRoute>
-                <AppLayout key="app-project">
-                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading project...</div></div>}>
-                    <ChatLoader key="project-chat" />
-                  </Suspense>
-                </AppLayout>
+                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading project...</div></div>}>
+                  <StageRedirect />
+                </Suspense>
               </ProtectedRoute>
             } />
             <Route path="/app/blueprint/:id" element={
               <ProtectedRoute>
-                <AppLayout key="app-blueprint">
-                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading blueprint...</div></div>}>
-                    <ChatLoader key="blueprint-chat" />
-                  </Suspense>
-                </AppLayout>
+                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading project...</div></div>}>
+                  <StageRedirect />
+                </Suspense>
               </ProtectedRoute>
             } />
 
