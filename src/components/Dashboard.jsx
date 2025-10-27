@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import WorkflowProgressIndicator from './WorkflowProgressIndicator.jsx';
 import CompletedProjectsGallery from './CompletedProjectsGallery.jsx';
+import GetStartedPanel from './GetStartedPanel.jsx';
 import { projectRepository } from '../services/ProjectRepository';
 import { deriveStageStatus, getStageRoute } from '../utils/stageStatus';
 import { telemetry } from '../features/builder/useStageController';
@@ -286,7 +287,12 @@ export default function Dashboard() {
                 <>
                   <button
                     onClick={() => {
-                      const { currentStage } = deriveStageStatus(mostRecentInProgressProject);
+                      const { currentStage, stageStatus } = deriveStageStatus(mostRecentInProgressProject);
+                      telemetry.track('resume_click', {
+                        projectId: mostRecentInProgressProject.id,
+                        stage: currentStage,
+                        stageStatus: stageStatus[currentStage]
+                      });
                       const route = getStageRoute(mostRecentInProgressProject.id, currentStage);
                       navigate(route);
                     }}
@@ -454,7 +460,11 @@ export default function Dashboard() {
             <div className="squircle-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg
                             border border-slate-200/50 dark:border-slate-700/50
                             shadow-[0_8px_32px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_48px_rgba(0,0,0,0.4)]
-                            p-16 text-center">
+                            p-10 text-center space-y-8">
+              {/* Show the workflow so first-time users understand the journey */}
+              <div className="max-w-3xl mx-auto">
+                <WorkflowProgressIndicator />
+              </div>
               <div className="flex flex-col items-center gap-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-blue-500/20 blur-xl animate-pulse" />
@@ -495,12 +505,12 @@ export default function Dashboard() {
                             bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg
                             border border-slate-200/50 dark:border-slate-700/50
                             shadow-[0_8px_32px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_48px_rgba(0,0,0,0.4)]
-                            p-16 text-center">
+                            p-10">
               {/* Gradient overlay */}
               <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none
                               bg-gradient-to-br from-blue-500 via-purple-500 to-emerald-500" />
 
-              <div className="relative flex flex-col items-center gap-8 max-w-md mx-auto">
+              <div className="relative flex flex-col items-center gap-8 max-w-5xl mx-auto">
                 {/* Icon illustration */}
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-2xl" />
@@ -516,45 +526,29 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Text content */}
-                <div className="space-y-3">
+                {/* Get Started copy + actions */}
+                <div className="space-y-3 text-center">
                   <Heading level={2} className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
                     No projects yet
                   </Heading>
                   <Text color="secondary" size="lg" className="leading-relaxed">
-                    Start your first project to see it appear here.
+                    Start your first project and build in short, focused steps.
                   </Text>
                 </div>
 
-                {/* CTA Button */}
-                <button
-                  onClick={handleCreateNew}
-                  className="squircle-button flex items-center gap-2.5 px-6 py-3
-                             bg-gradient-to-b from-blue-500 to-blue-600
-                             hover:from-blue-600 hover:to-blue-700
-                             active:scale-[0.98]
-                             text-white font-semibold text-base
-                             shadow-lg shadow-blue-500/30
-                             hover:shadow-xl hover:shadow-blue-500/40
-                             transition-all duration-200"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  <span>Create Project</span>
-                </button>
-
-                {/* Subtle hint */}
-                <Text size="sm" color="secondary" className="opacity-60">
-                  or browse our <button onClick={() => navigate('/app/samples?show=showcase')} className="underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors">showcase projects</button> for inspiration
-                </Text>
+                <div className="w-full">
+                  <GetStartedPanel
+                    onStart={handleCreateNew}
+                    onHowItWorks={() => navigate('/how-it-works')}
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {!isLoading && !loadError && filteredDrafts.length > 0 && (
             <div className="space-y-12">
-              {/* Workflow Progress Indicator */}
+              {/* Workflow Progress Indicator (also shown in empty state) */}
               <WorkflowProgressIndicator />
 
               {/* Completed Projects Gallery (at top for celebration) */}

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle, ExternalLink, Copy, Archive, Calendar } from 'lucide-react';
 import { getSubjectTheme } from '../utils/projectThemes';
 
@@ -22,6 +23,7 @@ function formatDate(value) {
 }
 
 export default function CompletedProjectsGallery({ projects, onOpen, onDuplicate, onArchive }) {
+  const navigate = useNavigate();
   if (!projects || projects.length === 0) {
     return null; // Don't show section if no completed projects
   }
@@ -51,7 +53,7 @@ export default function CompletedProjectsGallery({ projects, onOpen, onDuplicate
         {projects.length > 4 && (
           <button
             className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-            onClick={() => {/* Could navigate to dedicated gallery view */}}
+            onClick={() => navigate('/app/completed')}
           >
             View All →
           </button>
@@ -63,9 +65,8 @@ export default function CompletedProjectsGallery({ projects, onOpen, onDuplicate
         <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
           {projects.map((project) => {
             const theme = getSubjectTheme(project.wizardData?.primarySubject || project.wizardData?.subject);
-            const completedDate = project.stageStatus?.review === 'completed'
-              ? project.updatedAt
-              : project.updatedAt;
+            // Prefer completedAt when available; fallback to last updatedAt
+            const completedDate = project.completedAt || project.updatedAt;
 
             return (
               <article

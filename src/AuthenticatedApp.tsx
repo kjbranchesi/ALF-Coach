@@ -34,6 +34,7 @@ const SamplePreview = lazy(() => import('./pages/SamplePreview'));
 // Phase A: Using actual ReviewScreen with cloud-first reads
 const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const ProjectShowcasePage = lazy(() => import('./features/showcase/ProjectShowcasePage'));
+const CompletedProjectsPage = lazy(() => import('./pages/CompletedProjectsPage'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
 const IntakeWizardMinimal = lazy(() => import('./features/wizard/IntakeWizardMinimal'));
@@ -221,6 +222,15 @@ export default function AuthenticatedApp() {
                 <AppLayout key="app-samples">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading samples...</div></div>}>
                     <SamplesGallery key="samples" />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/completed" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading completed…</div></div>}>
+                    <CompletedProjectsPage />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
