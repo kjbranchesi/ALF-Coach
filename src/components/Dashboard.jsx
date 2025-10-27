@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
+import WorkflowProgressIndicator from './WorkflowProgressIndicator.jsx';
+import CompletedProjectsGallery from './CompletedProjectsGallery.jsx';
 import { projectRepository } from '../services/ProjectRepository';
 import { deriveStageStatus, getStageRoute } from '../utils/stageStatus';
 import { telemetry } from '../features/builder/useStageController';
@@ -244,6 +246,23 @@ export default function Dashboard() {
     return groups;
   }, [filteredDrafts]);
 
+  // Find most recently modified in-progress project for "Resume" quick action
+  const mostRecentInProgressProject = useMemo(() => {
+    const inProgress = [
+      ...groupedProjects.ideation,
+      ...groupedProjects.journey,
+      ...groupedProjects.deliverables
+    ];
+
+    if (inProgress.length === 0) return null;
+
+    return inProgress.reduce((most, project) => {
+      const projectDate = new Date(project.updatedAt || project.createdAt);
+      const mostDate = new Date(most.updatedAt || most.createdAt);
+      return projectDate > mostDate ? project : most;
+    });
+  }, [groupedProjects]);
+
   return (
     <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
       <div className="hidden dark:block pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(94,118,255,0.28),transparent_55%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.22),transparent_45%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.18),transparent_55%)] opacity-80" />
@@ -251,32 +270,73 @@ export default function Dashboard() {
         <Container className="pt-24 pb-20">
         <Stack spacing={8}>
           {/* Refined Header with macOS styling */}
-          <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4" role="banner">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 squircle-sm bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/25">
+                <div className="flex items-center justify-center w-10 h-10 squircle-sm bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/25" aria-hidden="true">
                   <Icon name="home" size="md" color="white" />
                 </div>
                 <Heading level={1} className="text-slate-900 dark:text-slate-50">ALF Studio Dashboard</Heading>
               </div>
-              <Text color="secondary" size="sm" className="ml-[52px]">Manage your in-progress projects and keep building with ALF Studio.</Text>
+              <Text color="secondary" size="sm" className="ml-[52px]">Create and manage your project-based learning experiences</Text>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              {/* macOS-style Primary Button */}
-              <button
-                onClick={() => navigate('/app/new')}
-                className="squircle-button flex items-center gap-2 px-5 py-2.5
-                           bg-gradient-to-b from-blue-500 to-blue-600
-                           hover:from-blue-600 hover:to-blue-700
-                           active:scale-[0.98]
-                           text-white font-medium text-sm
-                           shadow-lg shadow-blue-500/25
-                           hover:shadow-xl hover:shadow-blue-500/30
-                           transition-all duration-200"
-              >
-                <Icon name="add" size="sm" color="white" />
-                <span>Start New Project</span>
-              </button>
+              {/* Primary Action: Resume or Start New */}
+              {mostRecentInProgressProject ? (
+                <>
+                  <button
+                    onClick={() => {
+                      const { currentStage } = deriveStageStatus(mostRecentInProgressProject);
+                      const route = getStageRoute(mostRecentInProgressProject.id, currentStage);
+                      navigate(route);
+                    }}
+                    className="squircle-button flex items-center gap-2 px-5 py-2.5
+                               bg-gradient-to-b from-blue-500 to-blue-600
+                               hover:from-blue-600 hover:to-blue-700
+                               active:scale-[0.98]
+                               text-white font-medium text-sm
+                               shadow-lg shadow-blue-500/25
+                               hover:shadow-xl hover:shadow-blue-500/30
+                               transition-all duration-200"
+                    aria-label="Resume most recent project"
+                  >
+                    <Icon name="play" size="sm" color="white" />
+                    <span>Resume "{mostRecentInProgressProject.title || 'Untitled'}"</span>
+                  </button>
+
+                  {/* Secondary: Start New */}
+                  <button
+                    onClick={() => navigate('/app/new')}
+                    className="squircle-button flex items-center gap-2 px-4 py-2
+                               bg-white/80 dark:bg-slate-800/80
+                               hover:bg-white dark:hover:bg-slate-800
+                               backdrop-blur-md
+                               border border-slate-200/60 dark:border-slate-700/60
+                               text-slate-700 dark:text-slate-300 font-medium text-sm
+                               shadow-sm hover:shadow-md
+                               active:scale-[0.98]
+                               transition-all duration-200"
+                  >
+                    <Icon name="add" size="sm" />
+                    <span>New Project</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => navigate('/app/new')}
+                  className="squircle-button flex items-center gap-2 px-5 py-2.5
+                             bg-gradient-to-b from-blue-500 to-blue-600
+                             hover:from-blue-600 hover:to-blue-700
+                             active:scale-[0.98]
+                             text-white font-medium text-sm
+                             shadow-lg shadow-blue-500/25
+                             hover:shadow-xl hover:shadow-blue-500/30
+                             transition-all duration-200"
+                >
+                  <Icon name="add" size="sm" color="white" />
+                  <span>Start New Project</span>
+                </button>
+              )}
 
               {/* Secondary Actions */}
               <button
@@ -295,26 +355,28 @@ export default function Dashboard() {
                 <span>Browse Showcase</span>
               </button>
 
+              {/* Delete All moved to overflow menu concept (keeping for now but de-emphasized) */}
               {drafts.length > 0 && (
                 <button
                   onClick={requestDeleteAll}
                   disabled={isPurging}
-                  className="squircle-button flex items-center gap-2 px-4 py-2
+                  className="squircle-button flex items-center gap-2 px-3 py-2
                              bg-white/80 dark:bg-slate-800/80
                              hover:bg-red-50 dark:hover:bg-red-950/30
                              backdrop-blur-md
                              border border-slate-200/60 dark:border-slate-700/60
                              hover:border-red-200/60 dark:hover:border-red-800/60
-                             text-slate-700 dark:text-slate-300
+                             text-slate-600 dark:text-slate-400
                              hover:text-red-600 dark:hover:text-red-400
-                             font-medium text-sm
+                             text-sm
                              shadow-sm hover:shadow-md
                              active:scale-[0.98]
                              disabled:opacity-50 disabled:cursor-not-allowed
                              transition-all duration-200"
+                  aria-label="Delete all projects"
                 >
                   <Icon name="delete" size="sm" />
-                  <span>{isPurging ? 'Deleting…' : 'Delete All'}</span>
+                  <span className="hidden sm:inline">{isPurging ? 'Deleting…' : 'Delete All'}</span>
                 </button>
               )}
             </div>
@@ -492,126 +554,126 @@ export default function Dashboard() {
 
           {!isLoading && !loadError && filteredDrafts.length > 0 && (
             <div className="space-y-12">
+              {/* Workflow Progress Indicator */}
+              <WorkflowProgressIndicator />
+
+              {/* Completed Projects Gallery (at top for celebration) */}
+              {groupedProjects.completed.length > 0 && (
+                <CompletedProjectsGallery
+                  projects={groupedProjects.completed}
+                  onOpen={handleOpenDraft}
+                  onDuplicate={(project) => {
+                    // TODO: Implement duplicate functionality
+                    console.log('Duplicate project:', project.id);
+                  }}
+                  onArchive={(project) => {
+                    // Archive is essentially soft delete
+                    handleDeleteDraft(project.id);
+                  }}
+                />
+              )}
+
               {/* In Progress Section: 3 Columns */}
               {(groupedProjects.ideation.length > 0 ||
                 groupedProjects.journey.length > 0 ||
                 groupedProjects.deliverables.length > 0) && (
-                <div className="space-y-6">
+                <section className="space-y-6" role="region" aria-label="In progress projects">
                   <Heading level={2} className="text-slate-900 dark:text-slate-50">
-                    In Progress
+                    Working On
                   </Heading>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                     {/* Ideation Column */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between px-1">
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                          Ideation
-                        </h3>
+                      <div className="flex items-center gap-3 px-1">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <span className="text-base">💡</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                            1. Ideation
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Define your big idea
+                          </p>
+                        </div>
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
                           {groupedProjects.ideation.length}
                         </span>
                       </div>
                       <div className="space-y-4">
-                        {groupedProjects.ideation.length === 0 ? (
-                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
-                            <Text size="sm" color="secondary">No projects in ideation</Text>
-                          </div>
-                        ) : (
-                          groupedProjects.ideation.map(draft => (
-                            <ProjectCard
-                              key={draft.id}
-                              draft={draft}
-                              onOpen={handleOpenDraft}
-                              onDelete={handleDeleteDraft}
-                            />
-                          ))
-                        )}
+                        {groupedProjects.ideation.map(draft => (
+                          <ProjectCard
+                            key={draft.id}
+                            draft={draft}
+                            onOpen={handleOpenDraft}
+                            onDelete={handleDeleteDraft}
+                          />
+                        ))}
                       </div>
                     </div>
 
                     {/* Journey Column */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between px-1">
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                          Journey
-                        </h3>
+                      <div className="flex items-center gap-3 px-1">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30">
+                          <span className="text-base">🗺️</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                            2. Journey
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Map the learning path
+                          </p>
+                        </div>
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
                           {groupedProjects.journey.length}
                         </span>
                       </div>
                       <div className="space-y-4">
-                        {groupedProjects.journey.length === 0 ? (
-                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
-                            <Text size="sm" color="secondary">No projects in journey</Text>
-                          </div>
-                        ) : (
-                          groupedProjects.journey.map(draft => (
-                            <ProjectCard
-                              key={draft.id}
-                              draft={draft}
-                              onOpen={handleOpenDraft}
-                              onDelete={handleDeleteDraft}
-                            />
-                          ))
-                        )}
+                        {groupedProjects.journey.map(draft => (
+                          <ProjectCard
+                            key={draft.id}
+                            draft={draft}
+                            onOpen={handleOpenDraft}
+                            onDelete={handleDeleteDraft}
+                          />
+                        ))}
                       </div>
                     </div>
 
                     {/* Deliverables Column */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between px-1">
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                          Deliverables
-                        </h3>
+                      <div className="flex items-center gap-3 px-1">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+                          <span className="text-base">📦</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                            3. Deliverables
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Plan outcomes & assessment
+                          </p>
+                        </div>
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
                           {groupedProjects.deliverables.length}
                         </span>
                       </div>
                       <div className="space-y-4">
-                        {groupedProjects.deliverables.length === 0 ? (
-                          <div className="squircle-lg bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 p-8 text-center">
-                            <Text size="sm" color="secondary">No projects in deliverables</Text>
-                          </div>
-                        ) : (
-                          groupedProjects.deliverables.map(draft => (
-                            <ProjectCard
-                              key={draft.id}
-                              draft={draft}
-                              onOpen={handleOpenDraft}
-                              onDelete={handleDeleteDraft}
-                            />
-                          ))
-                        )}
+                        {groupedProjects.deliverables.map(draft => (
+                          <ProjectCard
+                            key={draft.id}
+                            draft={draft}
+                            onOpen={handleOpenDraft}
+                            onDelete={handleDeleteDraft}
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {/* Completed Section */}
-              {groupedProjects.completed.length > 0 && (
-                <div className="space-y-6 pt-8 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <div className="flex items-center justify-between">
-                    <Heading level={2} className="text-slate-900 dark:text-slate-50">
-                      Completed
-                    </Heading>
-                    <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
-                      {groupedProjects.completed.length} {groupedProjects.completed.length === 1 ? 'project' : 'projects'}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-                    {groupedProjects.completed.map(draft => (
-                      <ProjectCard
-                        key={draft.id}
-                        draft={draft}
-                        onOpen={handleOpenDraft}
-                        onDelete={handleDeleteDraft}
-                      />
-                    ))}
-                  </div>
-                </div>
+                </section>
               )}
             </div>
           )}
