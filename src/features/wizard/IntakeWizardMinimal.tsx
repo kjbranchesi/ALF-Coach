@@ -164,8 +164,9 @@ export default function IntakeWizardMinimal() {
       const savedProject = await storage.loadProject(projectId);
       if (!savedProject) {
         console.error('[IntakeWizard] Project save verification failed - project not found after save');
+        console.error('[IntakeWizard] This indicates the project did not persist to storage');
         setIsLaunching(false);
-        alert('Failed to create project. Please try again.');
+        // Navigation will fail, so user stays on wizard - they can try again
         return;
       }
 

@@ -316,11 +316,13 @@ export function DeliverablesStage() {
     return null;
   }
 
-  const isComplete = canCompleteStage();
-  const hasAnyContent =
-    milestones.some(m => m.name.trim()) ||
-    artifacts.some(a => a.name.trim()) ||
-    criteria.some(c => c.text.trim());
+  // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
+  // Use a pure local completeness check for UI feedback and button enablement.
+  const milestonesCount = milestones.filter(m => m.name.trim()).length;
+  const artifactsCount = artifacts.filter(a => a.name.trim()).length;
+  const criteriaCount = criteria.filter(c => c.text.trim()).length;
+  const isComplete = milestonesCount >= 3 && artifactsCount >= 1 && criteriaCount >= 3;
+  const hasAnyContent = milestonesCount > 0 || artifactsCount > 0 || criteriaCount > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">

@@ -67,8 +67,6 @@ export function IdeationStage() {
         if (!project) {
           console.error(`[IdeationStage] Project ${projectId} not found in storage`);
           console.error('[IdeationStage] This may indicate a save timing issue or validation failure');
-          // Give user feedback before redirecting
-          alert('Unable to load project. You will be redirected to the dashboard.');
           navigate('/app/dashboard');
           return;
         }
@@ -81,7 +79,6 @@ export function IdeationStage() {
         setChallenge(project.ideation?.challenge || '');
       } catch (error) {
         console.error('[IdeationStage] Failed to load project', error);
-        alert('An error occurred while loading the project. You will be redirected to the dashboard.');
         navigate('/app/dashboard');
       } finally {
         setIsLoading(false);
@@ -147,8 +144,14 @@ export function IdeationStage() {
     return null;
   }
 
-  const isComplete = canCompleteStage();
-  const hasAnyContent = bigIdea.trim() || essentialQuestion.trim() || challenge.trim();
+  // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
+  // For UI enablement and badges, use a pure check of local field completeness.
+  const isComplete = Boolean(
+    bigIdea.trim() &&
+    essentialQuestion.trim() &&
+    challenge.trim()
+  );
+  const hasAnyContent = Boolean(bigIdea.trim() || essentialQuestion.trim() || challenge.trim());
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">

@@ -203,9 +203,11 @@ export function JourneyStage() {
     return null;
   }
 
-  const isComplete = canCompleteStage();
   const hasMinimumPhases = phases.length >= 3;
   const hasNamedPhases = phases.filter(p => p.name.trim()).length >= 3;
+  // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
+  // Use a pure local completeness check for UI enablement and status badges.
+  const isComplete = hasMinimumPhases && hasNamedPhases;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
