@@ -53,12 +53,19 @@ describe('StageRedirect', () => {
 
   it('redirects existing project to current stage route', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: 'bp_abc', projectId: undefined });
-    mockLoad.mockResolvedValue({ id: 'bp_abc', ideation: { bigIdea: 'X', essentialQuestion: 'Y', challenge: 'Z' }, journey: { phases: [{ id: '1', name: 'Phase 1', activities: [] }, { id: '2', name: 'Phase 2', activities: [] }, { id: '3', name: 'Phase 3', activities: [] }] }, deliverables: {} });
+    // Mock project at journey stage (ideation complete, journey has 3 phases, deliverables empty)
+    mockLoad.mockResolvedValue({
+      id: 'bp_abc',
+      ideation: { bigIdea: 'X', essentialQuestion: 'Y', challenge: 'Z' },
+      journey: { phases: [{ id: '1', name: 'Phase 1', activities: [] }, { id: '2', name: 'Phase 2', activities: [] }, { id: '3', name: 'Phase 3', activities: [] }] },
+      deliverables: { milestones: [], artifacts: [], rubric: { criteria: [] } }
+    });
 
     render(<StageRedirect />);
     const nav = await screen.findByTestId('nav');
     const to = nav.getAttribute('data-to') || '';
-    expect(to).toBe('/app/projects/bp_abc/deliverables');
+    // Should route to journey stage since deliverables is not started
+    expect(to).toBe('/app/projects/bp_abc/journey');
   });
 
   it('redirects to dashboard when project is missing', async () => {
