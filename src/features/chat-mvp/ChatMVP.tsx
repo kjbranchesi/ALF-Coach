@@ -307,7 +307,7 @@ export function ChatMVP({
     }
   }, [journeyV2Enabled]);
 
-  const handleJourneyAccept = useCallback(() => {
+  const handleJourneyAccept = useCallback(async () => {
     const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
     if (normalized.length < 3) {
       try { const { showToast } = await import('../../utils/toast'); showToast('Add at least three phases before accepting the journey.', 'info'); } catch {}
