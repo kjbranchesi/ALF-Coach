@@ -8,7 +8,8 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, ChevronDown, ChevronUp, Send, Loader2 } from 'lucide-react';
+import { Sparkles, ChevronDown, ChevronUp, Send, Loader2, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useStageAI } from '../hooks/useStageAI';
 import { SuggestionChips } from '../../chat-mvp/components/SuggestionChips';
 import { trackEvent } from '../../../utils/analytics';
@@ -48,7 +49,7 @@ export function StageAIAssistant({
   const [sendingMessage, setSendingMessage] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const { isAIAvailable, suggestions, loading, sendMessage } = useStageAI({
+  const { isAIAvailable, suggestions, loading, error, healthChecking, checkAIHealth, sendMessage } = useStageAI({
     stage,
     currentData
   });
@@ -77,6 +78,13 @@ export function StageAIAssistant({
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
+
+  // Track AI gate shown
+  useEffect(() => {
+    if (!isCollapsed && !isAIAvailable && !healthChecking) {
+      trackEvent('ai_gate_shown', { stage, error });
+    }
+  }, [isCollapsed, isAIAvailable, healthChecking, stage, error]);
 
   const handleToggle = () => {
     const newState = !isCollapsed;
@@ -135,6 +143,25 @@ export function StageAIAssistant({
     }
   };
 
+  const handleRetry = async () => {
+    trackEvent('ai_gate_retry', { stage });
+    const success = await checkAIHealth();
+    if (success) {
+      trackEvent('ai_health_recovered', { stage });
+    }
+  };
+
+  const handleDiagnostics = () => {
+    trackEvent('ai_diagnostics_opened', { stage });
+    console.group('🔍 AI Diagnostics');
+    console.log('Feature Enabled:', import.meta.env.VITE_FEATURE_STAGE_ASSISTANT);
+    console.log('Gemini Enabled:', import.meta.env.VITE_GEMINI_ENABLED);
+    console.log('API Key Present:', !!import.meta.env.VITE_GEMINI_API_KEY);
+    console.log('AI Available:', isAIAvailable);
+    console.log('Error:', error);
+    console.groupEnd();
+  };
+
   // Don't render if feature disabled
   if (import.meta.env.VITE_FEATURE_STAGE_ASSISTANT !== 'true') {
     return null;
@@ -168,84 +195,143 @@ export function StageAIAssistant({
       {/* Content */}
       {!isCollapsed && (
         <div id="ai-assistant-panel" className="px-4 pb-4 space-y-4">
-          {/* Suggestions Section */}
-          {suggestions.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                Suggestions
-              </p>
-              <SuggestionChips
-                items={suggestions}
-                onSelect={handleSuggestionSelect}
-              />
+          {/* AI Unavailable Gate - Blocking */}
+          {!isAIAvailable && (
+            <div className="space-y-4 py-6">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-1">
+                    AI Assistant Unavailable
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {error || 'AI is required to use this feature'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <button
+                  onClick={handleRetry}
+                  disabled={healthChecking}
+                  className="w-full px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {healthChecking ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : (
+                    'Retry Connection'
+                  )}
+                </button>
+
+                <Link
+                  to="/app/setup/ai"
+                  onClick={() => trackEvent('ai_setup_opened', { stage, source: 'gate' })}
+                  className="block w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-50 font-medium text-center transition-colors"
+                >
+                  AI Setup
+                </Link>
+
+                <button
+                  onClick={handleDiagnostics}
+                  className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"
+                >
+                  Show Diagnostics
+                </button>
+              </div>
+
+              <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                This app requires AI to function. Please configure your AI settings to continue.
+              </div>
             </div>
           )}
 
-          {/* Chat Section (only if AI available) */}
+          {/* AI Available - Normal Content */}
           {isAIAvailable && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                Ask Assistant
-              </p>
-
-              {/* Chat Messages */}
-              {chatMessages.length > 0 && (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {chatMessages.slice(-4).map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`text-sm p-2 rounded-lg ${
-                        msg.role === 'user'
-                          ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 ml-4'
-                          : 'bg-purple-50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-100 mr-4'
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
+            <>
+              {/* Suggestions Section */}
+              {suggestions.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                    Suggestions
+                  </p>
+                  <SuggestionChips
+                    items={suggestions}
+                    onSelect={handleSuggestionSelect}
+                  />
                 </div>
               )}
 
-              {/* Chat Input */}
-              <form onSubmit={handleSendMessage} className="flex gap-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  placeholder="Ask a question..."
-                  disabled={sendingMessage}
-                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
-                />
-                <button
-                  type="submit"
-                  disabled={!chatInput.trim() || sendingMessage}
-                  className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  aria-label="Send message"
-                >
-                  {sendingMessage ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </button>
-              </form>
-            </div>
-          )}
+              {/* Chat Section */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                  Ask Assistant
+                </p>
 
-          {/* Loading State */}
-          {loading && suggestions.length === 0 && (
-            <div className="flex items-center justify-center py-8 text-sm text-slate-500 dark:text-slate-400">
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Loading suggestions...
-            </div>
-          )}
+                {/* Chat Messages */}
+                {chatMessages.length > 0 && (
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {chatMessages.slice(-4).map((msg, idx) => (
+                      <div
+                        key={idx}
+                        className={`text-sm p-2 rounded-lg ${
+                          msg.role === 'user'
+                            ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 ml-4'
+                            : 'bg-purple-50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-100 mr-4'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    ))}
+                    <div ref={chatEndRef} />
+                  </div>
+                )}
 
-          {/* No Suggestions State */}
-          {!loading && suggestions.length === 0 && (
-            <div className="text-center py-8 text-sm text-slate-500 dark:text-slate-400">
-              Complete the fields to see suggestions
-            </div>
+                {/* Chat Input */}
+                <form onSubmit={handleSendMessage} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Ask a question..."
+                    disabled={sendingMessage}
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!chatInput.trim() || sendingMessage}
+                    className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    aria-label="Send message"
+                  >
+                    {sendingMessage ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* Loading State */}
+              {loading && suggestions.length === 0 && (
+                <div className="flex items-center justify-center py-8 text-sm text-slate-500 dark:text-slate-400">
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Loading suggestions...
+                </div>
+              )}
+
+              {/* No Suggestions State */}
+              {!loading && suggestions.length === 0 && (
+                <div className="text-center py-8 text-sm text-slate-500 dark:text-slate-400">
+                  Complete the fields to see suggestions
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

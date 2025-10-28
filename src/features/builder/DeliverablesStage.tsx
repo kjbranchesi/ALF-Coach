@@ -6,11 +6,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController, telemetry } from './useStageController';
+import { useStageAI } from './hooks/useStageAI';
 import { isDeliverablesUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
+import { trackEvent } from '../../utils/analytics';
 import {
   Container,
   Heading,
@@ -27,7 +29,9 @@ import {
   ArrowRight,
   Save,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
 
 // UI state interfaces (with IDs for React keys)
@@ -70,6 +74,19 @@ export function DeliverablesStage() {
     stage: 'deliverables',
     blueprint,
     onBlueprintUpdate: (updated) => setBlueprint(updated)
+  });
+
+  // AI health check for gate
+  const {
+    isAIAvailable,
+    error: aiError,
+    healthChecking,
+    checkAIHealth
+  } = useStageAI({
+    stage: 'deliverables',
+    currentData: {
+      wizard: blueprint?.wizard
+    }
   });
 
   // Load project data
@@ -318,6 +335,102 @@ export function DeliverablesStage() {
 
   if (!blueprint) {
     return null;
+  }
+
+  // AI Gate - Block entire stage if AI unavailable
+  if (!isAIAvailable) {
+    const handleRetry = async () => {
+      trackEvent('ai_gate_retry', { stage: 'deliverables', context: 'full_page' });
+      const success = await checkAIHealth();
+      if (success) {
+        trackEvent('ai_health_recovered', { stage: 'deliverables', context: 'full_page' });
+      }
+    };
+
+    const handleDiagnostics = () => {
+      trackEvent('ai_diagnostics_opened', { stage: 'deliverables', context: 'full_page' });
+      console.group('🔍 AI Diagnostics - Deliverables Stage');
+      console.log('Feature Enabled:', import.meta.env.VITE_FEATURE_STAGE_ASSISTANT);
+      console.log('Gemini Enabled:', import.meta.env.VITE_GEMINI_ENABLED);
+      console.log('API Key Present:', !!import.meta.env.VITE_GEMINI_API_KEY);
+      console.log('AI Available:', isAIAvailable);
+      console.log('Error:', aiError);
+      console.groupEnd();
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
+        <Container className="pt-24 pb-20">
+          <div className="max-w-2xl mx-auto">
+            <div className="squircle-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-2xl p-8 space-y-6">
+              {/* Icon and Title */}
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <AlertTriangle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <Heading level={2} className="text-slate-900 dark:text-slate-50 mb-2">
+                    AI Required
+                  </Heading>
+                  <Text color="secondary">
+                    {aiError || 'The Deliverables stage requires AI to function. Please configure your AI settings to continue.'}
+                  </Text>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleRetry}
+                  disabled={healthChecking}
+                  className="w-full px-6 py-3 rounded-xl bg-gradient-to-b from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                >
+                  {healthChecking ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Checking AI Connection...
+                    </>
+                  ) : (
+                    'Retry Connection'
+                  )}
+                </button>
+
+                <Link
+                  to="/app/setup/ai"
+                  onClick={() => trackEvent('ai_setup_opened', { stage: 'deliverables', source: 'full_page_gate' })}
+                  className="block w-full px-6 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-50 font-semibold text-center transition-all duration-200"
+                >
+                  Configure AI Settings
+                </Link>
+
+                <button
+                  onClick={handleDiagnostics}
+                  className="w-full px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-all duration-200"
+                >
+                  Show Diagnostics
+                </button>
+
+                <button
+                  onClick={() => navigate('/app/dashboard')}
+                  className="w-full px-6 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-500 font-medium transition-all duration-200"
+                >
+                  Return to Dashboard
+                </button>
+              </div>
+
+              {/* Help Text */}
+              <div className="squircle-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 px-4 py-3">
+                <Text size="sm" color="secondary" className="text-center">
+                  <strong>Why AI is required:</strong> This app uses AI to provide intelligent suggestions,
+                  guidance, and assistance throughout your project design process. Without AI, the experience
+                  would be significantly degraded.
+                </Text>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </div>
+    );
   }
 
   // Avoid invoking canCompleteStage() during render (it updates state inside the hook).

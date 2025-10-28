@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "check-env": "node scripts/check-env.mjs",
+    "prebuild": "node scripts/check-env.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

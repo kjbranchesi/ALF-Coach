@@ -44,6 +44,7 @@ const DebugTelemetry = lazy(() => import('./pages/DebugTelemetry'));
 const IdeationStage = lazy(() => import('./features/builder/IdeationStage').then(m => ({ default: m.IdeationStage })));
 const JourneyStage = lazy(() => import('./features/builder/JourneyStage').then(m => ({ default: m.JourneyStage })));
 const DeliverablesStage = lazy(() => import('./features/builder/DeliverablesStage').then(m => ({ default: m.DeliverablesStage })));
+const AiSetup = lazy(() => import('./pages/AiSetup').then(m => ({ default: m.AiSetup })));
 
 const dashboardErrorFallback = (
   <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
@@ -279,6 +280,18 @@ export default function AuthenticatedApp() {
                 </AppLayout>
               </ProtectedRoute>
             } />
+
+            {/* AI Setup route */}
+            <Route path="/app/setup/ai" element={
+              <ProtectedRoute>
+                <AppLayout key="app-ai-setup">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading AI setup...</div></div>}>
+                    <AiSetup />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+
             <Route path="/app/samples/:id" element={
               <ProtectedRoute>
                 <AppLayout>
