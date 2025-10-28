@@ -354,7 +354,13 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
         }
       });
       
-      alert('Share link copied to clipboard!');
+      // User feedback
+      try {
+        const { showToast } = await import('../../utils/toast');
+        showToast('Share link copied to clipboard!', 'success');
+      } catch {
+        // no-op if toast import fails
+      }
     } catch (error) {
       console.error('Share link generation failed:', error);
     }
@@ -364,7 +370,12 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
   // Export to Google Classroom
   const exportToGoogleClassroom = async () => {
     // In a real app, this would use Google Classroom API
-    alert('Google Classroom integration coming soon!');
+    try {
+      const { showToast } = await import('../../utils/toast');
+      showToast('Google Classroom integration coming soon!', 'info');
+    } catch {
+      // no-op if toast import fails
+    }
   };
 
   // Handle publish completion

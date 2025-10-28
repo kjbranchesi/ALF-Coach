@@ -71,7 +71,7 @@ export default function DebugTelemetry() {
   const handleClearCache = () => {
     if (confirm('Clear cloud project cache? This will force reload from cloud on next access.')) {
       cloudProjectService.clearCache();
-      alert('Cache cleared successfully');
+      import('../utils/toast').then(m => m.showToast('Cache cleared successfully', 'success')).catch(() => {});
     }
   };
 

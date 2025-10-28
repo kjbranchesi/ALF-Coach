@@ -310,7 +310,7 @@ export function ChatMVP({
   const handleJourneyAccept = useCallback(() => {
     const normalized = journeyDraft.map((phase, index) => normalizePhaseDraft(phase, index));
     if (normalized.length < 3) {
-      window.alert('Add at least three phases before accepting the journey.');
+      try { const { showToast } = await import('../../utils/toast'); showToast('Add at least three phases before accepting the journey.', 'info'); } catch {}
       return;
     }
 

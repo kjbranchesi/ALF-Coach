@@ -46,7 +46,7 @@ export function JourneyBoard({
 
   const handleRemove = (phase: JourneyPhaseDraft) => {
     if (phases.length <= 1) {
-      window.alert('Keep at least one phase. Add another before removing this one.');
+      import('../../../utils/toast').then(m => m.showToast('Keep at least one phase. Add another before removing this one.', 'info')).catch(() => {});
       return;
     }
     if (window.confirm(`Remove “${phase.name}”?`)) {
