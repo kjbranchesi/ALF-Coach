@@ -3,12 +3,18 @@
  *
  * Form for defining learning journey phases.
  * Integrates with useStageController for autosave, validation, and transitions.
+ *
+ * NOTE: Currently only phase NAMES are editable. The `activities`, `focus`, and
+ * `checkpoint` fields are defined in the Phase interface but not exposed in the UI.
+ * These will be implemented in a future "Zoom-In" detail editor (Phase 7+).
+ * For now, validation only requires 3+ phases with names (see stages.ts:348).
  */
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController } from './useStageController';
+import { isJourneyUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import {
   Container,
@@ -62,52 +68,55 @@ export function JourneyStage() {
 
   // Load project data
   useEffect(() => {
+    let cancelled = false;
     if (!projectId) {
       navigate('/app/dashboard');
-      return;
+      return () => { cancelled = true; };
     }
 
     const loadProject = async () => {
-      setIsLoading(true);
+      if (!cancelled) setIsLoading(true);
       try {
         const storage = UnifiedStorageManager.getInstance();
         const project = await storage.loadProject(projectId);
 
         if (!project) {
           console.error('[JourneyStage] Project not found');
-          navigate('/app/dashboard');
+          if (!cancelled) navigate('/app/dashboard');
           return;
         }
 
-        setBlueprint(project);
-
-        // Initialize phases from project data or create empty array
-        const existingPhases = project.journey?.phases || [];
-        if (existingPhases.length > 0) {
-          setPhases(existingPhases.map((p, idx) => ({
-            id: p.id || `p${idx + 1}`,
-            name: p.name || '',
-            focus: p.focus,
-            activities: p.activities || [],
-            checkpoint: p.checkpoint
-          })));
-        } else {
-          // Start with 3 empty phases (minimum required)
-          setPhases([
-            { id: 'p1', name: '', activities: [] },
-            { id: 'p2', name: '', activities: [] },
-            { id: 'p3', name: '', activities: [] }
-          ]);
+        if (!cancelled) {
+          setBlueprint(project);
+          // Initialize phases from project data or create empty array
+          const existingPhases = project.journey?.phases || [];
+          if (existingPhases.length > 0) {
+            setPhases(existingPhases.map((p, idx) => ({
+              id: p.id || `p${idx + 1}`,
+              name: p.name || '',
+              focus: p.focus,
+              activities: p.activities || [],
+              checkpoint: p.checkpoint
+            })));
+          } else {
+            // Start with 3 empty phases (minimum required)
+            setPhases([
+              { id: 'p1', name: '', activities: [] },
+              { id: 'p2', name: '', activities: [] },
+              { id: 'p3', name: '', activities: [] }
+            ]);
+          }
         }
       } catch (error) {
         console.error('[JourneyStage] Failed to load project', error);
-        navigate('/app/dashboard');
+        if (!cancelled) navigate('/app/dashboard');
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    loadProject();
+    void loadProject();
+    return () => { cancelled = true; };
   }, [projectId, navigate]);
 
   // Autosave phases when they change
@@ -142,8 +151,8 @@ export function JourneyStage() {
 
   // Remove phase
   const handleRemovePhase = (index: number) => {
-    if (phases.length <= 1) {
-      // Don't allow removing the last phase
+    if (phases.length <= 3) {
+      // Don't allow removing below minimum required (3 phases)
       return;
     }
     const updatedPhases = phases.filter((_, i) => i !== index);
@@ -205,9 +214,7 @@ export function JourneyStage() {
 
   const hasMinimumPhases = phases.length >= 3;
   const hasNamedPhases = phases.filter(p => p.name.trim()).length >= 3;
-  // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
-  // Use a pure local completeness check for UI enablement and status badges.
-  const isComplete = hasMinimumPhases && hasNamedPhases;
+  const isComplete = isJourneyUIComplete(phases);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">

@@ -174,6 +174,13 @@ export function useStageController({
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
 
+      // Guard: Cannot flush if blueprint hasn't loaded yet
+      if (!blueprint) {
+        console.warn('[StageController] Cannot flush save - blueprint not loaded yet');
+        pendingUpdatesRef.current = null;
+        return;
+      }
+
       // Merge pending updates with current blueprint
       const updatedBlueprint = {
         ...blueprint,
@@ -224,8 +231,10 @@ export function useStageController({
 
   const debouncedSave = useCallback(
     (updates: Partial<UnifiedProjectData>) => {
-      // Store pending updates
-      pendingUpdatesRef.current = updates;
+      // Store pending updates (coalesce across rapid edits)
+      pendingUpdatesRef.current = pendingUpdatesRef.current
+        ? { ...pendingUpdatesRef.current, ...updates }
+        : updates;
 
       // Clear existing timer
       if (saveTimerRef.current) {
@@ -234,6 +243,13 @@ export function useStageController({
 
       // Set new timer (600ms - middle of 500-800ms range)
       saveTimerRef.current = window.setTimeout(async () => {
+        // Guard: Cannot save if blueprint hasn't loaded yet
+        if (!blueprint) {
+          console.warn('[StageController] Cannot autosave - blueprint not loaded yet');
+          pendingUpdatesRef.current = null;
+          return;
+        }
+
         // Clear pending updates since we're about to save them
         pendingUpdatesRef.current = null;
 

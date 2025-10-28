@@ -350,11 +350,10 @@ export function validate(stage: Stage, captured: CapturedData): { ok: boolean; r
       if (phases.length < 3) {
         return { ok: false, reason: 'Add at least 3 phases with names.' };
       }
-      // Soft validation on details; don’t hard‑block until Zoom‑In UI exists
-      const incomplete = phases.some(p => (p.activities?.length || 0) < 1);
-      return incomplete
-        ? { ok: true }
-        : { ok: true };
+      // Note: Activities validation is not enforced as the Zoom-In UI for editing
+      // individual phase activities hasn't been implemented yet (Phase 7+ feature).
+      // Currently only phase names are editable in JourneyStage.tsx
+      return { ok: true };
     }
     case 'DELIVERABLES': {
       const ms = captured.deliverables.milestones?.length || 0;

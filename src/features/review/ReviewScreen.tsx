@@ -6,6 +6,7 @@ import { type WizardData, type JourneyData, getJourneyData } from '../../types/b
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
 import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
+import { deriveStageStatus, getStageRoute } from '../../utils/stageStatus';
 import { type EnhancedHeroProjectData } from '../../services/HeroProjectTransformer';
 import type { HeroProjectData } from '../../utils/hero/types';
 // SECURITY: XSS prevention with DOMPurify sanitization
@@ -394,6 +395,27 @@ export default function ReviewScreen() {
     const samples = getAllSampleBlueprints('anonymous');
     return samples.find(s => s.id === id);
   }, [id, isPrebuiltHero]);
+
+  const handleContinueRefining = React.useCallback(async () => {
+    try {
+      if (!id) {
+        navigate('/app/dashboard');
+        return;
+      }
+      const project = await unifiedStorage.loadProject(id);
+      if (!project) {
+        // Fallback: go to deliverables editor (most common refinement at review)
+        navigate(`/app/projects/${id}/deliverables`);
+        return;
+      }
+      const { currentStage } = deriveStageStatus(project);
+      const route = getStageRoute(id, currentStage);
+      navigate(route);
+    } catch {
+      // Conservative fallback
+      navigate(`/app/projects/${id}/deliverables`);
+    }
+  }, [id, navigate]);
 
   // Load enhanced hero project data for educator projects
   useEffect(() => {
@@ -1219,7 +1241,7 @@ export default function ReviewScreen() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(`/app/blueprint/${id}/chat`)}
+              onClick={handleContinueRefining}
               className="px-8 py-4 bg-white border-2 border-gray-200 rounded-2xl hover:border-primary-300 hover:bg-primary-50 transition-all duration-200 shadow-elevation-1 hover:shadow-elevation-2 font-semibold text-gray-700 hover:text-primary-700 flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-5 h-5" />

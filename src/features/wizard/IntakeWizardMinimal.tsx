@@ -5,6 +5,7 @@ import type { IconName } from '../../design-system/components/Icon';
 import { StageRoadmapPreview } from './components/StageRoadmapPreview';
 import { trackEvent } from '../../utils/analytics';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
+import { showToast } from '../../utils/toast';
 import { v4 as uuidv4 } from 'uuid';
 
 type SubjectKey = string; // supports built-ins and custom (e.g., "custom:Ocean Literacy")
@@ -177,8 +178,8 @@ export default function IntakeWizardMinimal() {
     } catch (error) {
       console.error('[IntakeWizard] Failed to create project', error);
       setIsLaunching(false);
-      // Show error to user or navigate to dashboard
-      alert('Failed to create project. Please try again.');
+      // Non-blocking user feedback
+      showToast('Failed to create project. Please try again.', 'error');
     }
   };
 

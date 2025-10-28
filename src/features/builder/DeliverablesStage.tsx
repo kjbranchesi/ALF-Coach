@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController, telemetry } from './useStageController';
+import { isDeliverablesUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import {
   Container,
@@ -73,74 +74,77 @@ export function DeliverablesStage() {
 
   // Load project data
   useEffect(() => {
+    let cancelled = false;
     if (!projectId) {
       navigate('/app/dashboard');
-      return;
+      return () => { cancelled = true; };
     }
 
     const loadProject = async () => {
-      setIsLoading(true);
+      if (!cancelled) setIsLoading(true);
       try {
         const storage = UnifiedStorageManager.getInstance();
         const project = await storage.loadProject(projectId);
 
         if (!project) {
           console.error('[DeliverablesStage] Project not found');
-          navigate('/app/dashboard');
+          if (!cancelled) navigate('/app/dashboard');
           return;
         }
 
-        setBlueprint(project);
+        if (!cancelled) {
+          setBlueprint(project);
+          // Initialize form fields from project data
+          const existingMilestones = project.deliverables?.milestones || [];
+          const existingArtifacts = project.deliverables?.artifacts || [];
+          const existingCriteria = project.deliverables?.rubric?.criteria || [];
 
-        // Initialize form fields from project data
-        const existingMilestones = project.deliverables?.milestones || [];
-        const existingArtifacts = project.deliverables?.artifacts || [];
-        const existingCriteria = project.deliverables?.rubric?.criteria || [];
+          // Convert to UI format with IDs
+          setMilestones(
+            existingMilestones.length > 0
+              ? existingMilestones.map((m: any, idx: number) => ({
+                  id: m.id || `m${idx + 1}`,
+                  name: m.name || ''
+                }))
+              : [
+                  { id: 'm1', name: '' },
+                  { id: 'm2', name: '' },
+                  { id: 'm3', name: '' }
+                ]
+          );
 
-        // Convert to UI format with IDs
-        setMilestones(
-          existingMilestones.length > 0
-            ? existingMilestones.map((m: any, idx: number) => ({
-                id: m.id || `m${idx + 1}`,
-                name: m.name || ''
-              }))
-            : [
-                { id: 'm1', name: '' },
-                { id: 'm2', name: '' },
-                { id: 'm3', name: '' }
-              ]
-        );
+          setArtifacts(
+            existingArtifacts.length > 0
+              ? existingArtifacts.map((a: any, idx: number) => ({
+                  id: a.id || `a${idx + 1}`,
+                  name: a.name || ''
+                }))
+              : [{ id: 'a1', name: '' }]
+          );
 
-        setArtifacts(
-          existingArtifacts.length > 0
-            ? existingArtifacts.map((a: any, idx: number) => ({
-                id: a.id || `a${idx + 1}`,
-                name: a.name || ''
-              }))
-            : [{ id: 'a1', name: '' }]
-        );
-
-        setCriteria(
-          existingCriteria.length > 0
-            ? existingCriteria.map((c: string, idx: number) => ({
-                id: `c${idx + 1}`,
-                text: c
-              }))
-            : [
-                { id: 'c1', text: '' },
-                { id: 'c2', text: '' },
-                { id: 'c3', text: '' }
-              ]
-        );
+          setCriteria(
+            existingCriteria.length > 0
+              ? existingCriteria.map((c: string, idx: number) => ({
+                  id: `c${idx + 1}`,
+                  text: c
+                }))
+              : [
+                  { id: 'c1', text: '' },
+                  { id: 'c2', text: '' },
+                  { id: 'c3', text: '' }
+                ]
+          );
+        }
       } catch (error) {
         console.error('[DeliverablesStage] Failed to load project', error);
-        navigate('/app/dashboard');
+        if (!cancelled) navigate('/app/dashboard');
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    loadProject();
+    void loadProject();
+    return () => { cancelled = true; };
   }, [projectId, navigate]);
 
   // Centralized autosave handler
@@ -321,7 +325,7 @@ export function DeliverablesStage() {
   const milestonesCount = milestones.filter(m => m.name.trim()).length;
   const artifactsCount = artifacts.filter(a => a.name.trim()).length;
   const criteriaCount = criteria.filter(c => c.text.trim()).length;
-  const isComplete = milestonesCount >= 3 && artifactsCount >= 1 && criteriaCount >= 3;
+  const isComplete = isDeliverablesUIComplete(milestones, artifacts, criteria);
   const hasAnyContent = milestonesCount > 0 || artifactsCount > 0 || criteriaCount > 0;
 
   return (

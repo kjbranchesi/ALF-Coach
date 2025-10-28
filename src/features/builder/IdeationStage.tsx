@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController } from './useStageController';
+import { isIdeationUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import {
   Container,
@@ -53,13 +54,14 @@ export function IdeationStage() {
 
   // Load project data
   useEffect(() => {
+    let cancelled = false;
     if (!projectId) {
       navigate('/app/dashboard');
-      return;
+      return () => { cancelled = true; };
     }
 
     const loadProject = async () => {
-      setIsLoading(true);
+      if (!cancelled) setIsLoading(true);
       try {
         const storage = UnifiedStorageManager.getInstance();
         const project = await storage.loadProject(projectId);
@@ -67,25 +69,31 @@ export function IdeationStage() {
         if (!project) {
           console.error(`[IdeationStage] Project ${projectId} not found in storage`);
           console.error('[IdeationStage] This may indicate a save timing issue or validation failure');
-          navigate('/app/dashboard');
+          if (!cancelled) {
+            navigate('/app/dashboard');
+          }
           return;
         }
 
-        setBlueprint(project);
-
-        // Initialize form fields from project data
-        setBigIdea(project.ideation?.bigIdea || '');
-        setEssentialQuestion(project.ideation?.essentialQuestion || '');
-        setChallenge(project.ideation?.challenge || '');
+        if (!cancelled) {
+          setBlueprint(project);
+          // Initialize form fields from project data
+          setBigIdea(project.ideation?.bigIdea || '');
+          setEssentialQuestion(project.ideation?.essentialQuestion || '');
+          setChallenge(project.ideation?.challenge || '');
+        }
       } catch (error) {
         console.error('[IdeationStage] Failed to load project', error);
-        navigate('/app/dashboard');
+        if (!cancelled) {
+          navigate('/app/dashboard');
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    loadProject();
+    void loadProject();
+    return () => { cancelled = true; };
   }, [projectId, navigate]);
 
   // Autosave on field changes
@@ -146,11 +154,7 @@ export function IdeationStage() {
 
   // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
   // For UI enablement and badges, use a pure check of local field completeness.
-  const isComplete = Boolean(
-    bigIdea.trim() &&
-    essentialQuestion.trim() &&
-    challenge.trim()
-  );
+  const isComplete = isIdeationUIComplete(bigIdea, essentialQuestion, challenge);
   const hasAnyContent = Boolean(bigIdea.trim() || essentialQuestion.trim() || challenge.trim());
 
   return (
