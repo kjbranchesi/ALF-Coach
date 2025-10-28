@@ -1,0 +1,254 @@
+/**
+ * StageAIAssistant - Reusable AI assistant panel for stage-separated builder
+ *
+ * Provides suggestion chips and compact chat interface.
+ * Adapts to desktop (right sidebar) and mobile (collapsible drawer).
+ *
+ * Feature flag: VITE_FEATURE_STAGE_ASSISTANT=true
+ */
+
+import React, { useState, useRef, useEffect } from 'react';
+import { Sparkles, ChevronDown, ChevronUp, Send, Loader2 } from 'lucide-react';
+import { useStageAI } from '../hooks/useStageAI';
+import { SuggestionChips } from '../../chat-mvp/components/SuggestionChips';
+import { trackEvent } from '../../../utils/analytics';
+
+type StageId = 'ideation' | 'journey' | 'deliverables';
+type IdeationField = 'bigIdea' | 'essentialQuestion' | 'challenge';
+
+interface StageAIAssistantProps {
+  stage: StageId;
+  currentData: {
+    bigIdea?: string;
+    essentialQuestion?: string;
+    challenge?: string;
+    wizard?: any;
+  };
+  onAccept: (field: IdeationField, text: string) => void;
+  collapsed?: boolean;
+  onToggle?: (open: boolean) => void;
+}
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+  timestamp: Date;
+}
+
+export function StageAIAssistant({
+  stage,
+  currentData,
+  onAccept,
+  collapsed = false,
+  onToggle
+}: StageAIAssistantProps) {
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const { isAIAvailable, suggestions, loading, sendMessage } = useStageAI({
+    stage,
+    currentData
+  });
+
+  // Track panel open/close
+  useEffect(() => {
+    if (!isCollapsed) {
+      trackEvent('assistant_opened', { stage });
+    } else {
+      trackEvent('assistant_closed', { stage });
+    }
+  }, [isCollapsed, stage]);
+
+  // Track suggestions shown
+  useEffect(() => {
+    if (suggestions.length > 0) {
+      trackEvent('ai_suggestions_shown', {
+        stage,
+        source: isAIAvailable ? 'ai' : 'static',
+        count: suggestions.length
+      });
+    }
+  }, [suggestions, stage, isAIAvailable]);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
+  const handleToggle = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    onToggle?.(newState);
+  };
+
+  const handleSuggestionSelect = (text: string, index: number) => {
+    // Determine which field to fill based on current state
+    let targetField: IdeationField = 'bigIdea';
+    if (currentData.bigIdea && !currentData.essentialQuestion) {
+      targetField = 'essentialQuestion';
+    } else if (currentData.essentialQuestion && !currentData.challenge) {
+      targetField = 'challenge';
+    }
+
+    trackEvent('ai_suggestion_accepted', {
+      stage,
+      target: targetField,
+      index
+    });
+
+    onAccept(targetField, text);
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || sendingMessage) return;
+
+    const userMessage: ChatMessage = {
+      role: 'user',
+      text: chatInput,
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev.slice(-3), userMessage]);
+    setChatInput('');
+    setSendingMessage(true);
+
+    try {
+      const response = await sendMessage(chatInput);
+
+      if (response) {
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          text: response,
+          timestamp: new Date()
+        };
+
+        setChatMessages(prev => [...prev.slice(-3), assistantMessage]);
+      }
+    } catch (error) {
+      console.error('[StageAIAssistant] Send message failed', error);
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  // Don't render if feature disabled
+  if (import.meta.env.VITE_FEATURE_STAGE_ASSISTANT !== 'true') {
+    return null;
+  }
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 rounded-xl shadow-lg">
+      {/* Header */}
+      <button
+        onClick={handleToggle}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-t-xl"
+        aria-expanded={!isCollapsed}
+        aria-controls="ai-assistant-panel"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <span className="font-semibold text-slate-900 dark:text-slate-50">
+            AI Assistant
+          </span>
+          {loading && (
+            <Loader2 className="w-4 h-4 text-purple-600 dark:text-purple-400 animate-spin" />
+          )}
+        </div>
+        {isCollapsed ? (
+          <ChevronDown className="w-5 h-5 text-slate-500" />
+        ) : (
+          <ChevronUp className="w-5 h-5 text-slate-500" />
+        )}
+      </button>
+
+      {/* Content */}
+      {!isCollapsed && (
+        <div id="ai-assistant-panel" className="px-4 pb-4 space-y-4">
+          {/* Suggestions Section */}
+          {suggestions.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                Suggestions
+              </p>
+              <SuggestionChips
+                items={suggestions}
+                onSelect={handleSuggestionSelect}
+              />
+            </div>
+          )}
+
+          {/* Chat Section (only if AI available) */}
+          {isAIAvailable && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                Ask Assistant
+              </p>
+
+              {/* Chat Messages */}
+              {chatMessages.length > 0 && (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {chatMessages.slice(-4).map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`text-sm p-2 rounded-lg ${
+                        msg.role === 'user'
+                          ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 ml-4'
+                          : 'bg-purple-50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-100 mr-4'
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+              )}
+
+              {/* Chat Input */}
+              <form onSubmit={handleSendMessage} className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Ask a question..."
+                  disabled={sendingMessage}
+                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={!chatInput.trim() || sendingMessage}
+                  className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Send message"
+                >
+                  {sendingMessage ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && suggestions.length === 0 && (
+            <div className="flex items-center justify-center py-8 text-sm text-slate-500 dark:text-slate-400">
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              Loading suggestions...
+            </div>
+          )}
+
+          {/* No Suggestions State */}
+          {!loading && suggestions.length === 0 && (
+            <div className="text-center py-8 text-sm text-slate-500 dark:text-slate-400">
+              Complete the fields to see suggestions
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

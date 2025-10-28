@@ -11,6 +11,8 @@ import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/U
 import { useStageController } from './useStageController';
 import { isIdeationUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
+import { StageAIAssistant } from './components/StageAIAssistant';
+import { trackEvent } from '../../utils/analytics';
 import {
   Container,
   Heading,
@@ -126,6 +128,36 @@ export function IdeationStage() {
     }
   };
 
+  // AI Assistant: Handle suggestion acceptance
+  const handleAIAccept = (field: 'bigIdea' | 'essentialQuestion' | 'challenge', text: string) => {
+    // Update local state
+    switch (field) {
+      case 'bigIdea':
+        setBigIdea(text);
+        break;
+      case 'essentialQuestion':
+        setEssentialQuestion(text);
+        break;
+      case 'challenge':
+        setChallenge(text);
+        break;
+    }
+
+    // Trigger debounced save
+    debouncedSave({
+      ideation: {
+        ...blueprint?.ideation,
+        [field]: text
+      }
+    });
+
+    // Track acceptance
+    trackEvent('ai_suggestion_accepted', {
+      stage: 'ideation',
+      target: field
+    });
+  };
+
   // Stage guides
   const bigIdeaGuide = stageGuide('BIG_IDEA');
   const eqGuide = stageGuide('ESSENTIAL_QUESTION');
@@ -164,9 +196,13 @@ export function IdeationStage() {
 
       <div className="relative">
         <Container className="pt-24 pb-20">
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Header */}
-            <header className="space-y-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Two-column layout: form + AI assistant */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+              {/* Left column: Form */}
+              <div className="space-y-8">
+                {/* Header */}
+                <header className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-12 h-12 squircle-sm bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/25">
                   <Lightbulb className="w-6 h-6 text-white" />
@@ -360,11 +396,27 @@ export function IdeationStage() {
               </button>
             </div>
 
-            {/* Help text */}
-            <div className="squircle-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 px-6 py-4">
-              <Text size="sm" color="secondary" className="leading-relaxed">
-                <strong>Tip:</strong> Your work is automatically saved as you type. You can leave at any time and pick up where you left off from the Dashboard.
-              </Text>
+                {/* Help text */}
+                <div className="squircle-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 px-6 py-4">
+                  <Text size="sm" color="secondary" className="leading-relaxed">
+                    <strong>Tip:</strong> Your work is automatically saved as you type. You can leave at any time and pick up where you left off from the Dashboard.
+                  </Text>
+                </div>
+              </div>
+
+              {/* Right column: AI Assistant */}
+              <div className="lg:sticky lg:top-24 lg:self-start">
+                <StageAIAssistant
+                  stage="ideation"
+                  currentData={{
+                    bigIdea,
+                    essentialQuestion,
+                    challenge,
+                    wizard: blueprint?.wizard
+                  }}
+                  onAccept={handleAIAccept}
+                />
+              </div>
             </div>
           </div>
         </Container>
