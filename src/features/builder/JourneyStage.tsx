@@ -58,6 +58,7 @@ export function JourneyStage() {
   const [phases, setPhases] = useState<Phase[]>([]);
   const [phaseSuggestions, setPhaseSuggestions] = useState<Map<number, FieldSuggestion[]>>(new Map());
   const [loadingSuggestions, setLoadingSuggestions] = useState<Set<number>>(new Set());
+  const [isAutoNaming, setIsAutoNaming] = useState(false);
 
   // Initialize stage controller
   const {
@@ -297,6 +298,82 @@ export function JourneyStage() {
     });
   };
 
+  // Auto-name remaining phases (guardrail action)
+  const handleAutoNamePhases = async () => {
+    if (!isAIAvailable || isAutoNaming) return;
+
+    const unnamedPhases = phases.filter(p => !p.name.trim());
+    const remaining = unnamedPhases.length;
+
+    if (remaining === 0) return;
+
+    setIsAutoNaming(true);
+    trackEvent('ai_auto_name_phases_clicked', {
+      stage: 'journey',
+      remaining
+    });
+
+    try {
+      // Lazy-load AI actions
+      const { generatePhaseNames } = await import('./ai/journeyActions');
+
+      // Generate names
+      const generatedNames = await generatePhaseNames({
+        bigIdea: blueprint?.ideation?.bigIdea,
+        essentialQuestion: blueprint?.ideation?.essentialQuestion,
+        challenge: blueprint?.ideation?.challenge
+      });
+
+      // Apply only to unnamed phases
+      const updatedPhases = phases.map(phase => {
+        if (!phase.name.trim() && generatedNames.length > 0) {
+          const name = generatedNames.shift();
+          return { ...phase, name: name || '' };
+        }
+        return phase;
+      });
+
+      handlePhasesChange(updatedPhases);
+
+      // Show toast
+      if (window.toast) {
+        window.toast.success('Named remaining phases');
+      }
+
+      trackEvent('ai_auto_name_phases_completed', {
+        stage: 'journey',
+        filled: remaining
+      });
+    } catch (error) {
+      console.error('[JourneyStage] Auto-name phases failed:', error);
+
+      // Show error toast
+      if (window.toast) {
+        window.toast.error('Failed to auto-name phases. Please try again.');
+      }
+
+      trackEvent('ai_auto_name_phases_failed', {
+        stage: 'journey',
+        error: String(error)
+      });
+    } finally {
+      setIsAutoNaming(false);
+    }
+  };
+
+  // Track guardrail visibility
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const namedCount = phases.filter(p => p.name.trim()).length;
+    if (namedCount < 3 && phases.length > 0) {
+      trackEvent('ai_guardrail_triggered', {
+        stage: 'journey',
+        namedCount
+      });
+    }
+  }, [phases, isAIAvailable]);
+
   // Load suggestions when phase names change (debounced)
   useEffect(() => {
     if (!isAIAvailable) return;
@@ -521,6 +598,38 @@ export function JourneyStage() {
                 </Text>
               </div>
             </header>
+
+            {/* Guardrail: Auto-name phases if <3 named */}
+            {isAIAvailable && phases.length > 0 && phases.filter(p => p.name.trim()).length < 3 && (
+              <div
+                role="status"
+                aria-live="polite"
+                tabIndex={0}
+                className="squircle-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/60 px-6 py-4 flex items-center justify-between gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                  <Text className="text-amber-800 dark:text-amber-200 font-medium">
+                    Name at least 3 phases to proceed.
+                  </Text>
+                </div>
+                <button
+                  onClick={handleAutoNamePhases}
+                  disabled={isAutoNaming}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap"
+                  aria-label="Auto-name remaining phases using AI"
+                >
+                  {isAutoNaming ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Naming...
+                    </>
+                  ) : (
+                    'Auto‑name remaining phases'
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Phase List */}
             <div className="space-y-4">

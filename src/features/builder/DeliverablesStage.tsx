@@ -9,7 +9,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController, telemetry } from './useStageController';
-import { useStageAI } from './hooks/useStageAI';
+import { useStageAI, type FieldSuggestion } from './hooks/useStageAI';
+import { StageAIAssistant } from './components/StageAIAssistant';
+import { InlineChips } from './components/InlineChips';
 import { isDeliverablesUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import { trackEvent } from '../../utils/analytics';
@@ -61,6 +63,16 @@ export function DeliverablesStage() {
   const [artifacts, setArtifacts] = useState<ArtifactItem[]>([]);
   const [criteria, setCriteria] = useState<CriterionItem[]>([]);
 
+  // AI suggestions state
+  const [milestoneSuggestions, setMilestoneSuggestions] = useState<FieldSuggestion[]>([]);
+  const [artifactSuggestions, setArtifactSuggestions] = useState<FieldSuggestion[]>([]);
+  const [criteriaSuggestions, setCriteriaSuggestions] = useState<FieldSuggestion[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState<{
+    milestones: boolean;
+    artifacts: boolean;
+    criteria: boolean;
+  }>({ milestones: false, artifacts: false, criteria: false });
+
   // Initialize stage controller
   const {
     isSaving,
@@ -76,16 +88,24 @@ export function DeliverablesStage() {
     onBlueprintUpdate: (updated) => setBlueprint(updated)
   });
 
-  // AI health check for gate
+  // AI assistant with Quick Actions and field suggestions
   const {
     isAIAvailable,
     error: aiError,
     healthChecking,
-    checkAIHealth
+    checkAIHealth,
+    getFieldSuggestions
   } = useStageAI({
     stage: 'deliverables',
     currentData: {
-      wizard: blueprint?.wizard
+      bigIdea: blueprint?.ideation?.bigIdea,
+      essentialQuestion: blueprint?.ideation?.essentialQuestion,
+      challenge: blueprint?.ideation?.challenge,
+      wizard: blueprint?.wizard,
+      phases: blueprint?.journey?.phases,
+      milestones,
+      artifacts,
+      criteria: criteria.map(c => c.text)
     }
   });
 
@@ -292,6 +312,167 @@ export function DeliverablesStage() {
     handleDeliverablesChange(milestones, artifacts, updated);
   };
 
+  // Quick Action result handler
+  const handleQuickActionResult = (result: any) => {
+    if (result.type === 'milestones') {
+      // Append suggested milestones
+      const newMilestones = [...milestones, ...result.data];
+      handleDeliverablesChange(newMilestones, artifacts, criteria);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        action: 'suggest-milestones',
+        count: result.data.length,
+        batch: true
+      });
+      if (window.toast) {
+        window.toast.success(`Added ${result.data.length} milestones`);
+      }
+    } else if (result.type === 'artifacts') {
+      // Append suggested artifacts
+      const newArtifacts = [...artifacts, ...result.data];
+      handleDeliverablesChange(milestones, newArtifacts, criteria);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        action: 'suggest-artifacts',
+        count: result.data.length,
+        batch: true
+      });
+      if (window.toast) {
+        window.toast.success(`Added ${result.data.length} artifacts`);
+      }
+    } else if (result.type === 'criteria') {
+      // Append suggested criteria
+      const newCriteria = [
+        ...criteria,
+        ...result.data.map((c: { text: string }, idx: number) => ({
+          id: `c${Date.now()}-${idx}`,
+          text: c.text
+        }))
+      ];
+      handleDeliverablesChange(milestones, artifacts, newCriteria);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        action: 'write-criteria',
+        count: result.data.length,
+        batch: true
+      });
+      if (window.toast) {
+        window.toast.success(`Added ${result.data.length} criteria`);
+      }
+    } else if (result.type === 'criteria-tightened') {
+      // Replace criteria with tightened versions
+      const tightenedCriteria = result.data.map((c: { text: string }, idx: number) => ({
+        id: criteria[idx]?.id || `c${Date.now()}-${idx}`,
+        text: c.text
+      }));
+      handleDeliverablesChange(milestones, artifacts, tightenedCriteria);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        action: 'tighten-criteria',
+        count: result.data.length,
+        batch: true
+      });
+      if (window.toast) {
+        window.toast.success('Criteria tightened for rigor');
+      }
+    }
+  };
+
+  // Load header chip suggestions
+  const loadHeaderSuggestions = async (target: 'milestones' | 'artifacts' | 'criteria') => {
+    if (!isAIAvailable) return;
+
+    setLoadingSuggestions(prev => ({ ...prev, [target]: true }));
+
+    try {
+      const suggestions = await getFieldSuggestions(target, 'header', 0);
+
+      if (target === 'milestones') {
+        setMilestoneSuggestions(suggestions);
+      } else if (target === 'artifacts') {
+        setArtifactSuggestions(suggestions);
+      } else {
+        setCriteriaSuggestions(suggestions);
+      }
+    } catch (error) {
+      console.error(`[DeliverablesStage] Failed to load ${target} suggestions:`, error);
+    } finally {
+      setLoadingSuggestions(prev => ({ ...prev, [target]: false }));
+    }
+  };
+
+  // Handle inline chip accept
+  const handleInlineSuggestionAccept = (
+    target: 'milestone' | 'artifact' | 'criterion',
+    suggestion: FieldSuggestion
+  ) => {
+    if (target === 'milestone') {
+      const newMilestone: MilestoneItem = {
+        id: `m${Date.now()}`,
+        name: suggestion.text
+      };
+      handleDeliverablesChange([...milestones, newMilestone], artifacts, criteria);
+      setMilestoneSuggestions([]);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        target: 'milestone',
+        batch: false
+      });
+    } else if (target === 'artifact') {
+      const newArtifact: ArtifactItem = {
+        id: `a${Date.now()}`,
+        name: suggestion.text
+      };
+      handleDeliverablesChange(milestones, [...artifacts, newArtifact], criteria);
+      setArtifactSuggestions([]);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        target: 'artifact',
+        batch: false
+      });
+    } else {
+      const newCriterion: CriterionItem = {
+        id: `c${Date.now()}`,
+        text: suggestion.text
+      };
+      handleDeliverablesChange(milestones, artifacts, [...criteria, newCriterion]);
+      setCriteriaSuggestions([]);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'deliverables',
+        target: 'criterion',
+        batch: false
+      });
+    }
+  };
+
+  // Load suggestions on mount and when lists change
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const timer = setTimeout(() => {
+      loadHeaderSuggestions('milestones');
+      loadHeaderSuggestions('artifacts');
+      loadHeaderSuggestions('criteria');
+    }, 1000); // Debounce 1s
+
+    return () => clearTimeout(timer);
+  }, [milestones.length, artifacts.length, criteria.length, isAIAvailable]);
+
+  // Track guardrail visibility
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const needsGuardrail = milestonesCount < 3 || artifactsCount < 1 || criteriaCount < 3;
+    if (needsGuardrail && (milestones.length > 0 || artifacts.length > 0 || criteria.length > 0)) {
+      trackEvent('ai_guardrail_triggered', {
+        stage: 'deliverables',
+        milestonesCount,
+        artifactsCount,
+        criteriaCount
+      });
+    }
+  }, [milestonesCount, artifactsCount, criteriaCount, isAIAvailable, milestones.length, artifacts.length, criteria.length]);
+
   const handleFinalizeAndReview = () => {
     // Track finalize click
     telemetry.track('finalize_click', {
@@ -448,9 +629,13 @@ export function DeliverablesStage() {
 
       <div className="relative">
         <Container className="pt-24 pb-20">
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Header */}
-            <header className="space-y-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Two-column layout: form + AI assistant */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+              {/* Left column: Form */}
+              <div className="space-y-8">
+                {/* Header */}
+                <header className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-12 h-12 squircle-sm bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/25">
                   <Target className="w-6 h-6 text-white" />
@@ -516,6 +701,57 @@ export function DeliverablesStage() {
               )}
             </header>
 
+            {/* Guardrails for 3/1/3 completion */}
+            {isAIAvailable && (
+              <>
+                {milestonesCount < 3 && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    tabIndex={0}
+                    className="squircle-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/60 px-6 py-4 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      <Text className="text-amber-800 dark:text-amber-200 font-medium">
+                        Add at least 3 milestones to proceed.
+                      </Text>
+                    </div>
+                  </div>
+                )}
+                {artifactsCount < 1 && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    tabIndex={0}
+                    className="squircle-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/60 px-6 py-4 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      <Text className="text-amber-800 dark:text-amber-200 font-medium">
+                        Add at least 1 artifact to proceed.
+                      </Text>
+                    </div>
+                  </div>
+                )}
+                {criteriaCount < 3 && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    tabIndex={0}
+                    className="squircle-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/60 px-6 py-4 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      <Text className="text-amber-800 dark:text-amber-200 font-medium">
+                        Add at least 3 assessment criteria to proceed.
+                      </Text>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
             {/* Milestones List */}
             <div className="squircle-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_32px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_48px_rgba(0,0,0,0.4)] p-6 space-y-4">
               <div className="flex items-start gap-3">
@@ -530,6 +766,15 @@ export function DeliverablesStage() {
                     <Text size="sm" color="secondary" className="mt-1">
                       Key checkpoints that mark progress through the project (aim for 3+)
                     </Text>
+                    {/* Inline AI suggestions */}
+                    {isAIAvailable && (
+                      <InlineChips
+                        suggestions={milestoneSuggestions}
+                        loading={loadingSuggestions.milestones}
+                        onAccept={(suggestion) => handleInlineSuggestionAccept('milestone', suggestion)}
+                        onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'milestones' })}
+                      />
+                    )}
                   </div>
 
                   {/* Milestones list */}
@@ -600,6 +845,15 @@ export function DeliverablesStage() {
                     <Text size="sm" color="secondary" className="mt-1">
                       Final products students will create (aim for 1-3)
                     </Text>
+                    {/* Inline AI suggestions */}
+                    {isAIAvailable && (
+                      <InlineChips
+                        suggestions={artifactSuggestions}
+                        loading={loadingSuggestions.artifacts}
+                        onAccept={(suggestion) => handleInlineSuggestionAccept('artifact', suggestion)}
+                        onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'artifacts' })}
+                      />
+                    )}
                   </div>
 
                   {/* Artifacts list */}
@@ -670,6 +924,15 @@ export function DeliverablesStage() {
                     <Text size="sm" color="secondary" className="mt-1">
                       Success criteria for evaluating student work (aim for 3-6)
                     </Text>
+                    {/* Inline AI suggestions */}
+                    {isAIAvailable && (
+                      <InlineChips
+                        suggestions={criteriaSuggestions}
+                        loading={loadingSuggestions.criteria}
+                        onAccept={(suggestion) => handleInlineSuggestionAccept('criterion', suggestion)}
+                        onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'criteria' })}
+                      />
+                    )}
                   </div>
 
                   {/* Criteria list */}
@@ -771,6 +1034,26 @@ export function DeliverablesStage() {
               </Text>
             </div>
           </div>
+
+          {/* Right column: AI Assistant */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <StageAIAssistant
+              stage="deliverables"
+              currentData={{
+                bigIdea: blueprint?.ideation?.bigIdea,
+                essentialQuestion: blueprint?.ideation?.essentialQuestion,
+                challenge: blueprint?.ideation?.challenge,
+                wizard: blueprint?.wizard,
+                phases: blueprint?.journey?.phases,
+                milestones,
+                artifacts,
+                criteria: criteria.map(c => c.text)
+              }}
+              onAccept={() => {}} // Not used for deliverables
+              onQuickActionResult={handleQuickActionResult}
+            />
+          </div>
+        </div>
         </Container>
       </div>
     </div>

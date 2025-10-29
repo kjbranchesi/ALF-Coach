@@ -23,6 +23,9 @@ interface UseStageAIOptions {
     challenge?: string;
     wizard?: any;
     phases?: any[]; // For journey stage
+    milestones?: any[]; // For deliverables stage
+    artifacts?: any[]; // For deliverables stage
+    criteria?: string[]; // For deliverables stage
   };
 }
 
@@ -295,6 +298,31 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
         value: String(idx)
       }))
     }
+  ] : stage === 'deliverables' ? [
+    {
+      id: 'suggest-milestones',
+      label: 'Suggest Milestones (≥3)',
+      description: 'Generate project milestones aligned with your learning journey',
+      icon: 'sparkles'
+    },
+    {
+      id: 'suggest-artifacts',
+      label: 'Suggest Artifacts (≥1)',
+      description: 'Recommend student artifacts for your project challenge',
+      icon: 'sparkles'
+    },
+    {
+      id: 'write-criteria',
+      label: 'Write 3 Criteria',
+      description: 'Create assessment criteria for your rubric',
+      icon: 'sparkles'
+    },
+    {
+      id: 'tighten-criteria',
+      label: 'Tighten Criteria',
+      description: 'Make criteria more measurable, visible, and rigorous',
+      icon: 'edit'
+    }
   ] : [];
 
   /**
@@ -362,6 +390,43 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
           default:
             throw new Error(`Unknown action: ${actionId}`);
         }
+      } else if (stage === 'deliverables') {
+        // Lazy-load deliverables actions
+        const actions = await import('../ai/deliverablesActions');
+
+        const context = {
+          bigIdea: currentData.bigIdea,
+          essentialQuestion: currentData.essentialQuestion,
+          challenge: currentData.challenge,
+          wizard: currentData.wizard,
+          phases: currentData.phases
+        };
+
+        switch (actionId) {
+          case 'suggest-milestones': {
+            const milestones = await actions.suggestMilestones(context);
+            return { type: 'milestones', data: milestones };
+          }
+
+          case 'suggest-artifacts': {
+            const artifacts = await actions.suggestArtifacts(context);
+            return { type: 'artifacts', data: artifacts };
+          }
+
+          case 'write-criteria': {
+            const criteria = await actions.writeCriteria(context);
+            return { type: 'criteria', data: criteria };
+          }
+
+          case 'tighten-criteria': {
+            const existingCriteria = currentData.criteria || [];
+            const tightened = await actions.tightenCriteria(existingCriteria, context);
+            return { type: 'criteria-tightened', data: tightened };
+          }
+
+          default:
+            throw new Error(`Unknown action: ${actionId}`);
+        }
       }
 
       return null;
@@ -382,12 +447,12 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     value: string,
     index?: number
   ): Promise<FieldSuggestion[]> => {
-    if (!isAIAvailable || !value?.trim()) {
+    if (!isAIAvailable) {
       return [];
     }
 
     try {
-      if (stage === 'journey' && field === 'phaseName') {
+      if (stage === 'journey' && field === 'phaseName' && value?.trim()) {
         // Lazy-load journey actions
         const actions = await import('../ai/journeyActions');
 
@@ -403,6 +468,41 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
         return suggestions.map(text => ({
           text,
           type: 'rename' as const,
+          targetIndex: index
+        }));
+      } else if (stage === 'deliverables') {
+        // Lazy-load deliverables actions
+        const actions = await import('../ai/deliverablesActions');
+
+        const context = {
+          bigIdea: currentData.bigIdea,
+          essentialQuestion: currentData.essentialQuestion,
+          challenge: currentData.challenge,
+          wizard: currentData.wizard,
+          phases: currentData.phases
+        };
+
+        let target: 'milestone' | 'artifact' | 'criterion';
+        let type: 'rename' | 'activity' | 'refinement';
+
+        if (field === 'milestones') {
+          target = 'milestone';
+          type = 'refinement';
+        } else if (field === 'artifacts') {
+          target = 'artifact';
+          type = 'refinement';
+        } else if (field === 'criteria') {
+          target = 'criterion';
+          type = 'refinement';
+        } else {
+          return [];
+        }
+
+        const chips = await actions.getHeaderChips(target, context);
+
+        return chips.map(text => ({
+          text,
+          type,
           targetIndex: index
         }));
       }
