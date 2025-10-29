@@ -171,7 +171,6 @@ export function StageAIAssistant({
     console.group('🔍 AI Diagnostics');
     console.log('Feature Enabled:', import.meta.env.VITE_FEATURE_STAGE_ASSISTANT);
     console.log('Gemini Enabled:', import.meta.env.VITE_GEMINI_ENABLED);
-    console.log('API Key Present:', !!import.meta.env.VITE_GEMINI_API_KEY);
     console.log('AI Available:', isAIAvailable);
     console.log('Error:', error);
     console.groupEnd();

@@ -28,27 +28,39 @@ export function AiSetup() {
   // Environment status
   const featureEnabled = import.meta.env.VITE_FEATURE_STAGE_ASSISTANT === 'true';
   const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
-  const hasApiKey = !!import.meta.env.VITE_GEMINI_API_KEY;
-  const apiKeyMasked = hasApiKey
-    ? `${import.meta.env.VITE_GEMINI_API_KEY.slice(0, 8)}...${import.meta.env.VITE_GEMINI_API_KEY.slice(-4)}`
-    : 'Not set';
-
+  // Do NOT access or bundle any API key client-side. Determine readiness via proxy health.
+  const [proxyHealthy, setProxyHealthy] = useState<boolean | null>(null);
   const isProduction = import.meta.env.PROD;
-  const isFullyConfigured = featureEnabled && geminiEnabled && hasApiKey;
+  const isFullyConfigured = featureEnabled && geminiEnabled && proxyHealthy === true;
 
   const handleRecheck = async () => {
     setChecking(true);
-    // Simulate check (in real implementation, would test AI connectivity)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setChecking(false);
-    setLastCheckTime(new Date());
+    try {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 2000);
+      const res = await fetch('/.netlify/functions/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: 'ping', model: 'gemini-flash-lite-latest', generationConfig: { maxOutputTokens: 4, temperature: 0 } }),
+        signal: controller.signal
+      });
+      window.clearTimeout(timeoutId);
+      setProxyHealthy(res.ok);
+    } catch {
+      setProxyHealthy(false);
+    } finally {
+      setChecking(false);
+      setLastCheckTime(new Date());
+    }
   };
 
+  useEffect(() => { void handleRecheck(); }, []);
+
   const copyEnvTemplate = () => {
-    const template = `# AI Configuration
+    const template = `# AI Configuration (development)
 VITE_FEATURE_STAGE_ASSISTANT=true
 VITE_GEMINI_ENABLED=true
-VITE_GEMINI_API_KEY=your_api_key_here`;
+# Do NOT include secrets in client .env for production.\n`;
 
     navigator.clipboard.writeText(template);
     setCopied(true);
@@ -137,8 +149,8 @@ VITE_GEMINI_API_KEY=your_api_key_here`;
                   label={`Gemini AI: ${geminiEnabled ? 'Enabled' : 'Disabled'}`}
                 />
                 <StatusIndicator
-                  status={hasApiKey ? 'success' : 'error'}
-                  label={`API Key: ${apiKeyMasked}`}
+                  status={proxyHealthy === true ? 'success' : (proxyHealthy === false ? 'error' : 'warning')}
+                  label={`Server Proxy: ${proxyHealthy === true ? 'Healthy' : (proxyHealthy === false ? 'Unavailable' : 'Checking…')}`}
                 />
               </div>
 
@@ -194,12 +206,12 @@ VITE_GEMINI_API_KEY=your_api_key_here`;
                         1. Create or update your .env file:
                       </Text>
                       <div className="relative">
-                        <pre className="squircle-lg bg-slate-900 dark:bg-slate-950 p-4 overflow-x-auto text-xs text-slate-50 font-mono">
-{`# AI Configuration
+                      <pre className="squircle-lg bg-slate-900 dark:bg-slate-950 p-4 overflow-x-auto text-xs text-slate-50 font-mono">
+{`# AI Configuration (development)
 VITE_FEATURE_STAGE_ASSISTANT=true
 VITE_GEMINI_ENABLED=true
-VITE_GEMINI_API_KEY=your_api_key_here`}
-                        </pre>
+# Do NOT include secrets in client .env for production.`}
+                      </pre>
                         <button
                           onClick={copyEnvTemplate}
                           className="absolute top-2 right-2 p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
