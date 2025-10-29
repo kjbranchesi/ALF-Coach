@@ -8,7 +8,7 @@
  * Run: npm run check-env (automatically runs in prebuild)
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, appendFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -68,7 +68,24 @@ function logSuccess(message) {
   log(`✓ ${message}`, colors.green);
 }
 
-// Get environment variables (prefer process.env, fallback to loaded .env)
+// Attempt fallback mapping: if GEMINI_API_KEY is set but VITE_GEMINI_API_KEY is not,
+// map it for this build and persist to a local .env for the subsequent vite process.
+try {
+  if (!process.env.VITE_GEMINI_API_KEY && process.env.GEMINI_API_KEY) {
+    logWarning('Detected GEMINI_API_KEY. Mapping to VITE_GEMINI_API_KEY for this build.');
+    const key = process.env.GEMINI_API_KEY;
+    process.env.VITE_GEMINI_API_KEY = key;
+    // Persist to .env so the next npm script (vite build) sees it
+    const envPath = resolve(__dirname, '../.env');
+    let existing = '';
+    try { existing = readFileSync(envPath, 'utf-8'); } catch {}
+    if (!existing.includes('VITE_GEMINI_API_KEY')) {
+      appendFileSync(envPath, `\nVITE_GEMINI_API_KEY=${key}\n`);
+    }
+  }
+} catch {}
+
+// Get environment variables (prefer process.env, after fallback mapping)
 const geminiEnabled = process.env.VITE_GEMINI_ENABLED === 'true';
 const hasApiKey = !!process.env.VITE_GEMINI_API_KEY;
 const featureEnabled = process.env.VITE_FEATURE_STAGE_ASSISTANT === 'true';

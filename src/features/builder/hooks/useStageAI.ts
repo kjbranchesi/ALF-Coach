@@ -273,7 +273,26 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
   const [actionExecuting, setActionExecuting] = useState<string | null>(null);
 
   // Define stage-specific Quick Actions
-  const quickActions: QuickAction[] = stage === 'journey' ? [
+  const quickActions: QuickAction[] = stage === 'ideation' ? [
+    {
+      id: 'brainstorm-big-idea',
+      label: 'Brainstorm Big Idea',
+      description: 'Generate 3 compelling big idea options for your project',
+      icon: 'sparkles'
+    },
+    {
+      id: 'refine-eq',
+      label: 'Refine Essential Question',
+      description: 'Strengthen your essential question with 2-3 alternatives',
+      icon: 'edit'
+    },
+    {
+      id: 'clarify-challenge',
+      label: 'Clarify Challenge Framing',
+      description: 'Get 2-3 clearer challenge framings for students',
+      icon: 'sparkles'
+    }
+  ] : stage === 'journey' ? [
     {
       id: 'generate-phases',
       label: 'Generate 4 Phases',
@@ -340,7 +359,37 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     trackEvent('ai_quick_action_clicked', { stage, action: actionId });
 
     try {
-      if (stage === 'journey') {
+      if (stage === 'ideation') {
+        // Lazy-load ideation actions
+        const actions = await import('../ai/ideationActions');
+
+        const context = {
+          bigIdea: currentData.bigIdea,
+          essentialQuestion: currentData.essentialQuestion,
+          challenge: currentData.challenge,
+          wizard: currentData.wizard
+        };
+
+        switch (actionId) {
+          case 'brainstorm-big-idea': {
+            const ideas = await actions.brainstormBigIdea(context);
+            return { type: 'big-idea-options', data: ideas };
+          }
+
+          case 'refine-eq': {
+            const questions = await actions.refineEssentialQuestion(context);
+            return { type: 'eq-options', data: questions };
+          }
+
+          case 'clarify-challenge': {
+            const framings = await actions.clarifyChallengeFraming(context);
+            return { type: 'challenge-options', data: framings };
+          }
+
+          default:
+            throw new Error(`Unknown action: ${actionId}`);
+        }
+      } else if (stage === 'journey') {
         // Lazy-load journey actions
         const actions = await import('../ai/journeyActions');
 
@@ -452,7 +501,33 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     }
 
     try {
-      if (stage === 'journey' && field === 'phaseName' && value?.trim()) {
+      if (stage === 'ideation') {
+        // Lazy-load ideation actions
+        const actions = await import('../ai/ideationActions');
+
+        const context = {
+          bigIdea: currentData.bigIdea,
+          essentialQuestion: currentData.essentialQuestion,
+          challenge: currentData.challenge,
+          wizard: currentData.wizard
+        };
+
+        let suggestions: string[] = [];
+
+        if (field === 'bigIdea' && value?.trim()) {
+          suggestions = await actions.getSuggestions('bigIdea', value, context);
+        } else if (field === 'essentialQuestion' && value?.trim()) {
+          suggestions = await actions.getSuggestions('essentialQuestion', value, context);
+        } else if (field === 'challenge' && value?.trim()) {
+          suggestions = await actions.getSuggestions('challenge', value, context);
+        }
+
+        return suggestions.map(text => ({
+          text,
+          type: 'refinement' as const,
+          targetIndex: index
+        }));
+      } else if (stage === 'journey' && field === 'phaseName' && value?.trim()) {
         // Lazy-load journey actions
         const actions = await import('../ai/journeyActions');
 

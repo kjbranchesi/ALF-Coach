@@ -12,7 +12,7 @@ import type { FieldSuggestion } from '../hooks/useStageAI';
 interface InlineChipsProps {
   suggestions: FieldSuggestion[];
   loading?: boolean;
-  onAccept: (suggestion: FieldSuggestion) => void;
+  onAccept: (suggestion: FieldSuggestion, index: number) => void;
   onMore?: () => void;
   limit?: number;
 }
@@ -54,7 +54,7 @@ export function InlineChips({
           key={idx}
           onClick={() => {
             setAcceptedIndex(idx);
-            onAccept(suggestion);
+            onAccept(suggestion, idx);
           }}
           disabled={acceptedIndex !== null}
           className="group relative inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-purple-900 dark:text-purple-100 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"

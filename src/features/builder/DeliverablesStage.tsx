@@ -404,7 +404,8 @@ export function DeliverablesStage() {
   // Handle inline chip accept
   const handleInlineSuggestionAccept = (
     target: 'milestone' | 'artifact' | 'criterion',
-    suggestion: FieldSuggestion
+    suggestion: FieldSuggestion,
+    chipIndex?: number
   ) => {
     if (target === 'milestone') {
       const newMilestone: MilestoneItem = {
@@ -771,7 +772,7 @@ export function DeliverablesStage() {
                       <InlineChips
                         suggestions={milestoneSuggestions}
                         loading={loadingSuggestions.milestones}
-                        onAccept={(suggestion) => handleInlineSuggestionAccept('milestone', suggestion)}
+                        onAccept={(suggestion, chipIndex) => handleInlineSuggestionAccept('milestone', suggestion, chipIndex)}
                         onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'milestones' })}
                       />
                     )}
@@ -850,7 +851,7 @@ export function DeliverablesStage() {
                       <InlineChips
                         suggestions={artifactSuggestions}
                         loading={loadingSuggestions.artifacts}
-                        onAccept={(suggestion) => handleInlineSuggestionAccept('artifact', suggestion)}
+                        onAccept={(suggestion, chipIndex) => handleInlineSuggestionAccept('artifact', suggestion, chipIndex)}
                         onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'artifacts' })}
                       />
                     )}
@@ -929,7 +930,7 @@ export function DeliverablesStage() {
                       <InlineChips
                         suggestions={criteriaSuggestions}
                         loading={loadingSuggestions.criteria}
-                        onAccept={(suggestion) => handleInlineSuggestionAccept('criterion', suggestion)}
+                        onAccept={(suggestion, chipIndex) => handleInlineSuggestionAccept('criterion', suggestion, chipIndex)}
                         onMore={() => trackEvent('ai_more_suggestions_clicked', { stage: 'deliverables', field: 'criteria' })}
                       />
                     )}

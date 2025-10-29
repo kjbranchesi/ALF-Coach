@@ -9,10 +9,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController } from './useStageController';
-import { useStageAI } from './hooks/useStageAI';
+import { useStageAI, type FieldSuggestion } from './hooks/useStageAI';
+import { StageAIAssistant } from './components/StageAIAssistant';
+import { InlineChips } from './components/InlineChips';
 import { isIdeationUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
-import { StageAIAssistant } from './components/StageAIAssistant';
 import { trackEvent } from '../../utils/analytics';
 import {
   Container,
@@ -42,6 +43,21 @@ export function IdeationStage() {
   const [essentialQuestion, setEssentialQuestion] = useState('');
   const [challenge, setChallenge] = useState('');
 
+  // AI suggestions state
+  const [bigIdeaSuggestions, setBigIdeaSuggestions] = useState<FieldSuggestion[]>([]);
+  const [eqSuggestions, setEqSuggestions] = useState<FieldSuggestion[]>([]);
+  const [challengeSuggestions, setChallengeSuggestions] = useState<FieldSuggestion[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState<{
+    bigIdea: boolean;
+    essentialQuestion: boolean;
+    challenge: boolean;
+  }>({ bigIdea: false, essentialQuestion: false, challenge: false });
+
+  // Specificity meter state
+  const [specificityScore, setSpecificityScore] = useState<number>(0);
+  const [refineSuggestions, setRefineSuggestions] = useState<string[]>([]);
+  const [isRefining, setIsRefining] = useState(false);
+
   // Initialize stage controller
   const {
     isSaving,
@@ -57,12 +73,14 @@ export function IdeationStage() {
     onBlueprintUpdate: (updated) => setBlueprint(updated)
   });
 
-  // AI health check for gate
+  // AI assistant with Quick Actions and field suggestions
   const {
     isAIAvailable,
     error: aiError,
     healthChecking,
-    checkAIHealth
+    checkAIHealth,
+    getFieldSuggestions,
+    refine
   } = useStageAI({
     stage: 'ideation',
     currentData: {
@@ -176,6 +194,219 @@ export function IdeationStage() {
       target: field
     });
   };
+
+  // Quick Action result handler
+  const handleQuickActionResult = (result: any) => {
+    if (result.type === 'big-idea-options') {
+      // For options, just set suggestions to show them in assistant
+      // User can click one to accept
+      trackEvent('ai_suggestions_shown', {
+        stage: 'ideation',
+        target: 'bigIdea',
+        count: result.data.length
+      });
+    } else if (result.type === 'eq-options') {
+      trackEvent('ai_suggestions_shown', {
+        stage: 'ideation',
+        target: 'essentialQuestion',
+        count: result.data.length
+      });
+    } else if (result.type === 'challenge-options') {
+      trackEvent('ai_suggestions_shown', {
+        stage: 'ideation',
+        target: 'challenge',
+        count: result.data.length
+      });
+    }
+    // Note: Quick action results are displayed in assistant panel
+    // User clicks "accept" there which calls handleAIAccept
+  };
+
+  // Load field suggestions
+  const loadFieldSuggestions = async (field: 'bigIdea' | 'essentialQuestion' | 'challenge', value: string) => {
+    if (!isAIAvailable || !value || value.trim().length < 10) return;
+
+    setLoadingSuggestions(prev => ({ ...prev, [field]: true }));
+
+    try {
+      const suggestions = await getFieldSuggestions(field, value, 0);
+
+      if (field === 'bigIdea') {
+        setBigIdeaSuggestions(suggestions);
+        if (suggestions.length > 0) {
+          trackEvent('ai_suggestions_shown', {
+            stage: 'ideation',
+            target: 'bigIdea',
+            count: suggestions.length
+          });
+        }
+      } else if (field === 'essentialQuestion') {
+        setEqSuggestions(suggestions);
+        if (suggestions.length > 0) {
+          trackEvent('ai_suggestions_shown', {
+            stage: 'ideation',
+            target: 'eq',
+            count: suggestions.length
+          });
+        }
+      } else if (field === 'challenge') {
+        setChallengeSuggestions(suggestions);
+        if (suggestions.length > 0) {
+          trackEvent('ai_suggestions_shown', {
+            stage: 'ideation',
+            target: 'challenge',
+            count: suggestions.length
+          });
+        }
+      }
+    } catch (error) {
+      console.error(`[IdeationStage] Failed to load ${field} suggestions:`, error);
+    } finally {
+      setLoadingSuggestions(prev => ({ ...prev, [field]: false }));
+    }
+  };
+
+  // Handle inline chip accept
+  const handleInlineSuggestionAccept = (
+    field: 'bigIdea' | 'essentialQuestion' | 'challenge',
+    suggestion: FieldSuggestion,
+    index: number
+  ) => {
+    handleFieldChange(field, suggestion.text);
+
+    // Clear suggestions for this field
+    if (field === 'bigIdea') {
+      setBigIdeaSuggestions([]);
+    } else if (field === 'essentialQuestion') {
+      setEqSuggestions([]);
+    } else {
+      setChallengeSuggestions([]);
+    }
+
+    trackEvent('ai_suggestion_accepted', {
+      stage: 'ideation',
+      target: field,
+      index
+    });
+
+    if (window.toast) {
+      window.toast.success(`Added suggestion to ${field === 'bigIdea' ? 'Big Idea' : field === 'essentialQuestion' ? 'Essential Question' : 'Challenge'}`);
+    }
+  };
+
+  // Handle specificity refine
+  const handleMakeMoreSpecific = async () => {
+    if (!isAIAvailable || !bigIdea || isRefining) return;
+
+    setIsRefining(true);
+    trackEvent('ai_refine_clicked', {
+      stage: 'ideation',
+      target: 'bigIdea'
+    });
+
+    try {
+      const result = await refine('bigIdea', bigIdea);
+      setRefineSuggestions(result.chips || []);
+
+      if (result.chips && result.chips.length > 0) {
+        trackEvent('ai_suggestions_shown', {
+          stage: 'ideation',
+          target: 'bigIdea_refine',
+          count: result.chips.length
+        });
+      }
+    } catch (error) {
+      console.error('[IdeationStage] Failed to refine big idea:', error);
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
+  // Accept refine suggestion
+  const handleRefineAccept = (suggestion: string, index: number) => {
+    handleFieldChange('bigIdea', suggestion);
+    setRefineSuggestions([]);
+
+    trackEvent('ai_suggestion_accepted', {
+      stage: 'ideation',
+      target: 'bigIdea_refine',
+      index
+    });
+
+    if (window.toast) {
+      window.toast.success('Applied refinement to Big Idea');
+    }
+  };
+
+  // Debounced field suggestions loading
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const timer = setTimeout(() => {
+      if (bigIdea) loadFieldSuggestions('bigIdea', bigIdea);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [bigIdea, isAIAvailable]);
+
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const timer = setTimeout(() => {
+      if (essentialQuestion) loadFieldSuggestions('essentialQuestion', essentialQuestion);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [essentialQuestion, isAIAvailable]);
+
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const timer = setTimeout(() => {
+      if (challenge) loadFieldSuggestions('challenge', challenge);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [challenge, isAIAvailable]);
+
+  // Specificity scoring (local, no network)
+  useEffect(() => {
+    if (!bigIdea) {
+      setSpecificityScore(0);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const { scoreIdeationSpecificity } = await import('../chat-mvp/domain/specificityScorer');
+
+        // Call with proper signature
+        const result = scoreIdeationSpecificity('BIG_IDEA', {
+          ideation: {
+            bigIdea,
+            essentialQuestion: essentialQuestion || '',
+            challenge: challenge || ''
+          }
+        } as any, {
+          gradeLevel: blueprint?.wizard?.gradeLevel
+        });
+
+        // Convert 0-100 score to 0-1 range
+        const normalizedScore = result.score / 100;
+        setSpecificityScore(normalizedScore);
+
+        const band = normalizedScore < 0.4 ? 'low' : normalizedScore < 0.7 ? 'medium' : 'high';
+        trackEvent('ai_specificity_scored', {
+          score: normalizedScore,
+          band
+        });
+      } catch (error) {
+        console.error('[IdeationStage] Specificity scoring failed:', error);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [bigIdea, essentialQuestion, challenge, blueprint?.wizard?.gradeLevel]);
 
   // Stage guides
   const bigIdeaGuide = stageGuide('BIG_IDEA');
@@ -410,6 +641,91 @@ export function IdeationStage() {
                     <Text size="xs" color="secondary">
                       💡 {bigIdeaGuide.tip}
                     </Text>
+
+                    {/* Field-level AI chips */}
+                    {bigIdea.trim().length >= 10 && (
+                      <InlineChips
+                        suggestions={bigIdeaSuggestions}
+                        onAccept={(suggestion, index) => handleInlineSuggestionAccept('bigIdea', suggestion, index)}
+                        loading={loadingSuggestions.bigIdea}
+                        onMoreClick={() => {
+                          trackEvent('ai_more_clicked', { stage: 'ideation', target: 'bigIdea' });
+                          // StageAIAssistant will already be visible in right column
+                        }}
+                      />
+                    )}
+
+                    {/* Specificity meter */}
+                    {bigIdea.trim().length >= 10 && (
+                      <div className="mt-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Text size="xs" color="secondary">
+                            Specificity
+                          </Text>
+                          <span
+                            className={`text-xs font-medium ${
+                              specificityScore < 0.4
+                                ? 'text-amber-600 dark:text-amber-400'
+                                : specificityScore < 0.7
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-emerald-600 dark:text-emerald-400'
+                            }`}
+                          >
+                            {specificityScore < 0.4 ? 'Low' : specificityScore < 0.7 ? 'Medium' : 'High'}
+                          </span>
+                        </div>
+                        <div className="relative h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-500 ${
+                              specificityScore < 0.4
+                                ? 'bg-amber-500'
+                                : specificityScore < 0.7
+                                ? 'bg-blue-500'
+                                : 'bg-emerald-500'
+                            }`}
+                            style={{ width: `${Math.min(100, specificityScore * 100)}%` }}
+                            role="progressbar"
+                            aria-valuenow={Math.round(specificityScore * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label="Specificity score"
+                          />
+                        </div>
+                        {specificityScore < 0.7 && (
+                          <button
+                            onClick={handleMakeMoreSpecific}
+                            disabled={isRefining || !isAIAvailable}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200/60 dark:border-blue-700/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Make Big Idea more specific"
+                          >
+                            {isRefining ? (
+                              <>
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                                <span>Refining...</span>
+                              </>
+                            ) : (
+                              <span>✨ Make more specific</span>
+                            )}
+                          </button>
+                        )}
+
+                        {/* Refine suggestions */}
+                        {refineSuggestions.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {refineSuggestions.map((suggestion, index) => (
+                              <button
+                                key={index}
+                                onClick={() => handleRefineAccept(suggestion, index)}
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200/60 dark:border-purple-700/60 transition-colors"
+                                aria-label={`Apply refinement: ${suggestion}`}
+                              >
+                                <span className="line-clamp-1">{suggestion}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -439,6 +755,18 @@ export function IdeationStage() {
                     <Text size="xs" color="secondary">
                       💡 {eqGuide.tip}
                     </Text>
+
+                    {/* Field-level AI chips */}
+                    {essentialQuestion.trim().length >= 10 && (
+                      <InlineChips
+                        suggestions={eqSuggestions}
+                        onAccept={(suggestion, index) => handleInlineSuggestionAccept('essentialQuestion', suggestion, index)}
+                        loading={loadingSuggestions.essentialQuestion}
+                        onMoreClick={() => {
+                          trackEvent('ai_more_clicked', { stage: 'ideation', target: 'essentialQuestion' });
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -468,6 +796,18 @@ export function IdeationStage() {
                     <Text size="xs" color="secondary">
                       💡 {challengeGuide.tip}
                     </Text>
+
+                    {/* Field-level AI chips */}
+                    {challenge.trim().length >= 10 && (
+                      <InlineChips
+                        suggestions={challengeSuggestions}
+                        onAccept={(suggestion, index) => handleInlineSuggestionAccept('challenge', suggestion, index)}
+                        loading={loadingSuggestions.challenge}
+                        onMoreClick={() => {
+                          trackEvent('ai_more_clicked', { stage: 'ideation', target: 'challenge' });
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -530,6 +870,7 @@ export function IdeationStage() {
                     wizard: blueprint?.wizard
                   }}
                   onAccept={handleAIAccept}
+                  onQuickActionResult={handleQuickActionResult}
                 />
               </div>
             </div>

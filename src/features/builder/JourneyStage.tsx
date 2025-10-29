@@ -283,17 +283,18 @@ export function JourneyStage() {
   };
 
   // Handle inline chip accept
-  const handleInlineSuggestionAccept = (index: number, suggestion: FieldSuggestion) => {
-    handlePhaseNameChange(index, suggestion.text);
+  const handleInlineSuggestionAccept = (phaseIndex: number, suggestion: FieldSuggestion, chipIndex: number) => {
+    handlePhaseNameChange(phaseIndex, suggestion.text);
     trackEvent('ai_suggestion_accepted', {
       stage: 'journey',
       target: 'phase_name',
-      index
+      index: phaseIndex,
+      chipIndex
     });
     // Clear suggestions for this field after accept
     setPhaseSuggestions(prev => {
       const next = new Map(prev);
-      next.delete(index);
+      next.delete(phaseIndex);
       return next;
     });
   };
@@ -662,7 +663,7 @@ export function JourneyStage() {
                           <InlineChips
                             suggestions={phaseSuggestions.get(index) || []}
                             loading={loadingSuggestions.has(index)}
-                            onAccept={(suggestion) => handleInlineSuggestionAccept(index, suggestion)}
+                            onAccept={(suggestion, chipIndex) => handleInlineSuggestionAccept(index, suggestion, chipIndex)}
                             onMore={() => {
                               // Scroll assistant into view or open it
                               trackEvent('ai_more_suggestions_clicked', { stage: 'journey', field: 'phase_name', index });
