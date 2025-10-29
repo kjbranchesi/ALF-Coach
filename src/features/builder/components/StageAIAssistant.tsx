@@ -24,8 +24,10 @@ interface StageAIAssistantProps {
     essentialQuestion?: string;
     challenge?: string;
     wizard?: any;
+    phases?: any[]; // For journey stage
   };
   onAccept: (field: IdeationField, text: string) => void;
+  onQuickActionResult?: (result: any) => void; // Handle Quick Action results
   collapsed?: boolean;
   onToggle?: (open: boolean) => void;
 }
@@ -40,6 +42,7 @@ export function StageAIAssistant({
   stage,
   currentData,
   onAccept,
+  onQuickActionResult,
   collapsed = false,
   onToggle
 }: StageAIAssistantProps) {
@@ -47,9 +50,21 @@ export function StageAIAssistant({
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [selectedPhaseForAction, setSelectedPhaseForAction] = useState<string>('0');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const { isAIAvailable, suggestions, loading, error, healthChecking, checkAIHealth, sendMessage } = useStageAI({
+  const {
+    isAIAvailable,
+    suggestions,
+    loading,
+    error,
+    healthChecking,
+    checkAIHealth,
+    sendMessage,
+    quickActions,
+    actionExecuting,
+    executeAction
+  } = useStageAI({
     stage,
     currentData
   });
@@ -162,6 +177,20 @@ export function StageAIAssistant({
     console.groupEnd();
   };
 
+  const handleQuickAction = async (actionId: string, requiresInput?: boolean) => {
+    try {
+      const params = requiresInput ? { phaseIndex: selectedPhaseForAction } : undefined;
+      const result = await executeAction(actionId, params);
+
+      if (result && onQuickActionResult) {
+        onQuickActionResult(result);
+      }
+    } catch (error) {
+      console.error('[StageAIAssistant] Quick Action failed:', error);
+      // Could show a toast here in the future
+    }
+  };
+
   // Don't render if feature disabled
   if (import.meta.env.VITE_FEATURE_STAGE_ASSISTANT !== 'true') {
     return null;
@@ -254,6 +283,51 @@ export function StageAIAssistant({
           {/* AI Available - Normal Content */}
           {isAIAvailable && (
             <>
+              {/* Quick Actions Section */}
+              {quickActions.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                    Quick Actions
+                  </p>
+                  {quickActions.map(action => (
+                    <div key={action.id} className="space-y-2">
+                      {action.requiresInput && action.inputOptions && (
+                        <select
+                          value={selectedPhaseForAction}
+                          onChange={(e) => setSelectedPhaseForAction(e.target.value)}
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        >
+                          {action.inputOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      <button
+                        onClick={() => handleQuickAction(action.id, action.requiresInput)}
+                        disabled={actionExecuting === action.id}
+                        className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+                      >
+                        {actionExecuting === action.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <span>{action.label}</span>
+                          </>
+                        )}
+                      </button>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {action.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Suggestions Section */}
               {suggestions.length > 0 && (
                 <div className="space-y-2">

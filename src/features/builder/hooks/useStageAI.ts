@@ -22,12 +22,29 @@ interface UseStageAIOptions {
     essentialQuestion?: string;
     challenge?: string;
     wizard?: any;
+    phases?: any[]; // For journey stage
   };
 }
 
 interface RefineResult {
   chips: string[];
   followup?: string;
+}
+
+export interface QuickAction {
+  id: string;
+  label: string;
+  description: string;
+  icon?: string;
+  requiresInput?: boolean;
+  inputLabel?: string;
+  inputOptions?: Array<{ label: string; value: string }>;
+}
+
+export interface FieldSuggestion {
+  text: string;
+  type: 'rename' | 'activity' | 'refinement';
+  targetIndex?: number;
 }
 
 export function useStageAI({ stage, currentData }: UseStageAIOptions) {
@@ -249,6 +266,154 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     }
   }, [isAIAvailable, currentData.bigIdea, currentData.essentialQuestion, currentData.challenge, getSuggestions]);
 
+  // Quick Actions state
+  const [actionExecuting, setActionExecuting] = useState<string | null>(null);
+
+  // Define stage-specific Quick Actions
+  const quickActions: QuickAction[] = stage === 'journey' ? [
+    {
+      id: 'generate-phases',
+      label: 'Generate 4 Phases',
+      description: 'Create 4 smart phase names based on your project context',
+      icon: 'sparkles'
+    },
+    {
+      id: 'rename-phases',
+      label: 'Rename Phases For Clarity',
+      description: 'Improve existing phase names to be more specific and descriptive',
+      icon: 'edit'
+    },
+    {
+      id: 'add-activities',
+      label: 'Add Activities To Phase',
+      description: 'Get 3-4 activity suggestions for a specific phase',
+      icon: 'plus',
+      requiresInput: true,
+      inputLabel: 'Select phase',
+      inputOptions: (currentData.phases || []).map((p: any, idx: number) => ({
+        label: p.name || `Phase ${idx + 1}`,
+        value: String(idx)
+      }))
+    }
+  ] : [];
+
+  /**
+   * Execute a Quick Action
+   */
+  const executeAction = useCallback(async (
+    actionId: string,
+    params?: any
+  ): Promise<any> => {
+    if (!isAIAvailable) {
+      return null;
+    }
+
+    setActionExecuting(actionId);
+    trackEvent('ai_quick_action_clicked', { stage, action: actionId });
+
+    try {
+      if (stage === 'journey') {
+        // Lazy-load journey actions
+        const actions = await import('../ai/journeyActions');
+
+        switch (actionId) {
+          case 'generate-phases': {
+            const phases = await actions.generatePhaseNames({
+              bigIdea: currentData.bigIdea,
+              essentialQuestion: currentData.essentialQuestion,
+              challenge: currentData.challenge
+            });
+            return { type: 'phases', data: phases };
+          }
+
+          case 'rename-phases': {
+            const phases = currentData.phases || [];
+            const renamedPhases = await actions.renamePhasesForClarity(phases, {
+              bigIdea: currentData.bigIdea,
+              essentialQuestion: currentData.essentialQuestion,
+              challenge: currentData.challenge
+            });
+            return { type: 'phase-names', data: renamedPhases };
+          }
+
+          case 'add-activities': {
+            const phaseIndex = parseInt(params?.phaseIndex || '0', 10);
+            const phases = currentData.phases || [];
+            const phase = phases[phaseIndex];
+
+            if (!phase) {
+              throw new Error('Phase not found');
+            }
+
+            const activities = await actions.suggestActivitiesForPhase(
+              phase.name,
+              phaseIndex,
+              phases.length,
+              {
+                bigIdea: currentData.bigIdea,
+                essentialQuestion: currentData.essentialQuestion,
+                challenge: currentData.challenge
+              }
+            );
+
+            return { type: 'activities', data: activities, phaseIndex };
+          }
+
+          default:
+            throw new Error(`Unknown action: ${actionId}`);
+        }
+      }
+
+      return null;
+    } catch (err) {
+      console.error(`[useStageAI] executeAction error:`, err);
+      trackEvent('ai_quick_action_failed', { stage, action: actionId, error: String(err) });
+      throw err;
+    } finally {
+      setActionExecuting(null);
+    }
+  }, [stage, currentData, isAIAvailable]);
+
+  /**
+   * Get field-level suggestions (for inline chips)
+   */
+  const getFieldSuggestions = useCallback(async (
+    field: string,
+    value: string,
+    index?: number
+  ): Promise<FieldSuggestion[]> => {
+    if (!isAIAvailable || !value?.trim()) {
+      return [];
+    }
+
+    try {
+      if (stage === 'journey' && field === 'phaseName') {
+        // Lazy-load journey actions
+        const actions = await import('../ai/journeyActions');
+
+        const suggestions = await actions.getPhaseSuggestions(
+          value,
+          index || 0,
+          {
+            bigIdea: currentData.bigIdea,
+            essentialQuestion: currentData.essentialQuestion
+          }
+        );
+
+        return suggestions.map(text => ({
+          text,
+          type: 'rename' as const,
+          targetIndex: index
+        }));
+      }
+
+      return [];
+    } catch (err) {
+      console.error(`[useStageAI] getFieldSuggestions error:`, err);
+      return [];
+    }
+  }, [stage, currentData, isAIAvailable]);
+
   return {
     isAIAvailable: isAIAvailable ?? false,
     suggestions,
@@ -258,6 +423,11 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     checkAIHealth,
     getSuggestions,
     refine,
-    sendMessage
+    sendMessage,
+    // Quick Actions
+    quickActions,
+    actionExecuting,
+    executeAction,
+    getFieldSuggestions
   };
 }

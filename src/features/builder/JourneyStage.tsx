@@ -14,7 +14,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { UnifiedStorageManager, type UnifiedProjectData } from '../../services/UnifiedStorageManager';
 import { useStageController } from './useStageController';
-import { useStageAI } from './hooks/useStageAI';
+import { useStageAI, type FieldSuggestion } from './hooks/useStageAI';
+import { StageAIAssistant } from './components/StageAIAssistant';
+import { InlineChips } from './components/InlineChips';
 import { isJourneyUIComplete } from './completeness';
 import { stageGuide } from '../chat-mvp/domain/stages';
 import { trackEvent } from '../../utils/analytics';
@@ -54,6 +56,8 @@ export function JourneyStage() {
 
   // Local form state
   const [phases, setPhases] = useState<Phase[]>([]);
+  const [phaseSuggestions, setPhaseSuggestions] = useState<Map<number, FieldSuggestion[]>>(new Map());
+  const [loadingSuggestions, setLoadingSuggestions] = useState<Set<number>>(new Set());
 
   // Initialize stage controller
   const {
@@ -70,16 +74,21 @@ export function JourneyStage() {
     onBlueprintUpdate: (updated) => setBlueprint(updated)
   });
 
-  // AI health check for gate
+  // AI assistant with Quick Actions and field suggestions
   const {
     isAIAvailable,
     error: aiError,
     healthChecking,
-    checkAIHealth
+    checkAIHealth,
+    getFieldSuggestions
   } = useStageAI({
     stage: 'journey',
     currentData: {
-      wizard: blueprint?.wizard
+      bigIdea: blueprint?.ideation?.bigIdea,
+      essentialQuestion: blueprint?.ideation?.essentialQuestion,
+      challenge: blueprint?.ideation?.challenge,
+      wizard: blueprint?.wizard,
+      phases
     }
   });
 
@@ -204,6 +213,104 @@ export function JourneyStage() {
       completeStage('deliverables');
     }
   };
+
+  // Quick Action result handler
+  const handleQuickActionResult = (result: any) => {
+    if (result.type === 'phases') {
+      // Generate 4 Phases - Replace with new phases
+      const newPhases: Phase[] = result.data.map((name: string, idx: number) => ({
+        id: `p${idx + 1}`,
+        name,
+        activities: []
+      }));
+      handlePhasesChange(newPhases);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'journey',
+        action: 'generate-phases',
+        count: newPhases.length
+      });
+    } else if (result.type === 'phase-names') {
+      // Rename Phases For Clarity - Update existing phase names
+      const updatedPhases = phases.map((phase, idx) => ({
+        ...phase,
+        name: result.data[idx] || phase.name
+      }));
+      handlePhasesChange(updatedPhases);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'journey',
+        action: 'rename-phases',
+        count: result.data.length
+      });
+    } else if (result.type === 'activities') {
+      // Add Activities To Phase - Append to specific phase
+      const phaseIndex = result.phaseIndex;
+      const updatedPhases = [...phases];
+      updatedPhases[phaseIndex] = {
+        ...updatedPhases[phaseIndex],
+        activities: [...(updatedPhases[phaseIndex].activities || []), ...result.data]
+      };
+      handlePhasesChange(updatedPhases);
+      trackEvent('ai_suggestion_accepted', {
+        stage: 'journey',
+        action: 'add-activities',
+        phaseIndex,
+        count: result.data.length
+      });
+    }
+  };
+
+  // Load field suggestions for a phase
+  const loadPhaseSuggestions = async (index: number, name: string) => {
+    if (!isAIAvailable || !name || name.trim().length < 3) {
+      return;
+    }
+
+    setLoadingSuggestions(prev => new Set(prev).add(index));
+
+    try {
+      const suggestions = await getFieldSuggestions('phaseName', name, index);
+      setPhaseSuggestions(prev => new Map(prev).set(index, suggestions));
+    } catch (error) {
+      console.error('[JourneyStage] Failed to load suggestions:', error);
+    } finally {
+      setLoadingSuggestions(prev => {
+        const next = new Set(prev);
+        next.delete(index);
+        return next;
+      });
+    }
+  };
+
+  // Handle inline chip accept
+  const handleInlineSuggestionAccept = (index: number, suggestion: FieldSuggestion) => {
+    handlePhaseNameChange(index, suggestion.text);
+    trackEvent('ai_suggestion_accepted', {
+      stage: 'journey',
+      target: 'phase_name',
+      index
+    });
+    // Clear suggestions for this field after accept
+    setPhaseSuggestions(prev => {
+      const next = new Map(prev);
+      next.delete(index);
+      return next;
+    });
+  };
+
+  // Load suggestions when phase names change (debounced)
+  useEffect(() => {
+    if (!isAIAvailable) return;
+
+    const timer = setTimeout(() => {
+      phases.forEach((phase, idx) => {
+        if (phase.name && phase.name.trim().length >= 3) {
+          loadPhaseSuggestions(idx, phase.name);
+        }
+      });
+    }, 1000); // Debounce 1s after typing stops
+
+    return () => clearTimeout(timer);
+  }, [phases, isAIAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Stage guide
   const journeyGuide = stageGuide('JOURNEY');
@@ -336,9 +443,13 @@ export function JourneyStage() {
 
       <div className="relative">
         <Container className="pt-24 pb-20">
-          <div className="max-w-5xl mx-auto space-y-8">
-            {/* Header */}
-            <header className="space-y-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Two-column layout: form + AI assistant */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+              {/* Left column: Form */}
+              <div className="space-y-8">
+                {/* Header */}
+                <header className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-12 h-12 squircle-sm bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/25">
                   <Map className="w-6 h-6 text-white" />
@@ -429,13 +540,27 @@ export function JourneyStage() {
 
                     {/* Phase content */}
                     <div className="flex-1 space-y-3">
-                      <input
-                        type="text"
-                        value={phase.name}
-                        onChange={(e) => handlePhaseNameChange(index, e.target.value)}
-                        placeholder={`Phase ${index + 1} name (e.g., "Research & Analysis")`}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg font-medium transition-all"
-                      />
+                      <div>
+                        <input
+                          type="text"
+                          value={phase.name}
+                          onChange={(e) => handlePhaseNameChange(index, e.target.value)}
+                          placeholder={`Phase ${index + 1} name (e.g., "Research & Analysis")`}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg font-medium transition-all"
+                        />
+                        {/* Inline AI suggestions */}
+                        {isAIAvailable && (
+                          <InlineChips
+                            suggestions={phaseSuggestions.get(index) || []}
+                            loading={loadingSuggestions.has(index)}
+                            onAccept={(suggestion) => handleInlineSuggestionAccept(index, suggestion)}
+                            onMore={() => {
+                              // Scroll assistant into view or open it
+                              trackEvent('ai_more_suggestions_clicked', { stage: 'journey', field: 'phase_name', index });
+                            }}
+                          />
+                        )}
+                      </div>
                     </div>
 
                     {/* Action buttons */}
@@ -534,6 +659,23 @@ export function JourneyStage() {
               </Text>
             </div>
           </div>
+
+          {/* Right column: AI Assistant */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <StageAIAssistant
+              stage="journey"
+              currentData={{
+                bigIdea: blueprint?.ideation?.bigIdea,
+                essentialQuestion: blueprint?.ideation?.essentialQuestion,
+                challenge: blueprint?.ideation?.challenge,
+                wizard: blueprint?.wizard,
+                phases
+              }}
+              onAccept={() => {}} // Not used for journey stage
+              onQuickActionResult={handleQuickActionResult}
+            />
+          </div>
+        </div>
         </Container>
       </div>
     </div>
