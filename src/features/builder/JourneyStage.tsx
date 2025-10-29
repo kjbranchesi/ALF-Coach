@@ -786,6 +786,7 @@ export function JourneyStage() {
             />
           </div>
         </div>
+          </div>
         </Container>
       </div>
     </div>

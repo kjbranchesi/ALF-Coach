@@ -1055,6 +1055,7 @@ export function DeliverablesStage() {
             />
           </div>
         </div>
+          </div>
         </Container>
       </div>
     </div>
