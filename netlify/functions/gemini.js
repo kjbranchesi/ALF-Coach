@@ -4,6 +4,15 @@
 
 const https = require('https');
 
+const RATE_LIMIT = { windowMs: 60_000, max: 60 }; // 60 requests/min per IP
+const bucket = global.__GEMINI_BUCKET__ || (global.__GEMINI_BUCKET__ = new Map());
+
+function getClientIp(event) {
+  const xf = event.headers['x-forwarded-for'] || event.headers['X-Forwarded-For'] || '';
+  const ip = (xf.split(',')[0] || '').trim() || event.headers['client-ip'] || event.headers['x-nf-client-connection-ip'] || 'unknown';
+  return ip;
+}
+
 exports.handler = async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -29,6 +38,22 @@ exports.handler = async function handler(event) {
   }
 
   try {
+    // Basic rate limiting per IP (best-effort; function instance scoped)
+    const ip = getClientIp(event);
+    const now = Date.now();
+    const entry = bucket.get(ip) || { count: 0, start: now };
+    if (now - entry.start > RATE_LIMIT.windowMs) {
+      entry.count = 0; entry.start = now;
+    }
+    entry.count += 1;
+    bucket.set(ip, entry);
+    if (entry.count > RATE_LIMIT.max) {
+      return {
+        statusCode: 429,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'Rate limit exceeded. Please wait and try again.' })
+      };
+    }
     const { prompt, history, model, systemPrompt, generationConfig } = JSON.parse(event.body || '{}');
     const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -89,6 +114,7 @@ exports.handler = async function handler(event) {
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) }
     };
 
+    const start = Date.now();
     const responseBody = await new Promise((resolve) => {
       const req = https.request(options, (res) => {
         let data = '';
@@ -99,6 +125,12 @@ exports.handler = async function handler(event) {
       req.write(payload);
       req.end();
     });
+
+    const latency = Date.now() - start;
+    // Structured log (no secrets)
+    console.log(JSON.stringify({
+      source: 'netlify-fn-gemini', ip, model: selectedModel, status: responseBody.status, latencyMs: latency
+    }));
 
     return {
       statusCode: responseBody.status === 200 ? 200 : (responseBody.status || 500),

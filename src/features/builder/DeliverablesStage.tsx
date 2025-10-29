@@ -313,57 +313,68 @@ export function DeliverablesStage() {
   };
 
   // Quick Action result handler
+  const normalize = (s: string) => s.trim().replace(/\s+/g, ' ');
+  const dedupeAppend = <T extends { id: string; name?: string; text?: string }>(
+    existing: T[],
+    incoming: T[],
+    pick: (t: T) => string
+  ): { next: T[]; added: number; skipped: number } => {
+    const seen = new Set(existing.map(e => pick(e).toLowerCase()));
+    const next = [...existing];
+    let added = 0; let skipped = 0;
+    for (const item of incoming) {
+      const key = pick(item).toLowerCase();
+      if (!key) { skipped++; continue; }
+      if (seen.has(key)) { skipped++; continue; }
+      seen.add(key);
+      next.push(item);
+      added++;
+    }
+    return { next, added, skipped };
+  };
+
   const handleQuickActionResult = (result: any) => {
     if (result.type === 'milestones') {
-      // Append suggested milestones
-      const newMilestones = [...milestones, ...result.data];
-      handleDeliverablesChange(newMilestones, artifacts, criteria);
+      const incoming = result.data.map((m: any, idx: number) => ({ id: m.id || `m${Date.now()}-${idx}`, name: normalize(m.name || '') }));
+      const { next, added, skipped } = dedupeAppend(milestones, incoming, x => x.name || '');
+      if (added === 0) { if (window.toast) window.toast.info('No new milestones to add'); return; }
+      handleDeliverablesChange(next, artifacts, criteria);
       trackEvent('ai_suggestion_accepted', {
         stage: 'deliverables',
         action: 'suggest-milestones',
-        count: result.data.length,
+        count: added,
         batch: true
       });
-      if (window.toast) {
-        window.toast.success(`Added ${result.data.length} milestones`);
-      }
+      if (window.toast) window.toast.success(`Added ${added} milestone(s)${skipped ? ` (${skipped} skipped)` : ''}`);
     } else if (result.type === 'artifacts') {
-      // Append suggested artifacts
-      const newArtifacts = [...artifacts, ...result.data];
-      handleDeliverablesChange(milestones, newArtifacts, criteria);
+      const incoming = result.data.map((a: any, idx: number) => ({ id: a.id || `a${Date.now()}-${idx}`, name: normalize(a.name || '') }));
+      const { next, added, skipped } = dedupeAppend(artifacts, incoming, x => x.name || '');
+      if (added === 0) { if (window.toast) window.toast.info('No new artifacts to add'); return; }
+      handleDeliverablesChange(milestones, next, criteria);
       trackEvent('ai_suggestion_accepted', {
         stage: 'deliverables',
         action: 'suggest-artifacts',
-        count: result.data.length,
+        count: added,
         batch: true
       });
-      if (window.toast) {
-        window.toast.success(`Added ${result.data.length} artifacts`);
-      }
+      if (window.toast) window.toast.success(`Added ${added} artifact(s)${skipped ? ` (${skipped} skipped)` : ''}`);
     } else if (result.type === 'criteria') {
-      // Append suggested criteria
-      const newCriteria = [
-        ...criteria,
-        ...result.data.map((c: { text: string }, idx: number) => ({
-          id: `c${Date.now()}-${idx}`,
-          text: c.text
-        }))
-      ];
-      handleDeliverablesChange(milestones, artifacts, newCriteria);
+      const incoming = result.data.map((c: { text: string }, idx: number) => ({ id: `c${Date.now()}-${idx}`, text: normalize(c.text) }));
+      const { next, added, skipped } = dedupeAppend(criteria as any, incoming as any, x => (x.text || ''));
+      if (added === 0) { if (window.toast) window.toast.info('No new criteria to add'); return; }
+      handleDeliverablesChange(milestones, artifacts, next as any);
       trackEvent('ai_suggestion_accepted', {
         stage: 'deliverables',
         action: 'write-criteria',
-        count: result.data.length,
+        count: added,
         batch: true
       });
-      if (window.toast) {
-        window.toast.success(`Added ${result.data.length} criteria`);
-      }
+      if (window.toast) window.toast.success(`Added ${added} criterion/criteria${skipped ? ` (${skipped} skipped)` : ''}`);
     } else if (result.type === 'criteria-tightened') {
       // Replace criteria with tightened versions
       const tightenedCriteria = result.data.map((c: { text: string }, idx: number) => ({
         id: criteria[idx]?.id || `c${Date.now()}-${idx}`,
-        text: c.text
+        text: normalize(c.text)
       }));
       handleDeliverablesChange(milestones, artifacts, tightenedCriteria);
       trackEvent('ai_suggestion_accepted', {

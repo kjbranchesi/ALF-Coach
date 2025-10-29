@@ -216,12 +216,13 @@ export function JourneyStage() {
   };
 
   // Quick Action result handler
+  const normalize = (s: string) => s.trim().replace(/\s+/g, ' ');
   const handleQuickActionResult = (result: any) => {
     if (result.type === 'phases') {
       // Generate 4 Phases - Replace with new phases
       const newPhases: Phase[] = result.data.map((name: string, idx: number) => ({
         id: `p${idx + 1}`,
-        name,
+        name: normalize(name),
         activities: []
       }));
       handlePhasesChange(newPhases);
@@ -234,7 +235,7 @@ export function JourneyStage() {
       // Rename Phases For Clarity - Update existing phase names
       const updatedPhases = phases.map((phase, idx) => ({
         ...phase,
-        name: result.data[idx] || phase.name
+        name: normalize(result.data[idx] || phase.name)
       }));
       handlePhasesChange(updatedPhases);
       trackEvent('ai_suggestion_accepted', {
@@ -246,16 +247,19 @@ export function JourneyStage() {
       // Add Activities To Phase - Append to specific phase
       const phaseIndex = result.phaseIndex;
       const updatedPhases = [...phases];
+      const existing = new Set((updatedPhases[phaseIndex].activities || []).map(a => normalize(a).toLowerCase()));
+      const incoming = (result.data || []).map((a: string) => normalize(a)).filter(a => a && !existing.has(a.toLowerCase()));
+      const cap = 12;
       updatedPhases[phaseIndex] = {
         ...updatedPhases[phaseIndex],
-        activities: [...(updatedPhases[phaseIndex].activities || []), ...result.data]
+        activities: [...(updatedPhases[phaseIndex].activities || []), ...incoming].slice(0, cap)
       };
       handlePhasesChange(updatedPhases);
       trackEvent('ai_suggestion_accepted', {
         stage: 'journey',
         action: 'add-activities',
         phaseIndex,
-        count: result.data.length
+        count: incoming.length
       });
     }
   };

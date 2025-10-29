@@ -57,6 +57,10 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
   const [error, setError] = useState<string | null>(null);
   const [healthChecking, setHealthChecking] = useState(false);
   const healthCheckAttemptedRef = useRef(false);
+  // Request cancellation + caching
+  const suggestionAborters = useRef<Record<string, AbortController>>({});
+  const suggestionCache = useRef<Map<string, { at: number; items: FieldSuggestion[] }>>(new Map());
+  const lastShownRef = useRef<Record<string, number>>({});
 
   /**
    * Health check: validates environment + tests actual AI connectivity
@@ -67,10 +71,9 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
     setError(null);
 
     try {
-      // Step 1: Check environment variables
+      // Step 1: Check feature flags only (no secrets on client)
       const featureEnabled = import.meta.env.VITE_FEATURE_STAGE_ASSISTANT === 'true';
       const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
-      const hasApiKey = !!import.meta.env.VITE_GEMINI_API_KEY;
 
       if (!featureEnabled) {
         setError('AI assistant feature is disabled');
@@ -82,22 +85,18 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
         return false;
       }
 
-      if (!hasApiKey) {
-        setError('AI API key is missing. Set VITE_GEMINI_API_KEY');
-        return false;
-      }
-
       // Step 2: Test actual AI connectivity (fast ping)
       try {
-        const { generateAI } = await import('../../chat-mvp/domain/ai');
-
-        // Minimal AI test with 2s timeout
-        const testPromise = generateAI('ok', { maxTokens: 8, temperature: 0 });
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('AI health check timeout')), 2000)
-        );
-
-        await Promise.race([testPromise, timeoutPromise]);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch('/.netlify/functions/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: 'ping', model: 'gemini-flash-lite-latest', generationConfig: { maxOutputTokens: 4, temperature: 0 } }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error(`Proxy responded ${res.status}`);
 
         // Success!
         console.log('[useStageAI] AI health check passed');
@@ -499,6 +498,23 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
     if (!isAIAvailable) {
       return [];
     }
+    const key = `${stage}:${field}:${(value || '').trim()}:${index ?? -1}`;
+    // Cancel any in-flight request for this key
+    try { suggestionAborters.current[key]?.abort(); } catch {}
+    const controller = new AbortController();
+    suggestionAborters.current[key] = controller;
+
+    // Serve from cache if same value recently requested
+    const cached = suggestionCache.current.get(key);
+    if (cached) {
+      // Coalesce telemetry: only show event if > 2s since last emit
+      const last = lastShownRef.current[key] || 0;
+      if (Date.now() - last > 2000) {
+        trackEvent('ai_suggestions_shown', { stage, target: field, count: cached.items.length });
+        lastShownRef.current[key] = Date.now();
+      }
+      return cached.items;
+    }
 
     try {
       if (stage === 'ideation') {
@@ -522,11 +538,18 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
           suggestions = await actions.getSuggestions('challenge', value, context);
         }
 
-        return suggestions.map(text => ({
+        const items = suggestions.map(text => ({
           text,
           type: 'refinement' as const,
           targetIndex: index
         }));
+        suggestionCache.current.set(key, { at: Date.now(), items });
+        const last = lastShownRef.current[key] || 0;
+        if (Date.now() - last > 2000) {
+          trackEvent('ai_suggestions_shown', { stage, target: field, count: items.length });
+          lastShownRef.current[key] = Date.now();
+        }
+        return items;
       } else if (stage === 'journey' && field === 'phaseName' && value?.trim()) {
         // Lazy-load journey actions
         const actions = await import('../ai/journeyActions');
@@ -540,11 +563,18 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
           }
         );
 
-        return suggestions.map(text => ({
+        const items = suggestions.map(text => ({
           text,
           type: 'rename' as const,
           targetIndex: index
         }));
+        suggestionCache.current.set(key, { at: Date.now(), items });
+        const last = lastShownRef.current[key] || 0;
+        if (Date.now() - last > 2000) {
+          trackEvent('ai_suggestions_shown', { stage, target: field, count: items.length });
+          lastShownRef.current[key] = Date.now();
+        }
+        return items;
       } else if (stage === 'deliverables') {
         // Lazy-load deliverables actions
         const actions = await import('../ai/deliverablesActions');
@@ -574,12 +604,18 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
         }
 
         const chips = await actions.getHeaderChips(target, context);
-
-        return chips.map(text => ({
+        const items = chips.map(text => ({
           text,
           type,
           targetIndex: index
         }));
+        suggestionCache.current.set(key, { at: Date.now(), items });
+        const last = lastShownRef.current[key] || 0;
+        if (Date.now() - last > 2000) {
+          trackEvent('ai_suggestions_shown', { stage, target: field, count: items.length });
+          lastShownRef.current[key] = Date.now();
+        }
+        return items;
       }
 
       return [];
