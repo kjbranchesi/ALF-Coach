@@ -89,7 +89,8 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000);
-        const res = await fetch('/.netlify/functions/gemini', {
+        const url = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
+        const res = await fetch(String(url), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt: 'ping', model: 'gemini-flash-lite-latest', generationConfig: { maxOutputTokens: 4, temperature: 0 } }),
@@ -155,12 +156,19 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
         }
       };
 
-      // Determine current micro-stage for better suggestions
+      // Determine prompt stage for better suggestions
+      // - Ideation maps to micro-stages (BIG_IDEA, ESSENTIAL_QUESTION, CHALLENGE)
+      // - Journey/Deliverables map to their respective macro stages
       const currentStage = stage === 'ideation'
         ? (currentData.bigIdea ? (currentData.essentialQuestion ? 'CHALLENGE' : 'ESSENTIAL_QUESTION') : 'BIG_IDEA')
-        : 'BIG_IDEA';
+        : (stage === 'journey' ? 'JOURNEY' : 'DELIVERABLES');
 
-      const prompt = buildSuggestionPrompt(currentStage as any, captured as CapturedData, currentData.wizard);
+      // Build suggestion prompt with correct object shape and safe wizard default
+      const prompt = buildSuggestionPrompt({
+        stage: currentStage as any,
+        captured: captured as CapturedData,
+        wizard: (currentData.wizard as any) || {}
+      });
       const aiResponse = await generateAI(prompt, { maxTokens: 200, temperature: 0.8 });
 
       // Extract suggestions from AI response
@@ -175,7 +183,14 @@ export function useStageAI({ stage, currentData }: UseStageAIOptions) {
     } finally {
       setLoading(false);
     }
-  }, [stage, currentData, isAIAvailable]);
+  }, [
+    stage,
+    currentData.bigIdea,
+    currentData.essentialQuestion,
+    currentData.challenge,
+    currentData.wizard,
+    isAIAvailable
+  ]);
 
   /**
    * Refine a specific field value
@@ -263,10 +278,10 @@ Keep responses under 2 sentences. Be encouraging and actionable.`;
 
   // Load initial suggestions when data changes
   useEffect(() => {
-    if (isAIAvailable !== null) {
+    if (isAIAvailable === true) {
       getSuggestions().then(setSuggestions);
     }
-  }, [isAIAvailable, currentData.bigIdea, currentData.essentialQuestion, currentData.challenge, getSuggestions]);
+  }, [isAIAvailable, getSuggestions]);
 
   // Quick Actions state
   const [actionExecuting, setActionExecuting] = useState<string | null>(null);
