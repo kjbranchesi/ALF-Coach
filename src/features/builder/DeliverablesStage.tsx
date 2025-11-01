@@ -470,6 +470,11 @@ export function DeliverablesStage() {
     return () => clearTimeout(timer);
   }, [milestones.length, artifacts.length, criteria.length, isAIAvailable]);
 
+  // Local completeness tallies used across effects and UI
+  const milestonesCount = milestones.filter(m => m.name.trim()).length;
+  const artifactsCount = artifacts.filter(a => a.name.trim()).length;
+  const criteriaCount = criteria.filter(c => c.text.trim()).length;
+
   // Track guardrail visibility
   useEffect(() => {
     if (!isAIAvailable) return;
@@ -628,9 +633,6 @@ export function DeliverablesStage() {
 
   // Avoid invoking canCompleteStage() during render (it updates state inside the hook).
   // Use a pure local completeness check for UI feedback and button enablement.
-  const milestonesCount = milestones.filter(m => m.name.trim()).length;
-  const artifactsCount = artifacts.filter(a => a.name.trim()).length;
-  const criteriaCount = criteria.filter(c => c.text.trim()).length;
   const isComplete = isDeliverablesUIComplete(milestones, artifacts, criteria);
   const hasAnyContent = milestonesCount > 0 || artifactsCount > 0 || criteriaCount > 0;
 

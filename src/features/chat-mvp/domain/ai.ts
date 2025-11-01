@@ -9,9 +9,10 @@ export async function generateAI(prompt: string, opts?: {
   maxTokens?: number;
   label?: string; // for telemetry grouping
 }): Promise<string> {
-  const enabledFlag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
-  const url = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
-  const envModel = (import.meta as any)?.env?.VITE_GEMINI_MODEL;
+  // Use plain import.meta.env so Jest's vite-meta-env transform can rewrite it
+  const enabledFlag = import.meta.env?.VITE_GEMINI_ENABLED;
+  const url = import.meta.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
+  const envModel = import.meta.env?.VITE_GEMINI_MODEL;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20000); // 20s
